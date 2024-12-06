@@ -55,7 +55,7 @@ dicotomous_2k_2sid <- function(data, referencevar) {
     # Crear tabla de contingencia
     tabla <- table(data[[referencevar]], data[[var]])
 
-    # Verificar si la tabla tiene al menos dos categorías validas
+    # Verificar si la tabla tiene al menos dos categorias validas
     if (all(dim(tabla) > 1)) {
       # Prueba de Chi cuadrada
       chi_test <- tryCatch(
