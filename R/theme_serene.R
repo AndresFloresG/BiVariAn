@@ -1,6 +1,16 @@
 #' @import ggprism
 #' @import ggplot2
 #' @import dplyr
+#'
+#' @name theme_serene
+#' @author Serene Chessur
+#' @title Basic theme for Bivaran packages plots
+#' @aliases theme_serene
+#' @description
+#' Basic theme for Bivaran packages plots
+#'
+#'
+#' @export
 
 theme_serene<- function(base_size = 14,
                       base_family = "sans",

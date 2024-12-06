@@ -32,7 +32,7 @@ auto_shapiro_raw <- function(data){
         Normalidad=  paste(ifelse(shapiro_p>0.05, "Normal", "Non-normal" ))
       )
     } else {
-      cat("\nLa variable", var1, "no está presente en la base de datos.\n")
+      cat("\nLa variable", var1, "no esta presente en la base de datos.\n")
     }
   }
 
