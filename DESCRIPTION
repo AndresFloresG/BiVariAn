@@ -1,0 +1,19 @@
+Package: bivaran
+Type: Package
+Title: Generates a HTML output with p values for bivariate analysis
+Version: 0.1.0
+Author: Flores García JA, Gordillo Moscoso AA, Castro Rodríguez JM
+Maintainer: Flores García JA <andres.flores@uaslp.mx>
+Description: Generates a HTML output with p values for bivariate analysis.
+License: GPL-2 | GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    car,
+    dplyr,
+    epitools,
+    ggplot2,
+    ggprism,
+    table1,
+    tableHTML
+RoxygenNote: 7.3.2
