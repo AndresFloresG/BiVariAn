@@ -1,10 +1,10 @@
-Package: bivaran
+Package: BiVariAn
 Type: Package
-Title: Generates a HTML output with p values for bivariate analysis
+Title: Bivariated Automatic Analysis
 Version: 0.1.0
 Author: Flores García José Andrés, Gordillo Moscoso Antonio Augusto, Castro Rodríguez Jhoselin Marian
 Maintainer: Flores García JA <andres.flores@uaslp.mx>
-Description: Generates a HTML output with p values for bivariate analysis.
+Description: Generates a automatic output for bivariate analysis.
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -18,8 +18,8 @@ Imports:
     table1,
     tableHTML
 RoxygenNote: 7.3.2
-URL: https://github.com/AndresFloresG/bivaran
-BugReports: https://github.com/AndresFloresG/bivaran/issues
+URL: https://github.com/AndresFloresG/BiVariAn
+BugReports: https://github.com/AndresFloresG/BiVariAn/issues
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
