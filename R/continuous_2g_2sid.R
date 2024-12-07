@@ -1,4 +1,5 @@
-#' @import tableHTML
+#' @importFrom dplyr "%>%"
+#' @importFrom rrtable df2flextable
 #' @name continuous_2g_2sid
 #' @import stats
 #' @aliases continuous_2g_2sid
@@ -110,10 +111,7 @@ continuous_2g_2sid <- function(data, groupvar) {
   # Convertir los resultados en un data frame
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
   # Mostrar los resultados
-  print(tableHTML(resultados_df, rownames = F) %>% add_theme("scientific"))
-
-  rm(resultados_df)
-  rm(data)
+  return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
 
 }
 

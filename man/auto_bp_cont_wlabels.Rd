@@ -4,12 +4,21 @@
 \alias{auto_bp_cont_wlabels}
 \title{auto_bp_cont_wlabels}
 \usage{
-auto_bp_cont_wlabels(data, groupvar)
+auto_bp_cont_wlabels(
+  data,
+  groupvar,
+  boxplot_args = list(),
+  theme_func = theme_serene
+)
 }
 \arguments{
 \item{data}{Name of the dataframe}
 
 \item{groupvar}{Name of the grouping variable}
+
+\item{boxplot_args}{List of arguments to be passed to "geom_violin"}
+
+\item{theme_func}{Theme to display plots. Default is "theme_serene"}
 }
 \description{
 #' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package.

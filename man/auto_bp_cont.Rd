@@ -4,12 +4,16 @@
 \alias{auto_bp_cont}
 \title{auto_bp_cont}
 \usage{
-auto_bp_cont(data, groupvar)
+auto_bp_cont(data, groupvar, boxplot_args = list(), theme_func = theme_serene)
 }
 \arguments{
 \item{data}{Name of the dataframe}
 
 \item{groupvar}{Name of the grouping variable}
+
+\item{boxplot_args}{List of arguments to be passed to "geom_violin"}
+
+\item{theme_func}{Theme to display plots. Default is "theme_serene"}
 }
 \description{
 Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function it is not possible to use labels for the variables, use "auto_bp_cont_wlabels" instead.

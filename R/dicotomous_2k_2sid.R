@@ -2,6 +2,7 @@
 #' @import dplyr
 #' @import epitools
 #' @importFrom tableHTML tableHTML
+#' @importFrom rrtable df2flextable
 #' @author JAFG
 #' @title Bivariate Chi squared and Fisher Test analysis for 2 categories.
 #' @aliases dicotomous_2k_2sid
@@ -9,6 +10,8 @@
 #' @usage dicotomous_2k_2sid(data, referencevar)
 #' @description
 #' Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
+#'
+#'
 #' @param data Data frame from which variables will be extractred
 #' @param referencevar Reference variable. Must have exactly 2 levels
 #' @examples
@@ -113,10 +116,8 @@ dicotomous_2k_2sid <- function(data, referencevar) {
 # Convertir los resultados en un data frame
 resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 # Mostrar los resultados
-print(tableHTML::tableHTML(resultados_df, rownames = F) %>% tableHTML::add_theme("scientific"))
+return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
 
-#rm(resultados_df)
-#rm(resultados)
 
 }
 

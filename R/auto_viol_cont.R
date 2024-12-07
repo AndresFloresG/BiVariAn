@@ -1,21 +1,22 @@
 #' @import ggplot2
 #' @import ggprism
-#' @name auto_bp_cont
+#' @name auto_viol_cont
 #' @author JMCR
-#' @title auto_bp_cont
-#' @aliases auto_bp_cont
+#' @title auto_viol_cont
+#' @aliases auto_viol_cont
 #' @description
-#' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function it is not possible to use labels for the variables, use "auto_bp_cont_wlabels" instead.
+#' Automatically generates violinplots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function it is not possible to use labels for the variables, use "auto_viol_cont_wlabels" instead.
 #'
 #' @param data Name of the dataframe
 #' @param groupvar Name of the grouping variable
-#' @param boxplot_args List of arguments to be passed to "geom_violin"
+#' @param violinplot_args List of arguments to be passed to "geom_violin"
 #' @param theme_func Theme to display plots. Default is "theme_serene"
 #'
 #' @export
 
-auto_bp_cont <- function(data, groupvar,
-                         boxplot_args = list(),
+
+auto_viol_cont <- function(data, groupvar,
+                         violinplot_args = list(),
                          theme_func = theme_serene) {
   # Verificar si theme_func es una funcion
   if (!is.function(theme_func)) {
@@ -34,8 +35,8 @@ auto_bp_cont <- function(data, groupvar,
       # Crear la base de la grafica
       p <- ggplot2::ggplot(data, ggplot2::aes_string(x = groupvar, y = var2))
 
-      # Agregar geom_boxplot con argumentos personalizados
-      p <- p + do.call(ggplot2::geom_boxplot, boxplot_args)
+      # Agregar geom_violinplot con argumentos personalizados
+      p <- p + do.call(ggplot2::geom_violin, violinplot_args)
 
       # Agregar etiquetas y tema
       p <- p + ggplot2::labs(
@@ -58,5 +59,3 @@ auto_bp_cont <- function(data, groupvar,
   # Retornar la lista de graficas
   return(graficascont)
 }
-
-
