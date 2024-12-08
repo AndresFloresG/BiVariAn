@@ -15,3 +15,6 @@ Generates a HTML table of raw data from a numerical variables of a dataframe.
 \examples{
 auto_shapiro_raw(iris)
 }
+\author{
+JAFG
+}
