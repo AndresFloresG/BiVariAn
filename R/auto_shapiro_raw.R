@@ -40,9 +40,6 @@ auto_shapiro_raw <- function(data){
 
   resultadosdf <-do.call(rbind, lapply(resultados, as.data.frame))
 
-<<<<<<< HEAD
   return(rrtable::df2flextable(resultadosdf, vanilla = TRUE))
-=======
-  return(rrtable::df2flextable(resultadodf, vanilla = TRUE))
->>>>>>> 13a681bf94bd671e99505e1292a7c39fd90b214c
+
 }
