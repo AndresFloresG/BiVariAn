@@ -1,8 +1,10 @@
 #' @importFrom stats shapiro.test
 #' @import dplyr
+#' @importFrom rrtable df2flextable
 #'
 #' @importFrom tableHTML tableHTML
 #' @importFrom tableHTML add_theme
+#' @author JAFG
 #' @name auto_shapiro_raw
 #' @aliases auto_shapiro_raw
 #' @title Automatic Shapiro-Wilk test table
@@ -38,5 +40,5 @@ auto_shapiro_raw <- function(data){
 
   resultadosdf <-do.call(rbind, lapply(resultados, as.data.frame))
 
-  tableHTML(resultadosdf, rownames = F) %>% add_theme("scientific")
+  return(rrtable::df2flextable(resultadosdf, vanilla = TRUE))
 }
