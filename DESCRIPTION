@@ -14,6 +14,7 @@ Imports:
     epitools,
     ggplot2,
     ggprism,
+    riskCommunicator,
     rrtable,
     table1,
     tableHTML
