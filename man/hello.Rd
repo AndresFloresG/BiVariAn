@@ -14,5 +14,5 @@ Prints 'Hello, world!'
 }
 \examples{
 hello()
-"Hello, world!"
+
 }

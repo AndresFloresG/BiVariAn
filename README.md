@@ -42,19 +42,26 @@ pak::pak("AndresFloresG/BiVariAn")
 
 ## Example
 
-Render an automatic Shapiro-Wilk’s table of a simple dataset
+Loading the package
 
 ``` r
 library(BiVariAn)
-#> Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading
-#> 'BiVariAn'
-#> Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when
-#> loading 'BiVariAn'
+```
 
+Sample useless function
+
+``` r
+hello()
+#> [1] "Hello, world!"
+```
+
+Render an automatic Shapiro-Wilk’s table of a simple dataset
+
+``` r
 auto_shapiro_raw(cars)
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 ``` r
 
@@ -64,6 +71,15 @@ shapiro.test(cars$speed)
 #> 
 #> data:  cars$speed
 #> W = 0.97765, p-value = 0.4576
+```
+
+Return Shapiro-Wilk’s results as a dataframe
+
+``` r
+auto_shapiro_raw(cars, flextableformat = FALSE)
+#>       Variable p_shapiro  Normality
+#> speed    speed   0.45763     Normal
+#> dist      dist    0.0391 Non-normal
 ```
 
 Render an automatic Shapiro-Wilk’s table of a more complex dataset
@@ -77,39 +93,46 @@ library(riskCommunicator)
 ``` r
 # Load dplyr to select specific columns
 library(dplyr)
-#> 
-#> Adjuntando el paquete: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 data(cvdd)
 ```
 
-``` r
-# For shapiro.test, sample size must be between 3 and 5000
-# Let's select only 300 observations (arbitrary)
+For shapiro.test, sample size must be between 3 and 5000
 
+Let’s select only 300 observations (arbitrary)
+
+``` r
 set.seed(081224)
 ex_sample<-slice_sample(cvdd, n=300)
 ```
 
+Now, let’s select specific columns from the database
+
 ``` r
-# Now, let's select specific columns from the database
+
 auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+Common use of shapiro.test
 
 ``` r
-
-# Common use of shapiro.test
 shapiro.test(ex_sample$TOTCHOL)
 #> 
 #>  Shapiro-Wilk normality test
 #> 
 #> data:  ex_sample$TOTCHOL
 #> W = 0.98654, p-value = 0.007891
+```
+
+Return the same Shapiro-Wilk’s results as a dataframe
+
+``` r
+auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE), flextableformat = FALSE)
+#>          Variable p_shapiro  Normality
+#> TOTCHOL   TOTCHOL   0.00789 Non-normal
+#> SYSBP       SYSBP   <0.001* Non-normal
+#> DIABP       DIABP   <0.001* Non-normal
+#> BMI           BMI   <0.001* Non-normal
+#> HEARTRTE HEARTRTE   <0.001* Non-normal
 ```

@@ -32,7 +32,7 @@ auto_shapiro_raw <- function(data, flextableformat= TRUE){
       resultados[[var1]]<- list(
         Variable= var1,
         p_shapiro=  ifelse(shapiro_p>0.001, paste(round(shapiro_p, digits=5)), "<0.001*" ),
-        Normalidad=  paste(ifelse(shapiro_p>0.05, "Normal", "Non-normal" ))
+        Normality=  paste(ifelse(shapiro_p>0.05, "Normal", "Non-normal" ))
       )
     } else {
       cat("\nLa variable", var1, "no esta presente en la base de datos.\n")

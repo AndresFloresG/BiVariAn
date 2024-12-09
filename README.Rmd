@@ -45,16 +45,32 @@ pak::pak("AndresFloresG/BiVariAn")
 
 ## Example
 
-Render an automatic Shapiro-Wilk's table of a simple dataset
 
+Loading the package
+
+```{r, warning=FALSE}
+library(BiVariAn)
+```
+
+Sample useless function
 
 ```{r}
-library(BiVariAn)
+hello()
+```
 
+Render an automatic Shapiro-Wilk's table of a simple dataset
+
+```{r, warning=FALSE}
 auto_shapiro_raw(cars)
 
 shapiro.test(cars$speed)
 ```
+
+Return Shapiro-Wilk's results as a dataframe
+```{r}
+auto_shapiro_raw(cars, flextableformat = FALSE)
+```
+
 
 Render an automatic Shapiro-Wilk's table of a more complex dataset
 
@@ -64,29 +80,38 @@ library(riskCommunicator)
 ```
 
 
-```{r}
+```{r, message=FALSE}
 # Load dplyr to select specific columns
 library(dplyr)
 data(cvdd)
 ```
 
+For shapiro.test, sample size must be between 3 and 5000
+
+Let's select only 300 observations (arbitrary)
 
 ```{r}
-# For shapiro.test, sample size must be between 3 and 5000
-# Let's select only 300 observations (arbitrary)
-
 set.seed(081224)
 ex_sample<-slice_sample(cvdd, n=300)
 ```
 
+Now, let's select specific columns from the database
 
 ```{r}
-# Now, let's select specific columns from the database
-auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
 
-# Common use of shapiro.test
+auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
+```
+
+Common use of shapiro.test
+```{r}
 shapiro.test(ex_sample$TOTCHOL)
 ```
+
+Return the same Shapiro-Wilk's results as a dataframe
+```{r}
+auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE), flextableformat = FALSE)
+```
+
 
 
 
