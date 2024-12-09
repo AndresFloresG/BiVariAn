@@ -12,6 +12,7 @@
 #' @description
 #' Generates a HTML table of raw data from a numerical variables of a dataframe.
 #' @param data Data frame from which variables will be extracted.
+#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #'
 #' @examples
 #' auto_shapiro_raw(iris)
@@ -19,7 +20,7 @@
 #' @export
 
 
-auto_shapiro_raw <- function(data){
+auto_shapiro_raw <- function(data, flextableformat= TRUE){
   var_cont<-c(colnames(data %>% select_if(is.numeric)))
 
   resultados<-list()
@@ -40,6 +41,11 @@ auto_shapiro_raw <- function(data){
 
   resultadosdf <-do.call(rbind, lapply(resultados, as.data.frame))
 
-  return(rrtable::df2flextable(resultadosdf, vanilla = TRUE))
+  if (flextableformat == TRUE){
+    return(rrtable::df2flextable(resultadosdf, vanilla = TRUE))
+  }
+  else {
+    return(resultadosdf)
+  }
 
 }

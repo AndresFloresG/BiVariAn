@@ -5,15 +5,16 @@
 #' @importFrom rrtable df2flextable
 #' @author JAFG
 #' @title Bivariate Chi squared and Fisher Test analysis for 2 categories.
-#' @aliases dicotomous_2k_2sid
-#' @name dicotomous_2k_2sid
-#' @usage dicotomous_2k_2sid(data, referencevar)
+#' @aliases dichotomous_2k_2sid
+#' @name dichotomous_2k_2sid
+#' @usage dichotomous_2k_2sid(data, referencevar, flextableformat)
 #' @description
 #' Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
 #'
 #'
 #' @param data Data frame from which variables will be extractred
 #' @param referencevar Reference variable. Must have exactly 2 levels
+#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #' @examples
 #'   # Not run
 #'
@@ -33,11 +34,12 @@
 #'  df$gender <- relevel(df$gender, ref= "Female")
 #'
 #'  # Apply function
-#'  dicotomous_2k_2sid(df, referencevar="has")
+#' dichotomous_2k_2sid(df, referencevar="has")
+#' dichotomous_2k_2sid(df, referencevar="has", flextableformat = FALSE)
 
 #' @export
 
-dicotomous_2k_2sid <- function(data, referencevar) {
+dichotomous_2k_2sid <- function(data, referencevar, flextableformat = TRUE) {
   # Convertir la variable de referencia en factor
   data[[referencevar]] <- as.factor(data[[referencevar]])
 
@@ -112,13 +114,13 @@ dicotomous_2k_2sid <- function(data, referencevar) {
       )
     }
   }
-
-# Convertir los resultados en un data frame
 resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
-# Mostrar los resultados
-return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
-
-
+if (flextableformat == TRUE){
+  return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
+} else{
+  rownames(resultados_df) <- NULL
+  return(resultados_df)
+}
 }
 
 

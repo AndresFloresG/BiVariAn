@@ -8,6 +8,8 @@ auto_shapiro_raw(data)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}
+
+\item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
 \description{
 Generates a HTML table of raw data from a numerical variables of a dataframe.

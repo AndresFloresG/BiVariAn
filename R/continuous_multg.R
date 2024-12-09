@@ -1,30 +1,22 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
-#' @name continuous_2g_2sid
+#' @name continuous_multg
 #' @import stats
-#' @aliases continuous_2g_2sid
-#' @title Bivariate analysis for 2 groups
-#' @usage continuous_2g_2sid(data, groupvar, flextableformat)
+#' @aliases continuous_multg
+#' @title Bivariate analysis for more than 2 groups
+#' @usage continuous_multg(data, groupvar, flextableformat)
 #' @description
 #'   Generates a HTML table of bivariate analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
-#' @examples
-#'  # Not run
-#'  # continuous_2g_2sid(dataframe, groupvar="group")
-#'  library(riskCommunicator)
 #'
-#'  continuous_2g_2sid(cvdd, "SEX")
-#'  continuous_2g_2sid(cvdd, "SEX", flextableformat = FALSE)
-
-
-
 #' @export
-continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
+
+
+continuous_multg<-function(data, groupvar, flextableformat = TRUE){
   # Convertir la variable de agrupacion en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
-  alternative<- c("two.sided")
 
   # Verificar que la variable de agrupacion tiene al menos dos niveles
   if (length(levels(data[[groupvar]])) < 2) {
@@ -38,7 +30,7 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
   # Bucle para analisis
   for (var1 in variables_continuas) {
     if (var1 %in% names(data)) { # Verifica si la variable existe en la base de datos
-      # Extraer los datos para la prueba, ignorando NA en la variable de agrupacion y la variable continua
+      # Extraer los datos para la prueba, ignorando NA
       valid_data <- data[!is.na(data[[groupvar]]) & !is.na(data[[var1]]), ]
       group_data <- valid_data[[groupvar]]
       continuous_data <- valid_data[[var1]]
@@ -49,17 +41,14 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
           Variable = var1,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
-          P_T_Student = NA,
-          Var_Equal = NA,
-          P_Mann_Whitney = NA,
-          Diff_Means = NA,
-          CI_Lower = NA,
-          CI_Upper = NA
+          P_ANOVA = NA,
+          P_KW = NA,
+          Significant_Test = NA
         )
         next
       }
 
-      # Pruebas estadísticas en bloque tryCatch para manejar errores
+      # Pruebas estadisticas en bloque tryCatch para manejar errores
       tryCatch({
         # Prueba de normalidad en los residuos
         lm_model <- lm(continuous_data ~ group_data)
@@ -68,31 +57,26 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
         # Prueba de homogeneidad de varianzas (Levene)
         levene_p <- car::leveneTest(continuous_data ~ group_data)$"Pr(>F)"[1]
 
-        # Decidir si usar var.equal = TRUE o FALSE en funcion de la prueba de Levene
-        var_equal <- ifelse(levene_p > 0.05, TRUE, FALSE)
-
-        # Prueba T de Student
-        t_test <- t.test(continuous_data ~ group_data, var.equal = var_equal, alternative = alternative)
-        t_p <- t_test$p.value
-        diff_means <- t_test$estimate[1] - t_test$estimate[2]
-        ci_lower <- t_test$conf.int[1]
-        ci_upper <- t_test$conf.int[2]
-
-        # Prueba U de Mann-Whitney
-        mann_whitney <- wilcox.test(continuous_data ~ group_data, alternative = alternative)
-        mann_u_p <- mann_whitney$p.value
+        if (shapiro_res > 0.05 && levene_p > 0.05) {
+          # Realizar ANOVA
+          anova_res <- aov(continuous_data ~ group_data, data=data)
+          anova_p <- summary(anova_res)[[1]]$"Pr(>F)"[1]
+          significant_test <- ifelse(anova_p < 0.05, "ANOVA", "None")
+        } else {
+          # Realizar Kruskal-Wallis
+          kw_res <- kruskal.test(continuous_data ~ group_data)
+          kw_p <- kw_res$p.value
+          significant_test <- ifelse(kw_p < 0.05, "Kruskal-Wallis", "None")
+        }
 
         # Guardar resultados
         resultados[[var1]] <- list(
           Variable = var1,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
           P_Levene = ifelse(levene_p > 0.001, round(levene_p, 5), "<0.001*"),
-          P_T_Student = ifelse(t_p > 0.001, round(t_p, 5), "<0.001*"),
-          Var_Equal = var_equal,
-          P_Mann_Whitney = ifelse(mann_u_p > 0.001, round(mann_u_p, 5), "<0.001*"),
-          Diff_Means = round(diff_means, 5),
-          CI_Lower = round(ci_lower, 5),
-          CI_Upper = round(ci_upper, 5)
+          P_ANOVA = ifelse(exists("anova_p"), ifelse(anova_p > 0.001, round(anova_p, 5), "<0.001*"), NA),
+          P_KW = ifelse(exists("kw_p"), ifelse(kw_p>0.001, round(kw_p, 5), "<0.001*"), NA),
+          Significant_Test = significant_test
         )
       }, error = function(e) {
         # En caso de error, asignar NA a los resultados de esta variable
@@ -100,12 +84,9 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
           Variable = var1,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
-          P_T_Student = NA,
-          Var_Equal = NA,
-          P_Mann_Whitney = NA,
-          Diff_Means = NA,
-          CI_Lower = NA,
-          CI_Upper = NA
+          P_ANOVA = NA,
+          P_KW = NA,
+          Significant_Test = NA
         )
       })
     } else {
@@ -113,13 +94,14 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
     }
   }
 
+  # Convertir resultados a data frame
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
-  if (flextableformat == TRUE){
+  if (flextableformat == TRUE) {
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
-    rownames(resultados_df)<- NULL
+    rownames(resultados_df) <- NULL
     return(resultados_df)
   }
-}
 
+}
