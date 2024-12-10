@@ -6,6 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+# Overview
+
 The purpose of BiVariAn is to facilitate bivariate analysis by
 integrating functions that allow the results of such analyses to be
 represented graphically and in text.
