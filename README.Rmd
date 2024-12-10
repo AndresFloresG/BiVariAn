@@ -13,32 +13,27 @@ knitr::opts_chunk$set(
 )
 ```
 
-# BiVariAn <img src="man/figures/logo.png" align="right" height="139" alt="" />
-
-
-
-
-
+# BiVariAn <img src="man/figures/logo.png" align="right" height="139"/>
 
 <!-- badges: start -->
+
 <!-- badges: end -->
+
+<br/>
+
+<br/>
+
 # Overview
 
 The purpose of BiVariAn is to facilitate bivariate analysis by integrating functions that allow the results of such analyses to be represented graphically and in text.
 
-
 Currently the package can generate summary tables of analysis data for: Analysis of continuous variables across two groups using Student's t-tests (OR Welch's t-tests according to homogeneity of variances), Mann-Whitney U; analysis of dichotomous variables using Chi-square and Fisher's exact test; analysis of normality of raw data using the Shapiro-Wilk test.
-
 
 It is also possible to generate graphs automatically with or without labels on the variables with the possibility of choosing a theme from the “ggplot2” package.
 
+Currently under development is the option to generate a generic interpretation of the statistical tests, temporarily available only in Spanish, but there are plans to include more languages.
 
-Currently under development is the option to generate a generic interpretation of the statistical tests, temporarily available only in Spanish, but there are plans to include more languages. 
-
-
-
-Note: The use of the package does not replace individual customized analysis, but rather streamlines the process of producing the results. We encourage users to perform statistical analyses based on the recommendations for each type of study. 
-
+Note: The use of the package does not replace individual customized analysis, but rather streamlines the process of producing the results. We encourage users to perform statistical analyses based on the recommendations for each type of study.
 
 ## Installation
 
@@ -50,7 +45,6 @@ pak::pak("AndresFloresG/BiVariAn")
 ```
 
 ## Example
-
 
 Loading the package
 
@@ -73,10 +67,10 @@ shapiro.test(cars$speed)
 ```
 
 Return Shapiro-Wilk's results as a dataframe
+
 ```{r}
 auto_shapiro_raw(cars, flextableformat = FALSE)
 ```
-
 
 Render an automatic Shapiro-Wilk's table of a more complex dataset
 
@@ -84,7 +78,6 @@ Render an automatic Shapiro-Wilk's table of a more complex dataset
 # Load riskCommunicator to access Framingham dataset
 library(riskCommunicator)
 ```
-
 
 ```{r, message=FALSE}
 # Load dplyr to select specific columns
@@ -109,15 +102,13 @@ auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
 ```
 
 Common use of shapiro.test
+
 ```{r}
 shapiro.test(ex_sample$TOTCHOL)
 ```
 
 Return the same Shapiro-Wilk's results as a dataframe
+
 ```{r}
 auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE), flextableformat = FALSE)
 ```
-
-
-
-

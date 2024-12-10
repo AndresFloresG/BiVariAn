@@ -1,10 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# BiVariAn <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# BiVariAn <img src="man/figures/logo.png" align="right" height="139"/>
 
 <!-- badges: start -->
 <!-- badges: end -->
+
+<br/>
+
+<br/>
 
 # Overview
 
