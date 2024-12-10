@@ -1,5 +1,6 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
+#' @import riskCommunicator
 #' @name continuous_2g_2sid
 #' @import stats
 #' @aliases continuous_2g_2sid

@@ -14,6 +14,21 @@ theme_serene(
   border = F
 )
 }
+\arguments{
+\item{base_size}{base font size, given in pts.}
+
+\item{base_family}{base font family}
+
+\item{base_fontface}{base font face}
+
+\item{base_line_size}{base line size}
+
+\item{base_rect_size}{base rect size}
+
+\item{axis_text_angle}{Axis text angle}
+
+\item{border}{Logical operator to indicate if the border should be printed}
+}
 \description{
 Basic theme for Bivaran packages plots
 }

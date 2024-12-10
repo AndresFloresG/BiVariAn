@@ -8,6 +8,14 @@
 #' @aliases theme_serene
 #' @description
 #' Basic theme for Bivaran packages plots
+#' @param base_size base font size, given in pts.
+#' @param base_family base font family
+#' @param base_fontface base font face
+#' @param base_line_size base line size
+#' @param base_rect_size base rect size
+#' @param axis_text_angle Axis text angle
+#' @param border Logical operator to indicate if the border should be printed
+#'
 #'
 #'
 #' @export

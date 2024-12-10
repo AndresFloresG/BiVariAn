@@ -80,8 +80,11 @@ author_check<-function(name, credentials, hash_col = "HASH"){
 #' @param sep Separator of the dataframe. Default is "," to denote a .csv file.
 
 get_credentials<-function(data=NULL, sep=","){
-  credentials<-read.delim(data, sep=sep)
-  assign("credentials", credentials, envir = .GlobalEnv)
+  if(is.null(data)){
+    stop("Credentials database should be a dataframe")
+  }
+  credentials<<-read.delim(data, sep=sep)
+  assign("credentials", credentials)
 }
 
 
