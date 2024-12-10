@@ -42,3 +42,28 @@ authenticity_check<-function(name, affil){
   }
   }
 }
+
+#' @title Author checker
+#' @name auth_check
+#'
+#' @param name Initials of the code's author name. (Last name, first name)
+#' @param affil_data Dataframe with the hash code of the tutor.
+#' @param hash_col Name of the column with hash codes. Default is "HASH"
+#'
+#' @export
+
+author_check<-function(name, affil_data, hash_col = "HASH"){
+
+  namehash<- digest(name, algo = "sha512", serialize = FALSE)
+
+    if(is.data.frame(affil_data)){
+      if(any(stri_detect_fixed(affil_data[[hash_col]], pattern = namehash))){
+
+        cat("Statistical analysis is authentic. \n")
+      } else {
+        cat("Statistical analysis is not authentic. \n", "\n","Please check with your tutor or committee.\n")
+      }
+    } else {
+      cat("Affiliation data must be a dataframe")
+    }
+}

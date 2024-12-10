@@ -103,5 +103,4 @@ continuous_multg<-function(data, groupvar, flextableformat = TRUE){
     rownames(resultados_df) <- NULL
     return(resultados_df)
   }
-
 }
