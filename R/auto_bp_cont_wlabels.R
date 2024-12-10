@@ -3,9 +3,10 @@
 #' @import table1
 #' @name auto_bp_cont_wlabels
 #' @author JMCR
-#' @title auto_bp_cont_wlabels
+#' @title auto_bp_cont_wlabels (Deprecated)
 #' @aliases auto_bp_cont_wlabels
 #' @description
+#' Deprecated, use "auto_bp_cont" instead.
 #' #' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package.
 #' @param data Name of the dataframe
 #' @param groupvar Name of the grouping variable

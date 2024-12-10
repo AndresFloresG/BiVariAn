@@ -2,7 +2,7 @@
 % Please edit documentation in R/auto_bp_cont_wlabels.R
 \name{auto_bp_cont_wlabels}
 \alias{auto_bp_cont_wlabels}
-\title{auto_bp_cont_wlabels}
+\title{auto_bp_cont_wlabels (Deprecated)}
 \usage{
 auto_bp_cont_wlabels(
   data,
@@ -21,6 +21,7 @@ auto_bp_cont_wlabels(
 \item{theme_func}{Theme to display plots. Default is "theme_serene"}
 }
 \description{
+Deprecated, use "auto_bp_cont" instead.
 #' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package.
 }
 \author{

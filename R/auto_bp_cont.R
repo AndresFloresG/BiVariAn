@@ -5,7 +5,7 @@
 #' @title auto_bp_cont
 #' @aliases auto_bp_cont
 #' @description
-#' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function it is not possible to use labels for the variables, use "auto_bp_cont_wlabels" instead.
+#' Automatically generates boxplot plots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package.
 #'
 #' @param data Name of the dataframe
 #' @param groupvar Name of the grouping variable
@@ -31,6 +31,8 @@ auto_bp_cont <- function(data, groupvar,
   # Bucle para generar y almacenar graficas
   for (var2 in variables_continuas) {
     if (var2 %in% names(data)) {  # Verifica si la variable esta en la base de datos
+      lab_bp_var<- if(!is.null(label(data[[var2]]))) label(data[[var2]]) else var2
+      lab_bp_group<- if(!is.null(label(data[[groupvar]]))) label(data[[groupvar]]) else groupvar
       # Crear la base de la grafica
       p <- ggplot2::ggplot(data, ggplot2::aes_string(x = groupvar, y = var2))
 
@@ -39,10 +41,9 @@ auto_bp_cont <- function(data, groupvar,
 
       # Agregar etiquetas y tema
       p <- p + ggplot2::labs(
-        title = paste("Distribucion de", var2),
-        x = groupvar,
-        y = var2
-      ) +
+        title = paste("Distribucion de", lab_bp_var),
+        x = lab_bp_group,
+        y = lab_bp_var) +
         theme_func() +
         ggplot2::theme(
           plot.title = element_text(hjust = 0.5, size = 14, face = "bold")

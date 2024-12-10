@@ -14,5 +14,5 @@ continuous_2g_pair(data, groupvar, flextableformat)
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
 \description{
-Generates a HTML table of bivariate analysis for 2 groups.
+Generates a HTML table of bivariate analysis for 2 groups. (In development)
 }

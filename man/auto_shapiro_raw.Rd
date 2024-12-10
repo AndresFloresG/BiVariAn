@@ -4,7 +4,7 @@
 \alias{auto_shapiro_raw}
 \title{Automatic Shapiro-Wilk test table}
 \usage{
-auto_shapiro_raw(data)
+auto_shapiro_raw(data, flextableformat = TRUE)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}

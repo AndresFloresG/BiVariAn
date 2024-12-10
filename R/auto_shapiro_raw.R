@@ -8,7 +8,6 @@
 #' @name auto_shapiro_raw
 #' @aliases auto_shapiro_raw
 #' @title Automatic Shapiro-Wilk test table
-#' @usage auto_shapiro_raw(data)
 #' @description
 #' Generates a HTML table of raw data from a numerical variables of a dataframe.
 #' @param data Data frame from which variables will be extracted.

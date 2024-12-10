@@ -7,7 +7,7 @@
 #' @title Bivariate analysis for 2 groups for paired data
 #' @usage continuous_2g_pair(data, groupvar, flextableformat)
 #' @description
-#'   Generates a HTML table of bivariate analysis for 2 groups.
+#'   Generates a HTML table of bivariate analysis for 2 groups. (In development)
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
@@ -15,14 +15,14 @@
 #'
 #'
 #'
-#' @export
+
 continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
-  # Convertir la variable de agrupación en factor
+  # Convertir la variable de agrupacion en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
 
-  # Verificar que la variable de agrupación tiene exactamente dos niveles
+  # Verificar que la variable de agrupacion tiene exactamente dos niveles
   if (length(levels(data[[groupvar]])) != 2) {
-    stop("La variable de agrupación debe tener exactamente dos niveles con observaciones.")
+    stop("La variable de agrupacion debe tener exactamente dos niveles con observaciones.")
   }
 
   # Seleccionar variables continuas del dataframe
@@ -59,7 +59,7 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
       next
     }
 
-    # Pruebas estadísticas
+    # Pruebas estadisticas
     tryCatch({
       # Prueba de normalidad para las diferencias
       diff <- paired_data$group1 - paired_data$group2

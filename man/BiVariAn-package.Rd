@@ -6,6 +6,8 @@
 \alias{BiVariAn-package}
 \title{BiVariAn: Bivariated Automatic Analysis}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Generates a automatic output for bivariate analysis.
 }
 \seealso{

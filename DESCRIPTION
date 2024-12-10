@@ -17,9 +17,12 @@ Imports:
     ggprism,
     riskCommunicator,
     rrtable,
+    scales,
+    stringi,
     table1,
     tableHTML,
-    tidyr
+    tidyr,
+    utils
 RoxygenNote: 7.3.2
 URL: https://github.com/AndresFloresG/BiVariAn
 BugReports: https://github.com/AndresFloresG/BiVariAn/issues
