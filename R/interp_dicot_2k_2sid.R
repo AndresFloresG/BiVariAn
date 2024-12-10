@@ -1,6 +1,4 @@
 #' @importFrom epitools oddsratio
-#' @importFrom stats chisq.test
-#' @importFrom stats fisher.test
 #'
 #' @name interp_dicot_2k_2sid
 #' @title Generic interpretation of chi squared or Fisher test
@@ -30,13 +28,13 @@ interp_dicot_2k_2sid <- function(data, var1, var2) {
   if (all(dim(tabla) > 1)) {
     # Prueba de Chi cuadrada
     chi_test <- tryCatch(
-      chisq.test(tabla, simulate.p.value = FALSE),
+      stats::chisq.test(tabla, simulate.p.value = FALSE),
       error = function(e) NULL
     )
 
     # Prueba exacta de Fisher
     fisher_test <- tryCatch(
-      fisher.test(tabla),
+      stats::fisher.test(tabla),
       error = function(e) NULL
     )
 

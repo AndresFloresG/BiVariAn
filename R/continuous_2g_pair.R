@@ -2,7 +2,6 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom rrtable df2flextable
 #' @name continuous_2g_pair
-#' @import stats
 #' @aliases continuous_2g_pair
 #' @title Bivariate analysis for 2 groups for paired data
 #' @usage continuous_2g_pair(data, groupvar, flextableformat)

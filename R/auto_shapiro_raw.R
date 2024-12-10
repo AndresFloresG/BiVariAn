@@ -1,4 +1,3 @@
-#' @importFrom stats shapiro.test
 #' @import dplyr
 #' @importFrom rrtable df2flextable
 #'
@@ -26,7 +25,7 @@ auto_shapiro_raw <- function(data, flextableformat= TRUE){
 
   for (var1 in var_cont) {
     if (var1 %in% names(data)) {
-      shapiro_p <- shapiro.test((data[[var1]]))$p.value
+      shapiro_p <- stats::shapiro.test((data[[var1]]))$p.value
 
       resultados[[var1]]<- list(
         Variable= var1,

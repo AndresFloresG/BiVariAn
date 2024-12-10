@@ -1,5 +1,4 @@
 #' @importFrom car leveneTest
-#' @importFrom stats lm
 #' @name interp_continuous_2g
 #' @title Generic interpretation for difference between 2 groups
 #' @usage interp_continuous_2g(data, groupvar, contvar)
@@ -37,7 +36,7 @@ interp_continuous_2g <- function(data, groupvar, contvar) {
   lm_model <- lm(cont_data ~ group_data)
 
   # Prueba de normalidad en los residuos
-  shapiro_res <- shapiro.test(residuals(lm_model))$p.value
+  shapiro_res <- stats::shapiro.test(residuals(lm_model))$p.value
 
   # Prueba de homogeneidad de varianzas
   levene_p <- car::leveneTest(cont_data ~ group_data)$"Pr(>F)"[1]

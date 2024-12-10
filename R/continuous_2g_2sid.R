@@ -2,7 +2,6 @@
 #' @importFrom rrtable df2flextable
 #' @import riskCommunicator
 #' @name continuous_2g_2sid
-#' @import stats
 #' @aliases continuous_2g_2sid
 #' @title Bivariate analysis for 2 groups
 #' @usage continuous_2g_2sid(data, groupvar, flextableformat)
@@ -64,7 +63,7 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
       tryCatch({
         # Prueba de normalidad en los residuos
         lm_model <- lm(continuous_data ~ group_data)
-        shapiro_res <- shapiro.test(residuals(lm_model))$p.value
+        shapiro_res <- stats::shapiro.test(residuals(lm_model))$p.value
 
         # Prueba de homogeneidad de varianzas (Levene)
         levene_p <- car::leveneTest(continuous_data ~ group_data)$"Pr(>F)"[1]

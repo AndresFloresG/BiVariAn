@@ -18,6 +18,7 @@ Imports:
     riskCommunicator,
     rrtable,
     scales,
+    stats,
     stringi,
     table1,
     tableHTML,

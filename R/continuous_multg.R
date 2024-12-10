@@ -1,7 +1,6 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
 #' @name continuous_multg
-#' @import stats
 #' @aliases continuous_multg
 #' @title Bivariate analysis for more than 2 groups
 #' @usage continuous_multg(data, groupvar, flextableformat)
@@ -52,7 +51,7 @@ continuous_multg<-function(data, groupvar, flextableformat = TRUE){
       tryCatch({
         # Prueba de normalidad en los residuos
         lm_model <- lm(continuous_data ~ group_data)
-        shapiro_res <- shapiro.test(residuals(lm_model))$p.value
+        shapiro_res <- stats::shapiro.test(residuals(lm_model))$p.value
 
         # Prueba de homogeneidad de varianzas (Levene)
         levene_p <- car::leveneTest(continuous_data ~ group_data)$"Pr(>F)"[1]
