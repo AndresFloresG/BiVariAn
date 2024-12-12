@@ -39,14 +39,14 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
 
   # Validar que reg_model sea un modelo de regresion
   if (!inherits(reg_model, c("lm", "glm"))) {
-    stop("The model must be an 'lm' or 'glm' object")
+    stop("\n\nThe model must be an 'lm' or 'glm' object")
   }
 
   # Procesar s_lower
   if (is.character(s_lower)) {
     s_lower <- terms(as.formula(s_lower), data = data)
   } else {
-    stop("s_lower must be a string with a valid formula")
+    stop("\n\ns_lower must be a string with a valid formula")
   }
 
   # Procesar s_upper
@@ -57,7 +57,7 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
   } else if (is.character(s_upper)) {
     s_upper <- terms(as.formula(s_upper), data = data)
   } else {
-    stop("s_upper must be a string with a valid formula.")
+    stop("\n\ns_upper must be a string with a valid formula.")
   }
 
   # Inicializar resultados
@@ -67,14 +67,14 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
 
   # Trazar el inicio
   if (trace) {
-    cat("Beggining of the model:\n", deparse(formula(fit)), "\n\n")
+    cat("\n\nBeggining of the model:\n", deparse(formula(fit)), "\n\n")
     print(Anova(fit))
     utils::flush.console()
   }
 
 
   # Guardar el modelo inicial
-  models[[nm]] <- list(change = "Initial", formula = formula(fit))
+  models[[nm]] <- list(change = "\n\nInitial", formula = formula(fit))
 
   while (steps > 0) {
     steps <- steps - 1
@@ -101,12 +101,12 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
       term_to_remove <- attr(terms(fit), "term.labels")[term_index]
 
       if (trace) {
-        cat("Candidate term to be eliminated:", term_to_remove, "p value =", max_p, "\n")
+        cat("\n\nCandidate term to be eliminated:", term_to_remove, "p value =", max_p, "\n")
       }
 
 
       if(is.na(term_to_remove)){
-        stop("No terms to be removed")
+        stop("\n\nNo terms to be removed")
       }
 
 
@@ -115,7 +115,7 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
       new_terms <- setdiff(attr(terms(fit), "term.labels"), term_to_remove)
 
       if(length(new_terms)<1){
-        stop("No terms to be removed")
+        stop("\n\nNo terms to be removed")
       }
 
       new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
@@ -127,7 +127,7 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
 
       # Mostrar el paso
       if (trace) {
-        cat("\nStep: Eliminated", term_to_remove, "\n", deparse(formula(fit)), "\n\n")
+        cat("\n\nStep: Eliminated", term_to_remove, "\n", deparse(formula(fit)), "\n\n")
         print(car::Anova(fit))
         utils::flush.console()
       }

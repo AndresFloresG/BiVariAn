@@ -14,7 +14,7 @@ test_that("step_bw_p realiza selección de predictores correctamente (lm)", {
   expect_true(nrow(result$steps) > 0)
 
   # Verificar que la fórmula inicial está registrada
-  expect_equal(result$steps$Step[1], "Initial")
+  expect_equal(result$steps$Step[1], "\n\nInitial")
 })
 
 test_that("step_bw_p maneja correctamente la dirección 'both'", {
@@ -54,5 +54,5 @@ test_that("step_bw_p maneja errores de entrada correctamente", {
 
   # Modelo no válido
   expect_error(step_bw_p("not_a_model", p_threshold = 0.05, trace = FALSE, data = mtcars),
-               "The model must be an 'lm' or 'glm' object")
+               "\n\nThe model must be an 'lm' or 'glm' object")
 })
