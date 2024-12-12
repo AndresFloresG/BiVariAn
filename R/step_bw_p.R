@@ -1,3 +1,4 @@
+#' @importFrom car Anova
 #' @title Automatized stepwise backward for regression models
 #' @name step_bw_p
 #' @aliases step_bw_p
@@ -67,9 +68,10 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
   # Trazar el inicio
   if (trace) {
     cat("Beggining of the model:\n", deparse(formula(fit)), "\n\n")
-    print(summary(fit))
+    print(Anova(fit))
     utils::flush.console()
   }
+
 
   # Guardar el modelo inicial
   models[[nm]] <- list(change = "Initial", formula = formula(fit))
@@ -77,12 +79,17 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
   while (steps > 0) {
     steps <- steps - 1
 
+    #
+    # Nota, agregar argumento para seleccionar predictores basados en valor de p de summary o Anova de car
+    #
+
+
     # Obtener coeficientes y p-valores
-    coef_summary <- summary(fit)$coefficients
-    pvalues <- coef_summary[, ifelse(inherits(reg_model, "glm"), "Pr(>|z|)", "Pr(>|t|)"), drop = TRUE]
+    coef_summary <- car::Anova(fit)
+    pvalues <- coef_summary[, ifelse(inherits(reg_model, "glm"), 'Pr(>Chisq)', 'Pr(>F)'), drop = TRUE]
 
     # Excluir el intercepto
-    pvalues <- pvalues[rownames(coef_summary) != "(Intercept)"]
+    pvalues <- pvalues[rownames(coef_summary) != "Residuals"]
 
     if (length(pvalues) > 0 && any(pvalues > p_threshold, na.rm = TRUE)) {
       max_p <- max(pvalues, na.rm = TRUE)
@@ -121,7 +128,7 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
       # Mostrar el paso
       if (trace) {
         cat("\nStep: Eliminated", term_to_remove, "\n", deparse(formula(fit)), "\n\n")
-        print(summary(fit))
+        print(car::Anova(fit))
         utils::flush.console()
       }
     } else {
