@@ -9,7 +9,7 @@ step_bw_p(
   s_lower = "~1",
   s_upper = "all",
   trace = TRUE,
-  steps = 1000,
+  steps = NULL,
   p_threshold = 0.05,
   data = NULL,
   ...
@@ -24,7 +24,7 @@ step_bw_p(
 
 \item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE}
 
-\item{steps}{Maximum number of steps in the process. Default is 1000}
+\item{steps}{Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.}
 
 \item{p_threshold}{Treshold of p value. Default is 0.05}
 

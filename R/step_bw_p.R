@@ -6,7 +6,7 @@
 #' @param s_lower Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)
 #' @param s_upper Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)
 #' @param trace Trace the steps in R console. Display the output of each iteration. Default is TRUE
-#' @param steps Maximum number of steps in the process. Default is 1000
+#' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
 #' @param p_threshold Treshold of p value. Default is 0.05
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
 #' @param ... Arguments passed to or from other methods
@@ -21,7 +21,13 @@
 #' @export
 
 
-step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, steps = 1000, p_threshold = 0.05, data = NULL, ...) {
+step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, steps = NULL, p_threshold = 0.05, data = NULL, ...) {
+
+  if(is.null(steps)){
+    steps <- length(reg_model)
+  } else {
+    steps <- steps
+  }
 
   if(is.null(data)){
     data <-eval(reg_model$call$data)
@@ -91,8 +97,20 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
         cat("Candidate term to be eliminated:", term_to_remove, "p value =", max_p, "\n")
       }
 
+
+      if(is.na(term_to_remove)){
+        stop("No terms to be removed")
+      }
+
+
+
       # Construir nueva formula eliminando el termino
       new_terms <- setdiff(attr(terms(fit), "term.labels"), term_to_remove)
+
+      if(length(new_terms)<1){
+        stop("No terms to be removed")
+      }
+
       new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
       fit <- update(fit, new_formula)
 
