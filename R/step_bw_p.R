@@ -10,7 +10,8 @@
 #' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
 #' @param p_threshold Treshold of p value. Default is 0.05
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
-#' @param ... Arguments passed to or from other methods
+#' @param ... Arguments passed to Anova function from the "car" package
+#'
 #'
 #' @examples
 #' data(mtcars)
@@ -24,23 +25,22 @@
 
 step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, steps = NULL, p_threshold = 0.05, data = NULL, ...) {
 
-  if(is.null(steps)){
-    steps <- length(reg_model)
-  } else {
-    steps <- steps
-  }
-
-  if(is.null(data)){
-    data <-eval(reg_model$call$data)
-  } else{
-    data <- data
-  }
-
-
-  # Validar que reg_model sea un modelo de regresion
-  if (!inherits(reg_model, c("lm", "glm"))) {
+  # Validar que reg_model sea un modelo lm o glm
+  if (!inherits(reg_model, c("lm", "glm"))){
     stop("\n\nThe model must be an 'lm' or 'glm' object")
   }
+
+  # Si no se especifican steps, usar el numero de predictores como limite
+  if (is.null(steps)) {
+    steps <- length(attr(terms(reg_model), "term.labels"))
+  }
+
+  # Si no se especifica data, obtenerla del modelo
+  if (is.null(data)) {
+    data <- eval(reg_model$call$data)
+  }
+
+
 
   # Procesar s_lower
   if (is.character(s_lower)) {
@@ -68,28 +68,22 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
   # Trazar el inicio
   if (trace) {
     cat("\n\nBeggining of the model:\n", deparse(formula(fit)), "\n\n")
-    print(Anova(fit))
+    print(car::Anova(fit, ...))  # Pasar argumentos adicionales
     utils::flush.console()
   }
 
-
   # Guardar el modelo inicial
-  models[[nm]] <- list(change = "\n\nInitial", formula = formula(fit))
+  models[[nm]] <- list(change = "Initial", formula_eval = formula(fit))
 
   while (steps > 0) {
     steps <- steps - 1
 
-    #
-    # Nota, agregar argumento para seleccionar predictores basados en valor de p de summary o Anova de car
-    #
-
-
     # Obtener coeficientes y p-valores
-    coef_summary <- car::Anova(fit)
+    coef_summary <- car::Anova(fit, ...)  # Usar argumentos de ...
     pvalues <- coef_summary[, ifelse(inherits(reg_model, "glm"), 'Pr(>Chisq)', 'Pr(>F)'), drop = TRUE]
 
-    # Excluir el intercepto
-    pvalues <- pvalues[rownames(coef_summary) != "Residuals"]
+    # Excluir los residuales (si aplica)
+    pvalues <- pvalues[!rownames(coef_summary) %in% c("Residuals", "(Intercept)")]
 
     if (length(pvalues) > 0 && any(pvalues > p_threshold, na.rm = TRUE)) {
       max_p <- max(pvalues, na.rm = TRUE)
@@ -104,17 +98,14 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
         cat("\n\nCandidate term to be eliminated:", term_to_remove, "p value =", max_p, "\n")
       }
 
-
-      if(is.na(term_to_remove)){
+      if (is.na(term_to_remove)) {
         stop("\n\nNo terms to be removed")
       }
-
-
 
       # Construir nueva formula eliminando el termino
       new_terms <- setdiff(attr(terms(fit), "term.labels"), term_to_remove)
 
-      if(length(new_terms)<1){
+      if (length(new_terms) < 1) {
         stop("\n\nNo terms to be removed")
       }
 
@@ -128,7 +119,7 @@ step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, 
       # Mostrar el paso
       if (trace) {
         cat("\n\nStep: Eliminated", term_to_remove, "\n", deparse(formula(fit)), "\n\n")
-        print(car::Anova(fit))
+        print(car::Anova(fit, ...))  # Usar argumentos de ...
         utils::flush.console()
       }
     } else {

@@ -27,7 +27,7 @@ authenticity_check<-function(name, affil){
 
   if(affil == "SC"){
     if(namehash == auth1 | namehash == auth2){
-      cat("Statistical analysis is authentic. \n")
+      cat("Statistical analysis is authentic. \u2660 \n")
     } else {
       cat("Statistical analysis is not authentic. \n", "\n","Please check with your tutor or committee. \n")
     }

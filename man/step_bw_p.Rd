@@ -30,7 +30,7 @@ step_bw_p(
 
 \item{data}{Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.}
 
-\item{...}{Arguments passed to or from other methods}
+\item{...}{Arguments passed to Anova function from the "car" package}
 }
 \description{
 Automatized stepwise backward for regression models
