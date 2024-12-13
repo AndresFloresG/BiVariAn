@@ -23,116 +23,92 @@
 #' @export
 
 
-step_bw_p <- function(reg_model, s_lower = "~1", s_upper = "all", trace = TRUE, steps = NULL, p_threshold = 0.05, data = NULL, ...) {
-
-  # Validar que reg_model sea un modelo lm o glm
-  if (!inherits(reg_model, c("lm", "glm"))){
+step_bw_p <- function (reg_model, s_lower = "~1", s_upper = "all", trace = TRUE,
+                       steps = NULL, p_threshold = 0.05, data = NULL, ...)
+{
+  if (!inherits(reg_model, c("lm", "glm"))) {
     stop("\n\nThe model must be an 'lm' or 'glm' object")
   }
-
-  # Si no se especifican steps, usar el numero de predictores como limite
   if (is.null(steps)) {
     steps <- length(attr(terms(reg_model), "term.labels"))
   }
-
-  # Si no se especifica data, obtenerla del modelo
   if (is.null(data)) {
     data <- eval(reg_model$call$data)
   }
-
-
-
-  # Procesar s_lower
   if (is.character(s_lower)) {
     s_lower <- terms(as.formula(s_lower), data = data)
-  } else {
+  }
+  else {
     stop("\n\ns_lower must be a string with a valid formula")
   }
-
-  # Procesar s_upper
   if (s_upper == "all") {
-    response_var <- all.vars(formula(reg_model))[1] # Variable de respuesta
-    all_vars <- setdiff(names(data), response_var)   # Excluir variable de respuesta
-    s_upper <- as.formula(paste(response_var, "~", paste(all_vars, collapse = "+")))
-  } else if (is.character(s_upper)) {
+    response_var <- all.vars(formula(reg_model))[1]
+    all_vars <- setdiff(names(data), response_var)
+    s_upper <- as.formula(paste(response_var, "~", paste(all_vars,
+                                                         collapse = "+")))
+  }
+  else if (is.character(s_upper)) {
     s_upper <- terms(as.formula(s_upper), data = data)
-  } else {
+  }
+  else {
     stop("\n\ns_upper must be a string with a valid formula.")
   }
-
-  # Inicializar resultados
   models <- list()
   fit <- reg_model
   nm <- 1
-
-  # Trazar el inicio
   if (trace) {
-    cat("\n\nBeggining of the model:\n", deparse(formula(fit)), "\n\n")
-    print(car::Anova(fit, ...))  # Pasar argumentos adicionales
+    cat("\n\nBeggining of the model:\n", deparse(formula(fit)),
+        "\n\n")
+    print(car::Anova(fit, ...))
     utils::flush.console()
   }
-
-  # Guardar el modelo inicial
   models[[nm]] <- list(change = "Initial", formula_eval = formula(fit))
-
   while (steps > 0) {
     steps <- steps - 1
-
-    # Obtener coeficientes y p-valores
-    coef_summary <- car::Anova(fit, ...)  # Usar argumentos de ...
-    pvalues <- coef_summary[, ifelse(inherits(reg_model, "glm"), 'Pr(>Chisq)', 'Pr(>F)'), drop = TRUE]
-
-    # Excluir los residuales (si aplica)
-    pvalues <- pvalues[!rownames(coef_summary) %in% c("Residuals", "(Intercept)")]
-
-    if (length(pvalues) > 0 && any(pvalues > p_threshold, na.rm = TRUE)) {
+    coef_summary <- car::Anova(fit, ...)
+    pvalues <- coef_summary[, ifelse(inherits(reg_model,
+                                              "glm"), "Pr(>Chisq)", "Pr(>F)"), drop = TRUE]
+    pvalues <- pvalues[!rownames(coef_summary) %in% c("Residuals",
+                                                      "(Intercept)")]
+    if (length(pvalues) > 0 && any(pvalues > p_threshold,
+                                   na.rm = TRUE)) {
       max_p <- max(pvalues, na.rm = TRUE)
-
-      # Identificar posicion del termino con el mayor p-valor
       term_index <- which.max(pvalues)
 
-      # Extraer el termino correspondiente
+
       term_to_remove <- attr(terms(fit), "term.labels")[term_index]
-
       if (trace) {
-        cat("\n\nCandidate term to be eliminated:", term_to_remove, "p value =", max_p, "\n")
+        cat("\n\nCandidate term to be eliminated:", term_to_remove,
+            "p value =", max_p, "\n")
       }
-
       if (is.na(term_to_remove)) {
         stop("\n\nNo terms to be removed")
       }
-
-      # Construir nueva formula eliminando el termino
-      new_terms <- setdiff(attr(terms(fit), "term.labels"), term_to_remove)
-
+      new_terms <- setdiff(attr(terms(fit), "term.labels"),
+                           term_to_remove)
       if (length(new_terms) < 1) {
         stop("\n\nNo terms to be removed")
       }
 
+
       new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
       fit <- update(fit, new_formula)
-
-      # Registrar el cambio
-      models[[nm + 1]] <- list(change = paste("-", term_to_remove), formula_eval = formula(fit))
+      models[[nm + 1]] <- list(change = paste("-", term_to_remove),
+                               formula_eval = formula(fit))
       nm <- nm + 1
-
-      # Mostrar el paso
       if (trace) {
-        cat("\n\nStep: Eliminated", term_to_remove, "\n", deparse(formula(fit)), "\n\n")
-        print(car::Anova(fit, ...))  # Usar argumentos de ...
+        cat("\n\nStep: Eliminated", term_to_remove, "\n",
+            deparse(formula(fit)), "\n\n")
+        print(car::Anova(fit, ...))
         utils::flush.console()
       }
-    } else {
-      # No hay terminos que eliminar
-      break
+    }
+    else {
+      on.exit("\n\nAll p values are below the threshold")
     }
   }
-
-  # Tabla de resultados
   Step <- sapply(models, function(x) x$change)
   Formula <- sapply(models, function(x) deparse(x$formula_eval))
-
-  steps_results <- data.frame(Step, Formula)
-
+  steps_results <- data.frame(cbind(Step, Formula))
   list(final_model = fit, steps = steps_results)
 }
