@@ -82,12 +82,12 @@ step_bw_p <- function (reg_model, s_lower = "~1", s_upper = "all", trace = TRUE,
             "p value =", max_p, "\n")
       }
       if (is.na(term_to_remove)) {
-        stop("\n\nNo terms to be removed")
+        cat("\n\nNo terms to be removed")
       }
       new_terms <- setdiff(attr(terms(fit), "term.labels"),
                            term_to_remove)
       if (length(new_terms) < 1) {
-        stop("\n\nNo terms to be removed")
+        cat("\n\nNo terms to be removed")
       }
 
 
