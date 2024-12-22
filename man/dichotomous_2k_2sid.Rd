@@ -4,7 +4,7 @@
 \alias{dichotomous_2k_2sid}
 \title{Bivariate Chi squared and Fisher Test analysis for 2 categories.}
 \usage{
-dichotomous_2k_2sid(data, referencevar, flextableformat)
+dichotomous_2k_2sid(data, referencevar, flextableformat = TRUE)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extractred}

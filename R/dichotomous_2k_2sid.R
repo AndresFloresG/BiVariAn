@@ -1,5 +1,3 @@
-
-#' @import dplyr
 #' @import epitools
 #' @importFrom tableHTML tableHTML
 #' @importFrom rrtable df2flextable
@@ -7,7 +5,6 @@
 #' @title Bivariate Chi squared and Fisher Test analysis for 2 categories.
 #' @aliases dichotomous_2k_2sid
 #' @name dichotomous_2k_2sid
-#' @usage dichotomous_2k_2sid(data, referencevar, flextableformat)
 #' @description
 #' Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
 #'

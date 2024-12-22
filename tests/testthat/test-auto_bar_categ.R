@@ -44,14 +44,14 @@ test_that("auto_bar_categ funciona correctamente", {
 
 
   # Caso 4: Etiquetas personalizadas
-  label(data$category1) <- "Categoria 1 Etiqueta"
-  label(data$group) <- "Grupo Etiqueta"
+  table1::label(data$category1) <- "Categoria 1 Etiqueta"
+  table1::label(data$group) <- "Grupo Etiqueta"
 
   graficas_labels <- auto_bar_categ(data, groupvar = "group", theme_func = theme_minimal)
 
   # Verificar que las etiquetas personalizadas se utilicen en las graficas
-  expect_true(identical(graficas_labels$category2$labels$title,"Distribucion de category2" ))
-  expect_true(identical(graficas_labels$category1$labels$title,"Distribucion de Categoria 1 Etiqueta" ))
+  expect_true(identical(graficas_labels$category2$labels$title,"Distribuci\u00f3n de category2" ))
+  expect_true(identical(graficas_labels$category1$labels$title,"Distribuci\u00f3n de Categoria 1 Etiqueta" ))
 
 
   # Caso 5: Validacion de texto de porcentajes

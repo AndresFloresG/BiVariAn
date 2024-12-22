@@ -74,23 +74,21 @@ step_bw_p <- function (reg_model, s_lower = "~1", s_upper = "all", trace = TRUE,
                                    na.rm = TRUE)) {
       max_p <- max(pvalues, na.rm = TRUE)
       term_index <- which.max(pvalues)
-
-
       term_to_remove <- attr(terms(fit), "term.labels")[term_index]
       if (trace) {
         cat("\n\nCandidate term to be eliminated:", term_to_remove,
             "p value =", max_p, "\n")
       }
       if (is.na(term_to_remove)) {
-        cat("\n\nNo terms to be removed")
+        cat("\n\nNo terms to be removed\n\n")
+        break
       }
       new_terms <- setdiff(attr(terms(fit), "term.labels"),
                            term_to_remove)
       if (length(new_terms) < 1) {
-        cat("\n\nNo terms to be removed")
+        cat("\n\nIt is not possible to eliminate more terms\n\n")
+        break
       }
-
-
       new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
       fit <- update(fit, new_formula)
       models[[nm + 1]] <- list(change = paste("-", term_to_remove),
@@ -104,7 +102,8 @@ step_bw_p <- function (reg_model, s_lower = "~1", s_upper = "all", trace = TRUE,
       }
     }
     else {
-      on.exit("\n\nAll p values are below the threshold")
+      cat("\n\nAll p values are below the threshold\n\n")
+      break
     }
   }
   Step <- sapply(models, function(x) x$change)

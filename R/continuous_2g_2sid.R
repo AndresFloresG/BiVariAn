@@ -4,7 +4,6 @@
 #' @name continuous_2g_2sid
 #' @aliases continuous_2g_2sid
 #' @title Bivariate analysis for 2 groups
-#' @usage continuous_2g_2sid(data, groupvar, flextableformat)
 #' @description
 #'   Generates a HTML table of bivariate analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.
@@ -39,7 +38,7 @@ continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
   for (var1 in variables_continuas) {
     if (var1 %in% names(data)) { # Verifica si la variable existe en la base de datos
       # Extraer los datos para la prueba, ignorando NA en la variable de agrupacion y la variable continua
-      valid_data <- data[!is.na(data[[groupvar]]) & !is.na(data[[var1]]), ]
+      valid_data <- data[!is.na(data[[groupvar]]) & (data[[var1]]), ]
       group_data <- valid_data[[groupvar]]
       continuous_data <- valid_data[[var1]]
 

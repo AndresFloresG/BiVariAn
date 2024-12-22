@@ -2,15 +2,21 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom DescTools KendallTauB
+#' @importFrom DescTools SpearmanRho
+#' @importFrom magrittr %>%
+#' @importFrom mice mice
 #' @importFrom scales percent
 #' @importFrom stats aov
 #' @importFrom stats as.formula
 #' @importFrom stats chisq.test
+#' @importFrom stats cor.test
 #' @importFrom stats fisher.test
 #' @importFrom stats formula
 #' @importFrom stats kruskal.test
 #' @importFrom stats lm
 #' @importFrom stats median
+#' @importFrom stats na.omit
 #' @importFrom stats reformulate
 #' @importFrom stats residuals
 #' @importFrom stats shapiro.test

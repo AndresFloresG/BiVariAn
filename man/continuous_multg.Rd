@@ -4,7 +4,7 @@
 \alias{continuous_multg}
 \title{Bivariate analysis for more than 2 groups}
 \usage{
-continuous_multg(data, groupvar, flextableformat)
+continuous_multg(data, groupvar, flextableformat = TRUE)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}

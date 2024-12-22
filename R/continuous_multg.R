@@ -3,7 +3,6 @@
 #' @name continuous_multg
 #' @aliases continuous_multg
 #' @title Bivariate analysis for more than 2 groups
-#' @usage continuous_multg(data, groupvar, flextableformat)
 #' @description
 #'   Generates a HTML table of bivariate analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.

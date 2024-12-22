@@ -4,7 +4,7 @@
 \alias{continuous_2g_2sid}
 \title{Bivariate analysis for 2 groups}
 \usage{
-continuous_2g_2sid(data, groupvar, flextableformat)
+continuous_2g_2sid(data, groupvar, flextableformat = TRUE)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}

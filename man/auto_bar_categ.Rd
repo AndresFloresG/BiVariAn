@@ -2,19 +2,27 @@
 % Please edit documentation in R/auto_bar_categ.R
 \name{auto_bar_categ}
 \alias{auto_bar_categ}
-\title{auto_bar_categ}
+\title{Automatic generation of barplot with percentages}
 \usage{
-auto_bar_categ(data, groupvar, bar_args = list(), theme_func = theme_serene)
+auto_bar_categ(
+  data,
+  groupvar = NULL,
+  bar_args = list(),
+  theme_func = theme_serene,
+  lang_labs = c("EN", "SPA")
+)
 }
 \arguments{
 \item{data}{Name of the dataframe}
 
-\item{groupvar}{Name of the grouping variable}
+\item{groupvar}{Name of the grouping variable. Grouping variable will be used in "fill" for aesthetics argument in the creation of each ggplot object. If not provided, the function take each variable as grouping and does not display the "fill" legend.}
 
 \item{bar_args}{List of arguments to be passed to "geom_bar"}
 
 \item{theme_func}{Theme of the generated plots}
+
+\item{lang_labs}{Language of displayed labels. If null, default is spanish.}
 }
 \description{
-auto_bar_categ
+Automatic generation of barplot with percentages
 }
