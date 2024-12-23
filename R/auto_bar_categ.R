@@ -77,7 +77,7 @@ auto_bar_categ <- function(data,
           y = ylabs,
           fill = lab_graf_group
         ) +
-        scale_y_continuous(((max(proportions(table(data[[varcat]], data[[groupvar]]))))*100)+5)+
+        scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
         theme_func() +
         theme(
           plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
