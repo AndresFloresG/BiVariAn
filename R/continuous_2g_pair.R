@@ -14,7 +14,7 @@
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #'
 #'
-#'
+#' @export
 
 continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
   # Convertir la variable de agrupacion en factor
@@ -39,72 +39,8 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
   }))
 
   if (has_na_discrepancy) {
-    if (!interactive()) {
-      stop("Group lengths are mismatched and function is not in interactive mode.")
-    }
+    cat("The length of one of the groups is mismatched, function will proceed with na removing.", "\nComparison columns has NAs, cannot compute t test nor mean differences\n\n")
 
-    cat("Group lengths are mismatched for at least one variable.\n")
-    cat("Do you want to handle missing values within this function?\n")
-    ANSWER <- readline(prompt = "Type Y for yes or N for no: ")
-
-    if (toupper(ANSWER) == "N") {
-      stop("Function stopped due to mismatched group lengths.")
-    } else if (toupper(ANSWER) == "Y") {
-      cat("Options for handling missing values:\n")
-      cat('1. Remove missing values (type "del")\n')
-      cat('2. Perform multiple imputation (type "imp")\n')
-      cat('3. Ignore missing values (type "ign")\n')
-      manlength <- readline(prompt = "Choose an option (del/imp/ign): ")
-
-      if (tolower(manlength) == "imp") {
-        m_val <- as.integer(readline(prompt = "Number of imputations. Default 5: "))
-        max_iter <- as.integer(readline(prompt = "Maximum iterations. Default 2: "))
-        methodimp <- readline(prompt = 'Imputation method. Default "cart": ')
-        seedimp <- as.integer(readline(prompt = "Seed for imputation. Default 1234: "))
-
-        if (is.na(m_val)) m_val <- 5
-        if (is.na(max_iter)) max_iter <- 2
-        if (methodimp == "") methodimp <- "cart"
-        if (is.na(seedimp)) seedimp <- 1234
-
-        impdat <- mice::mice(data, m = m_val, maxit = max_iter, method = methodimp, seed = seedimp, printFlag = FALSE)
-        data <- mice::complete(impdat)
-
-      } else if (tolower(manlength) == "del") {
-        for (var in variables_continuas){
-
-          group_levels <- levels(data[[groupvar]])
-          data_group1 <- data[data[[groupvar]] == group_levels[1], ]
-          data_group2 <- data[data[[groupvar]] == group_levels[2], ]
-
-          group1 <- data_group1[[var]]
-          group2 <- data_group2[[var]]
-
-          length(group1) = length(group2)
-
-          paired_data <- data.frame(cbind(na.omit(group1), na.omit(group2)))
-        }
-
-
-      } else if (tolower(manlength) == "ign") {
-        # Do nothing; proceed with ignoring missing values
-        group_levels <- levels(data[[groupvar]])
-        data_group1 <- data[data[[groupvar]] == group_levels[1], ]
-        data_group2 <- data[data[[groupvar]] == group_levels[2], ]
-
-        group1 <- data_group1[[var]]
-        group2 <- data_group2[[var]]
-
-        length(group1) = length(group2)
-
-        paired_data <- data.frame(cbind(group1, group2))
-
-      } else {
-        stop("Invalid input. Function stopped.")
-      }
-    } else {
-      stop("Invalid input. Function stopped.")
-    }
   }
 
   # Crear listas para almacenar resultados
@@ -120,8 +56,14 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
     group1 <- data_group1[[var]]
     group2 <- data_group2[[var]]
 
+    group1 <- na.omit(group1)
+    group2 <- na.omit(group2)
+
+    length(group1) = length(group2)
+
+
     # Emparejar los grupos
-    paired_data <- data.frame(group1, group2)
+    paired_data <- data.frame(cbind(group1, group2))
 
     if (nrow(paired_data) < 2) {
       resultados[[var]] <- list(
@@ -141,21 +83,15 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
       diff <- paired_data$group1 - paired_data$group2
       shapiro_res <- shapiro.test(diff)$p.value
 
-      if (shapiro_res > 0.05) {
+
         t_test <- t.test(paired_data$group1, paired_data$group2, paired = TRUE)
         t_p <- t_test$p.value
-        diff_means <- mean(diff)
+        diff_means <- mean(diff, na.rm = T)
         ci_lower <- t_test$conf.int[1]
         ci_upper <- t_test$conf.int[2]
-        wilcox_p <- NA
-      } else {
         wilcox_test <- wilcox.test(paired_data$group1, paired_data$group2, paired = TRUE)
         wilcox_p <- wilcox_test$p.value
-        t_p <- NA
-        diff_means <- mean(diff)
-        ci_lower <- NA
-        ci_upper <- NA
-      }
+
 
       resultados[[var]] <- list(
         Variable = var,
@@ -163,8 +99,8 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
         P_T_Paired = if (!is.na(t_p)) ifelse(t_p > 0.001, round(t_p, 5), "<0.001*") else NA,
         P_Wilcoxon = if (!is.na(wilcox_p)) ifelse(wilcox_p > 0.001, round(wilcox_p, 5), "<0.001*") else NA,
         Diff_Means = round(diff_means, 5),
-        CI_Lower = if (!is.na(ci_lower)) round(ci_lower, 5) else NA,
-        CI_Upper = if (!is.na(ci_upper)) round(ci_upper, 5) else NA
+        CI_Lower = if (!is.na(ci_lower)){format(round(ci_lower, 5), scientific = FALSE) } else NA,
+        CI_Upper = if (!is.na(ci_upper)){format(round(ci_upper, 5), scientific=FALSE) } else NA
       )
     }, error = function(e) {
       resultados[[var]] <- list(

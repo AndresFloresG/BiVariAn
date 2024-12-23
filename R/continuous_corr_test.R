@@ -1,5 +1,6 @@
 #' @importFrom magrittr '%>%'
 #' @importFrom dplyr select_if
+#' @importFrom rrtable df2flextable
 #' @importFrom DescTools SpearmanRho
 #' @importFrom DescTools KendallTauB
 #'
