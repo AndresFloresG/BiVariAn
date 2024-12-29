@@ -9,7 +9,8 @@ auto_bar_categ(
   groupvar = NULL,
   bar_args = list(),
   theme_func = theme_serene,
-  lang_labs = c("EN", "SPA")
+  lang_labs = c("EN", "SPA"),
+  showpercent = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ auto_bar_categ(
 \item{theme_func}{Theme of the generated plots}
 
 \item{lang_labs}{Language of displayed labels. If null, default is spanish.}
+
+\item{showpercent}{Logical atribute to indicate if the graph should include percentages}
 }
 \description{
 Automatic generation of barplot with percentages

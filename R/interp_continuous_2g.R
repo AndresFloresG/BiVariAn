@@ -41,6 +41,10 @@ interp_continuous_2g <- function(data, groupvar, contvar) {
   # Prueba de homogeneidad de varianzas
   levene_p <- car::leveneTest(cont_data ~ group_data)$"Pr(>F)"[1]
 
+  labelcontvar <- if (!is.null(table1::label(data[[contvar]])))
+    table1::label(data[[contvar]])
+  else contvar
+
   # Pruebas de comparacion
   t_test <- tryCatch(
     t.test(cont_data ~ group_data, var.equal = levene_p > 0.05),
@@ -59,56 +63,54 @@ interp_continuous_2g <- function(data, groupvar, contvar) {
   ci_upper <- if (!is.null(t_test)) t_test$conf.int[2] else NA
 
   # Seleccion del formato
-  if (shapiro_res > 0.05) { # Normalidad de los residuos
-    if (levene_p > 0.05) { # Homogeneidad de varianzas
-      if (t_p_value < 0.05) {
-        texto <- paste(
-          "La prueba de T de Student mostro una diferencia estadisticamente significativa entre los grupos.",
-          "La diferencia de medias fue", round(diff_means, 2), "con IC95 [",
-          round(ci_lower, 2), ",", round(ci_upper, 2), "].",
-          "El valor p de la prueba fue", format.pval(t_p_value, digits = 3), "."
-        )
-      } else {
-        texto <- paste(
-          "La prueba de T de Student no mostro una diferencia estadisticamente significativa entre los grupos.",
-          "La diferencia de medias fue", round(diff_means, 2), "con IC95 [",
-          round(ci_lower, 2), ",", round(ci_upper, 2), "].",
-          "El valor p de la prueba fue", format.pval(t_p_value, digits = 3), "."
-        )
-      }
-    } else { # Sin homogeneidad de varianzas (Welch)
-      if (t_p_value < 0.05) {
-        texto <- paste(
-          "La prueba de T de Welch mostro una diferencia estadisticamente significativa entre los grupos.",
-          "La diferencia de medias fue", round(diff_means, 2), "con IC95 [",
-          round(ci_lower, 2), ",", round(ci_upper, 2), "].",
-          "El valor p de la prueba fue", format.pval(t_p_value, digits = 3), "."
-        )
-      } else {
-        texto <- paste(
-          "La prueba de T de Welch no mostro una diferencia estadisticamente significativa entre los grupos.",
-          "La diferencia de medias fue", round(diff_means, 2), "con IC95 [",
-          round(ci_lower, 2), ",", round(ci_upper, 2), "].",
-          "El valor p de la prueba fue", format.pval(t_p_value, digits = 3), "."
-        )
-      }
+  if (shapiro_res > 0.05 && levene_p > 0.05){
+    if (t_p_value < 0.05){
+      texto <-paste0("La prueba de T de Student mostro una diferencia estadisticamente significativa entre los grupos ",
+                     paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]),  " para la variable ", labelcontvar,". ",
+                     "La diferencia de medias fue de ", round(diff_means, 2), " con IC","95 [",
+                     round(ci_lower, 2), ", ", round(ci_upper, 2), "]. ",
+                     "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
+    } else if (t_p_value > 0.05){
+      texto <-paste0("La prueba de T de Student no mostro una diferencia estadisticamente significativa entre los grupos ",
+                     paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]),  " para la variable ", labelcontvar,". ",
+                     "La diferencia de medias fue ", round(diff_means, 2), " con IC","95 [",
+                     round(ci_lower, 2), ", ", round(ci_upper, 2), "]. ",
+                     "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
     }
-  } else { # No normalidad de los residuos (Mann-Whitney)
-    if (mann_u_p_value < 0.05) {
-      texto <- paste(
-        "La prueba de U de Mann-Whitney mostro una diferencia estadisticamente significativa entre los grupos.",
-        "El valor p de la prueba fue", format.pval(mann_u_p_value, digits = 3), "."
-      )
-    } else {
-      texto <- paste(
-        "La prueba de U de Mann-Whitney no mostro una diferencia estadisticamente significativa entre los grupos.",
-        "El valor p de la prueba fue", format.pval(mann_u_p_value, digits = 3), "."
-      )
+
+  } else if (shapiro_res > 0.05 && levene_p < 0.05){
+    if (t_p_value < 0.05){
+      texto <- paste0( "La prueba de T de Welch mostro una diferencia estadisticamente significativa entre los grupos ",
+                       paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]),  " para la variable ", labelcontvar,". ",
+                       "La diferencia de medias fue ", round(diff_means, 2), " con IC", "95 [",
+                       round(ci_lower, 2), ",", round(ci_upper, 2), "].",
+                       "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
+    } else if (t_p_value > 0.05){
+      texto <- paste0( "La prueba de T de Welch no mostro una diferencia estadisticamente significativa entre los grupos ",
+                       paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]), " para la variable ", labelcontvar,". ",
+                       "La diferencia de medias fue ", round(diff_means, 2), " con IC", "95 [",
+                       round(ci_lower, 2), ", ", round(ci_upper, 2), "].",
+                       "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
+    }
+
+  } else if (shapiro_res < 0.05) {
+    if (mann_u_p_value < 0.05){
+      texto <- paste0( "La prueba de U de Mann Whitnney mostro una diferencia estadisticamente significativa entre los grupos ",
+                       paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]), " para la variable ", labelcontvar,". ",
+                       "La diferencia de medias fue ", round(diff_means, 2), " con IC", "95 [",
+                       round(ci_lower, 2), ",", round(ci_upper, 2), "].",
+                       "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
+    } else if (mann_u_p_value > 0.05){
+      texto <- paste0( "La prueba de U de Mann Whitnney no mostro una diferencia estadisticamente significativa entre los grupos ",
+                       paste0(levels(data[[groupvar]])[1]), " y ", paste0(levels(data[[groupvar]])[2]),  " para la variable ", labelcontvar,". ",
+                       "La diferencia de medias fue ", round(diff_means, 2), " con IC", "95 [",
+                       round(ci_lower, 2), ", ", round(ci_upper, 2), "].",
+                       "El valor p de la prueba fue ", format.pval(t_p_value, digits = 3), ".")
     }
   }
 
   # Imprimir el texto y los resultados de las pruebas
-  cat(texto, "\n\n")
+  cat("\n\n",texto, "\n\n")
 
   if (!is.null(t_test)) {
     cat("Resultados de la prueba T:\n")

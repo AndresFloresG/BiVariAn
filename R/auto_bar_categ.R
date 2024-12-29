@@ -9,6 +9,7 @@
 #' @param bar_args List of arguments to be passed to "geom_bar"
 #' @param theme_func Theme of the generated plots
 #' @param lang_labs Language of displayed labels. If null, default is spanish.
+#' @param showpercent Logical atribute to indicate if the graph should include percentages
 
 #' @export
 #'
@@ -18,7 +19,8 @@ auto_bar_categ <- function(data,
                            groupvar = NULL,
                            bar_args = list(),
                            theme_func = theme_serene,
-                           lang_labs = c("EN", "SPA")) {
+                           lang_labs = c("EN", "SPA"),
+                           showpercent = TRUE) {
   # Verificar que el argumento de tema sea una funcion valida
   if (!is.function(theme_func)) {
     stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
@@ -65,20 +67,24 @@ auto_bar_categ <- function(data,
       } else group_fill = groupvar
 
       # Crear la grafica
-      p <- ggplot(data, aes_string(x = varcat, fill = group_fill)) +
-        do.call(geom_bar, bar_args) +
-        geom_text(stat = "count",
+      p <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[varcat]], fill = .data[[group_fill]])) +
+        do.call(geom_bar, bar_args)
+
+      if (showpercent){
+        p <- p + geom_text(stat = "count",
                   aes(label=scales::percent(after_stat(count/sum(count)))),
                   position=position_dodge(width=0.9),
-                  vjust=-.5)+
-        labs(
+                  vjust=-.5)
+      }
+
+        p <- p +labs(
           title = paste(titlelab, lab_graf_cat),
           x = lab_graf_cat,
           y = ylabs,
           fill = lab_graf_group
         ) +
         scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
-        theme_func() +
+          theme_func() +
         theme(
           plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
         )

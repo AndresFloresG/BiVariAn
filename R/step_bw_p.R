@@ -23,11 +23,17 @@
 #' @export
 
 
-step_bw_p <- function (reg_model, s_lower = "~1", s_upper = "all", trace = TRUE,
-                       steps = NULL, p_threshold = 0.05, data = NULL, ...)
+step_bw_p <- function (reg_model,
+                       s_lower = "~1",
+                       s_upper = "all",
+                       trace = TRUE,
+                       steps = NULL,
+                       p_threshold = 0.05,
+                       data = NULL,
+                       ...)
 {
   if (!inherits(reg_model, c("lm", "glm"))) {
-    stop("\n\nThe model must be an 'lm' or 'glm' object")
+    stop("\n\nThe model must be a 'lm' or 'glm' object")
   }
   if (is.null(steps)) {
     steps <- length(attr(terms(reg_model), "term.labels"))

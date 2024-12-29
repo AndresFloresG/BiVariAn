@@ -54,5 +54,5 @@ test_that("step_bw_p maneja errores de entrada correctamente", {
 
   # Modelo no válido
   expect_error(step_bw_p("not_a_model", p_threshold = 0.05, trace = FALSE, data = mtcars),
-               "The model must be an 'lm' or 'glm' object")
+               "\n\nThe model must be a 'lm' or 'glm' object")
 })
