@@ -20,6 +20,7 @@ Imports:
     logistf,
     magrittr,
     mice,
+    pak,
     riskCommunicator,
     rrtable,
     scales,

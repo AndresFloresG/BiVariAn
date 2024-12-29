@@ -8,6 +8,7 @@
 #' @importFrom logistf logistf
 #' @importFrom magrittr %>%
 #' @importFrom mice mice
+#' @importFrom pak pak
 #' @importFrom scales percent
 #' @importFrom stats aov
 #' @importFrom stats as.formula
@@ -29,6 +30,7 @@
 #' @importFrom stats wilcox.test
 #' @importFrom stringi stri_detect_fixed
 #' @importFrom tidyr pivot_wider
+#' @importFrom utils packageVersion
 #' @importFrom utils read.delim
 ## usethis namespace: end
 NULL
