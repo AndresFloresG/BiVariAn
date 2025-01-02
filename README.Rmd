@@ -35,6 +35,8 @@ It is also possible to generate graphs automatically with or without labels on t
 
 Currently under development is the option to generate a generic interpretation of the statistical tests, temporarily available only in Spanish, but there are plans to include more languages.
 
+n addition to bivariate analyses, regression analyses with predictor selection using the stepwise backward method for linear, logistic and Firth penalized logistic regression models can be performed in an automated manner.
+
 Note: The use of the package does not replace individual customized analysis, but rather streamlines the process of producing the results. We encourage users to perform statistical analyses based on the recommendations for each type of study.
 
 ## Installation

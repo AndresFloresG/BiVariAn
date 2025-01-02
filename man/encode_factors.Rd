@@ -20,6 +20,22 @@ encode_factors(
 
 \item{uselist}{Logical operator to determine if use list of factors or not. If TRUE, list_factors argument must be provided.}
 }
+\value{
+Converts listed columns to factors.
+}
 \description{
 Encode character variables as factor automatically
+}
+\examples{
+df <- data.frame(has = c("Yes", "No", "Yes", "Yes", "No", "No", "Yes"),
+smoke = c("Yes", "No", "No", "Yes", "No", "Yes", "No"),
+gender = c("Male", "Female", "Male", "Female", "Female", "Male", "Male"))
+
+str(df)
+
+df <- encode_factors(df, encode = "character")
+
+str(df)
+
+
 }

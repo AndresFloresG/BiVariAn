@@ -12,11 +12,19 @@
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
 #' @param ... Arguments passed to Anova function from the "car" package
 #'
+#' @returns An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
+#'
+#' @references Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
+#'
 #'
 #' @examples
 #' data(mtcars)
 #' regression_model<-lm(cyl~., data=mtcars)
-#' step_bw_p(regression_model, trace=FALSE)
+#' stepwise<-step_bw_p(regression_model, trace=FALSE)
+#'
+#' final_stepwise_model<-stepwise$final_model
+#'
+#' summary(final_stepwise_model)
 #'
 #'
 
@@ -35,6 +43,11 @@ step_bw_p <- function (reg_model,
   if (!inherits(reg_model, c("lm", "glm"))) {
     stop("\n\nThe model must be a 'lm' or 'glm' object")
   }
+
+  if(p_threshold < 0 || p_threshold > 1){
+    stop("p_threshold must be a number between 0 and 1")
+  }
+
   if (is.null(steps)) {
     steps <- length(attr(terms(reg_model), "term.labels"))
   }
@@ -59,6 +72,9 @@ step_bw_p <- function (reg_model,
   else {
     stop("\n\ns_upper must be a string with a valid formula.")
   }
+
+
+
   models <- list()
   fit <- reg_model
   nm <- 1
@@ -108,12 +124,15 @@ step_bw_p <- function (reg_model,
       }
     }
     else {
-      cat("\n\nAll p values are below the threshold\n\n")
+      text<-("\n\nAll p values are below the threshold\n\n")
+      text
       break
     }
   }
   Step <- sapply(models, function(x) x$change)
   Formula <- sapply(models, function(x) deparse(x$formula_eval))
   steps_results <- data.frame(cbind(Step, Formula))
-  list(final_model = fit, steps = steps_results)
+  reslist<-list(final_model = fit, steps = steps_results)
+  class(reslist)<-"step_bw"
+  reslist
 }

@@ -16,6 +16,26 @@
 #' @param stat_lab Statistics to be shown. Can choose if you want to show percentages or frequencies.
 #' @param fill_grey Logical indicator to choose if the generated pie plots must be grey. Default is TRUE.
 #'
+#' @return Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+#'
+#' @examples
+#' data <- data.frame(categ = rep(c("Categ1", "Categ2"), 25),
+#' var1 = rbinom(50, 2, prob = 0.3),
+#' var2 = rbinom(50, 2, prob = 0.8),
+#' var3 = rbinom(50, 2, prob = 0.7))
+#' data$categ <- as.factor(data$categ)
+#' data$var1 <- as.factor(data$var1)
+#' data$var2 <- as.factor(data$var2)
+#' data$var3 <- as.factor(data$var3)
+#'
+#' pieplot_list <- auto_pie_categ(data = data)
+#'
+#' # Call for all listed plots
+#' pieplot_list
+#'
+#' # Call for one specific plot
+#' pieplot_list$var1
+#'
 #' @export
 
 auto_pie_categ <- function(data,
@@ -62,8 +82,9 @@ auto_pie_categ <- function(data,
         csum <- rev(cumsum(rev(freq)))
         pos <-  freq/2 + lead(csum, 1)
         pos <- if_else(is.na(pos), freq/2, pos)
+        namescol <- NULL
 
-        datastats <- data.frame(namescol <- names(freq), freq = as.vector(freq), prop <- as.vector(prop), as.vector(csum), as.vector(pos))
+        datastats <- data.frame(namescol = names(freq), freq = as.vector(freq), prop = as.vector(prop), csum = as.vector(csum), pos = as.vector(pos))
 
 
       lab_graf_cat <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
@@ -71,12 +92,12 @@ auto_pie_categ <- function(data,
 lab_graf_group <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
 
 
-        p <- ggplot2::ggplot(datastats, ggplot2::aes(x = "", y =prop, fill = namescol))
+        p <- ggplot2::ggplot(datastats, ggplot2::aes(x = "", y = prop, fill = namescol))
 
 
         if (!length(pie_bar_args) == 0) {
         p <- p + do.call(geom_bar, pie_bar_args)
-      } else p
+      } else p + do.call (pie_bar_args)
 
       if (statistics == TRUE && stat_lab == "percent"){
           p <- p + geom_text(aes(label = paste0(round(100 * prop, 2), "%")), position = position_stack(vjust = 0.5))

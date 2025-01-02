@@ -23,6 +23,28 @@ auto_bar_cont(
 
 \item{lang_labs}{Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"}
 }
+\value{
+Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+}
 \description{
-Generates bar plots of contiuous variables based on numerical variables from a data frame.
+Generates bar plots of contiuous variables based on numerical variables from a data frame. Internally, the function creates a tibble to summarize the data from each variable.
+}
+\examples{
+data <- data.frame(group = rep(letters[1:2], 30),
+var1 = rnorm(30, mean = 15, sd = 5),
+var2 = rnorm(30, mean = 20, sd = 2),
+var3 = rnorm(30, mean = 10, sd = 1),
+var4 = rnorm(30, mean = 5, sd =2))
+
+data$group<-as.factor(data$group)
+
+# Create a list containing all the plots
+barcontplots<-auto_bar_cont(data = data, groupvar = 'group', err_bar = "se", lang_labs = 'EN')
+
+# call to show all storaged plots
+barcontplots
+
+# call to show one individual plots
+barcontplots$var1
+
 }

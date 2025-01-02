@@ -1,15 +1,38 @@
 #' @import ggplot2
 #' @import ggprism
+#' @importFrom table1 label
 #' @importFrom scales percent
 #' @importFrom magrittr '%>%'
 #' @name auto_bar_categ
 #' @title Automatic generation of barplot with percentages
+#' @description
+#' Automatically generates barplot stratified by group variables with or without percentages.
+#'
 #' @param data Name of the dataframe
 #' @param groupvar Name of the grouping variable. Grouping variable will be used in "fill" for aesthetics argument in the creation of each ggplot object. If not provided, the function take each variable as grouping and does not display the "fill" legend.
 #' @param bar_args List of arguments to be passed to "geom_bar"
 #' @param theme_func Theme of the generated plots
 #' @param lang_labs Language of displayed labels. If null, default is spanish.
 #' @param showpercent Logical atribute to indicate if the graph should include percentages
+#'
+#' @return Returns a list containing all barplots as ggplot object. Can be accessed via $ operator
+#'
+#' @examples
+#' data<-data.frame(categ = rep(letters[1:2], 10),
+#' var1 = rep(LETTERS[4:5], 10),
+#' var2 = rep(LETTERS[6:7], 10),
+#' var3 = rep(LETTERS[8:9], 10),
+#' var4 = rep(LETTERS[10:11], 10))
+#' data$categ <- as.factor(data$categ)
+#' data$var1 <- as.factor(data$var1)
+#' data$var2 <- as.factor(data$var2)
+#' data$var3 <- as.factor(data$var3)
+#' data$var4 <- as.factor(data$var4)
+#'
+#' barplot_list<-auto_bar_categ(data = data, groupvar = "categ", lang_labs = "EN")
+#'
+#' barplot_list$var1
+#'
 
 #' @export
 #'
@@ -54,12 +77,12 @@ auto_bar_categ <- function(data,
   for (varcat in categ_var) {
     if (varcat %in% names(data)) {  # Verifica si la variable esta en la base de datos
       # Obtener etiquetas o usar nombres de las variables
-      lab_graf_cat <- if (!is.null(label(data[[varcat]]))) label(data[[varcat]]) else varcat
+      lab_graf_cat <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
 
       if(!is.null(groupvar)){
-        lab_graf_group <- if (!is.null(label(data[[groupvar]]))) label(data[[groupvar]]) else groupvar
+        lab_graf_group <- if (!is.null(table1::label(data[[groupvar]]))) table1::label(data[[groupvar]]) else groupvar
       } else {
-        lab_graf_group <- if (!is.null(label(data[[varcat]]))) label(data[[varcat]]) else varcat
+        lab_graf_group <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
       }
 
       if(is.null(groupvar)){
@@ -71,19 +94,19 @@ auto_bar_categ <- function(data,
         do.call(geom_bar, bar_args)
 
       if (showpercent){
-        p <- p + geom_text(stat = "count",
+        p <- p + ggplot2::geom_text(stat = "count",
                   aes(label=scales::percent(after_stat(count/sum(count)))),
                   position=position_dodge(width=0.9),
                   vjust=-.5)
       }
 
-        p <- p +labs(
+        p <- p + ggplot2::labs(
           title = paste(titlelab, lab_graf_cat),
           x = lab_graf_cat,
           y = ylabs,
           fill = lab_graf_group
         ) +
-        scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
+        ggplot2::scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
           theme_func() +
         theme(
           plot.title = element_text(hjust = 0.5, size = 14, face = "bold")

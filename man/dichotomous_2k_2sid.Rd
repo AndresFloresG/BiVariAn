@@ -13,6 +13,9 @@ dichotomous_2k_2sid(data, referencevar, flextableformat = TRUE)
 
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
+\value{
+Returns a dataframe or flextable containing statistical values for Chi squared tests or Fisher's test.
+}
 \description{
 Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
 }

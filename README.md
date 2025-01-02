@@ -35,6 +35,11 @@ Currently under development is the option to generate a generic
 interpretation of the statistical tests, temporarily available only in
 Spanish, but there are plans to include more languages.
 
+n addition to bivariate analyses, regression analyses with predictor
+selection using the stepwise backward method for linear, logistic and
+Firth penalized logistic regression models can be performed in an
+automated manner.
+
 Note: The use of the package does not replace individual customized
 analysis, but rather streamlines the process of producing the results.
 We encourage users to perform statistical analyses based on the
@@ -56,6 +61,9 @@ Loading the package
 
 ``` r
 library(BiVariAn)
+#> Registered S3 method overwritten by 'openxlsx':
+#>   method               from         
+#>   as.character.formula formula.tools
 ```
 
 Sample useless function
@@ -97,7 +105,6 @@ Render an automatic Shapiro-Wilk’s table of a more complex dataset
 ``` r
 # Load riskCommunicator to access Framingham dataset
 library(riskCommunicator)
-#> Warning: package 'riskCommunicator' was built under R version 4.4.2
 ```
 
 ``` r

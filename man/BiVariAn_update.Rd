@@ -9,6 +9,14 @@ BiVariAn_update(force = FALSE)
 \arguments{
 \item{force}{Whether to force an update, even if no newer version is available. (Currently even if FALSE, the package will update... working on process)}
 }
+\value{
+Returns nothing else than an updated version of the package.
+}
 \description{
 Use this function to update the development version of BiVariAn
+}
+\examples{
+\dontrun{BiVariAn_update()}
+
+
 }

@@ -11,16 +11,27 @@
 #' @param groupvar Name of the grouping variable
 #' @param violinplot_args List of arguments to be passed to "geom_violin"
 #' @param theme_func Theme to display plots. Default is "theme_serene"
+#' @param lang_labs Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA".
+#'
 #'
 #' @export
 
 
 auto_viol_cont <- function(data, groupvar,
                          violinplot_args = list(),
-                         theme_func = theme_serene) {
+                         theme_func = theme_serene,
+                         lang_labs = c("EN", "SPA")) {
   # Verificar si theme_func es una funcion
   if (!is.function(theme_func)) {
-    stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
+    stop("Argument 'theme_func' must be a valid function")
+  }
+
+  if(any(is.null(lang_labs) | lang_labs == "SPA")){
+    titlab1 = "Box plot de"
+    titlab2 = "por"
+  } else if (lang_labs == "EN"){
+    titlab1 = "Bar plot of"
+    titlab2 = "by"
   }
 
   # Identificar variables continuas
@@ -33,14 +44,18 @@ auto_viol_cont <- function(data, groupvar,
   for (var2 in variables_continuas) {
     if (var2 %in% names(data)) {  # Verifica si la variable esta en la base de datos
       # Crear la base de la grafica
-      p <- ggplot2::ggplot(data, ggplot2::aes_string(x = groupvar, y = var2))
+
+      lab_viol_var<- if(!is.null(label(data[[var2]]))) label(data[[var2]]) else var2
+      lab_viol_group<- if(!is.null(label(data[[groupvar]]))) label(data[[groupvar]]) else groupvar
+
+      p <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[groupvar]], y = .data[[var2]]))
 
       # Agregar geom_violinplot con argumentos personalizados
       p <- p + do.call(ggplot2::geom_violin, violinplot_args)
 
       # Agregar etiquetas y tema
       p <- p + ggplot2::labs(
-        title = paste("Distribucion de", var2),
+        title = paste(titlab1, lab_viol_var, titlab2, lab_viol_group),
         x = groupvar,
         y = var2
       ) +
@@ -52,7 +67,7 @@ auto_viol_cont <- function(data, groupvar,
       # Guardar la grafica en la lista
       graficascont[[var2]] <- p
     } else {
-      cat("\nLa variable", var2, "no esta presente en la base de datos.\n")
+      cat("\nVariable", var2, "is not in provided dataframe\n")
     }
   }
 

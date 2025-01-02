@@ -9,6 +9,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom mice mice
 #' @importFrom pak pak
+#' @importFrom rlang .data
 #' @importFrom scales percent
 #' @importFrom stats aov
 #' @importFrom stats as.formula

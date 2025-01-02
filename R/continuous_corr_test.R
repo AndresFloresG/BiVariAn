@@ -13,94 +13,182 @@
 #' @param data Data frame from which variables will be extracted.
 #' @param referencevar Reference variable. Must be a continuous variable.
 #' @param alternative Alternative for cor.test. Must be either "two.sided", "geater" or "less"
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format. Because the function calculates different statistics for each correlation (specially in kendall correlation test), it may take some time to run. You can select individual variables using the pipe operator and the select function to run correlations only on the selected variables.
+#' @param corr_test Correlation test to be performed
+#'
+#' @returns A dataframe or flextable containing pvalues for correlation tests along with the normality and homocedasticity tests p values
+#' @examples
+#' # example code
+#'
+
+#' data <- data.frame(group = rep(letters[1:2], 15),
+#' var1 = rnorm(30, mean = 15, sd = 5),
+#' var2 = rnorm(30, mean = 20, sd = 2),
+#' var3 = rnorm(30, mean = 10, sd = 1),
+#' var4 = rnorm(30, mean = 5, sd =2))
+#'
+#' data$group<-as.factor(data$group)
+#'
+#' continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+#'
+#' \dontrun{# Example performing correlation test for only one variable
+#'
+#' continuous_corr_test(data = data %>% select("var1","var2"),
+#'  referencevar = "var1", flextableformat = FALSE)}
+#'
+#' # Example performing only pearson correlation test
+#' continuous_corr_test(data = data, referencevar = "var1",
+#'  flextableformat = FALSE, corr_test = "pearson")
+#'
+#'
 #'
 #' @export
 #'
-continuous_corr_test<-function(data, referencevar,  alternative = NULL, flextableformat = TRUE){
+continuous_corr_test <- function(data, referencevar,
+                                 alternative = NULL,
+                                 flextableformat = TRUE,
+                                 corr_test = c("all", "pearson", "spearman", "kendall")) {
 
-  cont_var <- colnames(data) [sapply(data, function(x) is.numeric(x) && !identical(x, data[[referencevar]]))]
+  # Configuración inicial de los análisis a realizar
+  perform_pearson <- FALSE
+  perform_spearman <- FALSE
+  perform_kendall <- FALSE
 
+  # Determinar qué análisis ejecutar según el argumento corr_test
+  if ("all" %in% corr_test || is.null(corr_test)) {
+    perform_pearson <- TRUE
+    perform_spearman <- TRUE
+    perform_kendall <- TRUE
+  } else {
+    if ("pearson" %in% corr_test) perform_pearson <- TRUE
+    if ("spearman" %in% corr_test) perform_spearman <- TRUE
+    if ("kendall" %in% corr_test) perform_kendall <- TRUE
+  }
+
+  # Identificar variables continuas
+  cont_var <- colnames(data)[sapply(data, function(x) is.numeric(x) && !identical(x, data[[referencevar]]))]
+
+  # Inicializar resultados
   results <- list()
 
-  if (any(is.null(alternative) | alternative == "two.sided")) {
-    alternative="two.sided"
-  }  else alternative=alternative
+  # Configuración del parámetro alternative
+  if (is.null(alternative)) {
+    alternative <- "two.sided"
+  }
 
+  # Bucle para analizar cada variable continua
   for (variable in cont_var) {
-    if (variable %in% names(data)){
-
-      ref_var_data<- data[[referencevar]]
+    if (variable %in% names(data)) {
+      ref_var_data <- data[[referencevar]]
       continuous_data <- data[[variable]]
 
-      if (length(ref_var_data) < 2 || length(continuous_data) < 2){
+      # Verificar longitud de los datos
+      if (length(ref_var_data) < 2 || length(continuous_data) < 2) {
         results[[variable]] <- list(
           Variable = variable,
           P_Shapiro_Resid = NA,
-          P_Pearson = NA,
-          P_Spearman = NA,
-          P_Kendall = NA,
-          r_Pearson = NA,
-          r_P_CI_l = NA,
-          r_P_CI_H = NA,
-          t_Kendall = NA,
-          t_K_CI_L = NA,
-          t_K_CI_H = NA,
-          rho_S = NA,
-          rho_S_CI_L = NA,
-          rho_S_CI_H = NA
+          P_Pearson = if (perform_pearson) NA else NULL,
+          P_Spearman = if (perform_spearman) NA else NULL,
+          P_Kendall = if (perform_kendall) NA else NULL,
+          r_Pearson = if (perform_pearson) NA else NULL,
+          r_P_CI_L = if (perform_pearson) NA else NULL,
+          r_P_CI_H = if (perform_pearson) NA else NULL,
+          t_Kendall = if (perform_kendall) NA else NULL,
+          t_K_CI_L = if (perform_kendall) NA else NULL,
+          t_K_CI_H = if (perform_kendall) NA else NULL,
+          rho_Spearman = if (perform_spearman) NA else NULL,
+          rho_S_CI_L = if (perform_spearman) NA else NULL,
+          rho_S_CI_H = if (perform_spearman) NA else NULL
         )
         next
       }
+
+      # Realizar análisis de correlación según los métodos seleccionados
       tryCatch({
-        lm_model <- lm(continuous_data~ref_var_data)
+        lm_model <- lm(continuous_data ~ ref_var_data)
         shapiro_res <- stats::shapiro.test(residuals(lm_model))$p.value
-        pearson_test<-cor.test(continuous_data, ref_var_data, method="pearson", alternative=alternative)
-        spearman_test<-cor.test(continuous_data, ref_var_data, method="spearman", alternative=alternative)
-        kendall_test<-cor.test(continuous_data, ref_var_data, method="kendall", alternative=alternative)
 
-        pears_p<-pearson_test$p.value
-        pears_estim<-pearson_test$estimate
-        pears_cilow<-pearson_test$conf.int[1]
-        pears_cihi<-pearson_test$conf.int[2]
+        if (perform_pearson) {
+          pearson_test <- cor.test(continuous_data, ref_var_data, method = "pearson", alternative = alternative)
+          pears_p <- pearson_test$p.value
+          pears_estim <- pearson_test$estimate
+          pears_cilow <- pearson_test$conf.int[1]
+          pears_cihi <- pearson_test$conf.int[2]
+        } else {
+          pears_p <- pears_estim <- pears_cilow <- pears_cihi <- NA
+        }
 
-        spear_p<-spearman_test$p.value
-        spear_estim<-spearman_test$estimate
-        spear_cilow<-DescTools::SpearmanRho(continuous_data, ref_var_data, conf.level = .95)[2]
-        spear_cihi<-DescTools::SpearmanRho(continuous_data, ref_var_data, conf.level = .95)[3]
+        if (perform_spearman) {
+          spearman_test <- cor.test(continuous_data, ref_var_data, method = "spearman", alternative = alternative)
+          spear_p <- spearman_test$p.value
+          spear_estim <- spearman_test$estimate
+          spear_cilow <- DescTools::SpearmanRho(continuous_data, ref_var_data, conf.level = .95)[2]
+          spear_cihi <- DescTools::SpearmanRho(continuous_data, ref_var_data, conf.level = .95)[3]
+        } else {
+          spear_p <- spear_estim <- spear_cilow <- spear_cihi <- NA
+        }
 
-        kend_p<-spearman_test$p.value
-        kend_estim<-spearman_test$estimate
-        kend_cilow<-DescTools::KendallTauB(continuous_data, ref_var_data, conf.level = .95)[2]
-        kend_cihi<-DescTools::KendallTauB(continuous_data, ref_var_data, conf.level = .95)[3]
+        if (perform_kendall) {
+          kendall_test <- cor.test(continuous_data, ref_var_data, method = "kendall", alternative = alternative)
+          kend_p <- kendall_test$p.value
+          kend_estim <- kendall_test$estimate
+          kend_cilow <- DescTools::KendallTauB(continuous_data, ref_var_data, conf.level = .95)[2]
+          kend_cihi <- DescTools::KendallTauB(continuous_data, ref_var_data, conf.level = .95)[3]
+        } else {
+          kend_p <- kend_estim <- kend_cilow <- kend_cihi <- NA
+        }
 
+        # Guardar resultados
         results[[variable]] <- list(
           Variable = variable,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
-          P_Pearson = ifelse(pears_p > 0.001, round(pears_p, 5), "<0.001*"),
-          P_Spearman = ifelse(spear_p > 0.001, round(spear_p, 5), "<0.001*"),
-          P_Kendall = ifelse(kend_p > 0.001, round(kend_p, 5), "<0.001*"),
-          r_Pearson = round(pears_estim, 5),
-          r_P_CI_l = round(pears_cilow, 5),
-          r_P_CI_H = round(pears_cihi, 5),
-          t_Kendall = round(kend_estim, 5),
-          t_K_CI_L = round(kend_cilow, 5),
-          t_K_CI_H = round(kend_cihi, 5),
-          rho_S = round(spear_estim, 5),
-          rho_S_CI_L = round(spear_cilow, 5),
-          rho_S_CI_H = round(spear_cihi, 5)
+          P_Pearson = pears_p,
+          P_Spearman = spear_p,
+          P_Kendall = kend_p,
+          r_Pearson = pears_estim,
+          r_P_CI_L = pears_cilow,
+          r_P_CI_H = pears_cihi,
+          t_Kendall = kend_estim,
+          t_K_CI_L = kend_cilow,
+          t_K_CI_H = kend_cihi,
+          rho_Spearman = spear_estim,
+          rho_S_CI_L = spear_cilow,
+          rho_S_CI_H = spear_cihi
         )
       })
     } else {
       cat("\nVariable", variable, "is not present in database\n")
     }
   }
-  resultados_df <- do.call(rbind, lapply(results, as.data.frame))
 
-  if (flextableformat == TRUE){
+  # Convertir resultados a data frame
+  resultados_df <- do.call(rbind, lapply(results, function(x) as.data.frame(x, stringsAsFactors = FALSE)))
+
+  if(!perform_pearson){
+    resultados_df$P_Pearson <- NULL
+    resultados_df$r_P_CI_L <- NULL
+    resultados_df$r_P_CI_H <- NULL
+    resultados_df$r_Pearson <- NULL
+  }
+
+  if(!perform_spearman){
+    resultados_df$P_Spearman <- NULL
+    resultados_df$rho_Spearman <- NULL
+    resultados_df$rho_S_CI_L <- NULL
+    resultados_df$rho_S_CI_H <- NULL
+  }
+
+  if(!perform_kendall){
+    resultados_df$P_Kendall <- NULL
+    resultados_df$t_Kendall <- NULL
+    resultados_df$t_K_CI_L <- NULL
+    resultados_df$t_K_CI_H <- NULL
+  }
+
+  if (flextableformat == TRUE) {
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
-    rownames(resultados_df)<- NULL
+    rownames(resultados_df) <- NULL
     return(resultados_df)
   }
 }

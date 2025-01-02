@@ -13,6 +13,21 @@ continuous_2g_pair(data, groupvar, flextableformat)
 
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
+\value{
+A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
+}
 \description{
 Generates a HTML table of bivariate analysis for 2 groups. (In development)
+}
+\examples{
+data <- data.frame(group = rep(letters[1:2], 30),
+                   var1 = rnorm(30, mean = 15, sd = 5),
+                  var2 = rnorm(30, mean = 20, sd = 2),
+                  var3 = rnorm(30, mean = 10, sd = 1),
+                  var4 = rnorm(30, mean = 5, sd =2))
+data$group<-as.factor(data$group)
+
+continuous_2g_pair(data = data, groupvar = "group")
+
+
 }

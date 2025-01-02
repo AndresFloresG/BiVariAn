@@ -11,12 +11,15 @@ authenticity_check(name, affil)
 
 \item{affil}{Affiliation of the code's author}
 }
+\value{
+Text in console whether the statistical analysis is authorized by a tutor or not
+}
 \description{
-Check for authenticity of the analysis author or tutor from an indexed database
+Authenticity check for institutional analysis. Future implementation of this code is planned for incoming functions.
 }
 \examples{
-# Not run
-# For John Doe
-# authenticity_check(name = JD, affil = "Some University")
+\dontrun{ #For John Doe
+authenticity_check(name = JD, affil = 'Some University')}
+authenticity_check(name = 'FGJA', affil = 'UASLP')
 
 }

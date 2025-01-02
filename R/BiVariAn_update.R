@@ -7,6 +7,12 @@
 #' Use this function to update the development version of BiVariAn
 #' @param force Whether to force an update, even if no newer version is available. (Currently even if FALSE, the package will update... working on process)
 #'
+#' @return Returns nothing else than an updated version of the package.
+#'
+#' @examples
+#' \dontrun{BiVariAn_update()}
+#'
+#'
 #' @export
 #'
 BiVariAn_update <- function(force = FALSE) {

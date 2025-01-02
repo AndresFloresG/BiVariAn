@@ -12,6 +12,9 @@
 #' @param data Data frame from which variables will be extractred
 #' @param referencevar Reference variable. Must have exactly 2 levels
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#'
+#' @return Returns a dataframe or flextable containing statistical values for Chi squared tests or Fisher's test.
+#'
 #' @examples
 #'   # Not run
 #'
@@ -37,6 +40,18 @@
 #' @export
 
 dichotomous_2k_2sid <- function(data, referencevar, flextableformat = TRUE) {
+
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
+  if(!(referencevar %in% names(data))){
+    stop(referencevar, " is not present in provided dataframe")
+  }
+
+  if(any(is.character(flextableformat) | !is.logical(flextableformat))){
+    stop("flextableformat must be a logical operator")
+  }
   # Convertir la variable de referencia en factor
   data[[referencevar]] <- as.factor(data[[referencevar]])
 

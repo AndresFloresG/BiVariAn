@@ -32,13 +32,23 @@ step_bw_p(
 
 \item{...}{Arguments passed to Anova function from the "car" package}
 }
+\value{
+An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
+}
 \description{
 Automatized stepwise backward for regression models
 }
 \examples{
 data(mtcars)
 regression_model<-lm(cyl~., data=mtcars)
-step_bw_p(regression_model, trace=FALSE)
+stepwise<-step_bw_p(regression_model, trace=FALSE)
+
+final_stepwise_model<-stepwise$final_model
+
+summary(final_stepwise_model)
 
 
+}
+\references{
+Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
 }

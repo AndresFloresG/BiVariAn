@@ -29,6 +29,28 @@ auto_pie_categ(
 
 \item{fill_grey}{Logical indicator to choose if the generated pie plots must be grey. Default is TRUE.}
 }
+\value{
+Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+}
 \description{
 Generates pie plots based on categorical variables of a data frame.
+}
+\examples{
+data <- data.frame(categ = rep(c("Categ1", "Categ2"), 25),
+var1 = rbinom(50, 2, prob = 0.3),
+var2 = rbinom(50, 2, prob = 0.8),
+var3 = rbinom(50, 2, prob = 0.7))
+data$categ <- as.factor(data$categ)
+data$var1 <- as.factor(data$var1)
+data$var2 <- as.factor(data$var2)
+data$var3 <- as.factor(data$var3)
+
+pieplot_list <- auto_pie_categ(data = data)
+
+# Call for all listed plots
+pieplot_list
+
+# Call for one specific plot
+pieplot_list$var1
+
 }

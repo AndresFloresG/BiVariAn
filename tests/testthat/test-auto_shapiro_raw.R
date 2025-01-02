@@ -9,6 +9,7 @@ test_that("auto_shapiro_raw funciona correctamente", {
 
   # Ejecutar la función
   resultados <- auto_shapiro_raw(data, flextableformat = FALSE)
+  resultados_tab <- auto_shapiro_raw(data, flextableformat = TRUE)
 
   # Verificar estructura del resultado
   expect_true(is.data.frame(resultados))
@@ -18,6 +19,10 @@ test_that("auto_shapiro_raw funciona correctamente", {
   # Verificar valores específicos
   expect_true(all(resultados$Variable %in% c("var1", "var2")))
   expect_true(all(resultados$Normality %in% c("Normal", "Non-normal")))
+
+  expect_error(auto_shapiro_raw(data = data, flextableformat = data), "Argument flextableformat must be a logical operator")
+
+  expect_error(auto_shapiro_raw(resultados_tab), "Data provided must be a data.frame object")
 
   # Caso 2: Datos sin variables numéricas
   data_no_numeric <- data.frame(
@@ -52,6 +57,8 @@ test_that("auto_shapiro_raw funciona correctamente", {
   expect_equal(nrow(resultados_with_na), 2)
   expect_true(all(resultados_with_na$Variable %in% c("var1", "var2")))
   expect_true(all(resultados_with_na$Normality %in% c("Normal", "Non-normal")))
+
+
 
   # Caso 5: Validación de errores
   expect_snapshot(auto_shapiro_raw(NULL), error = T)

@@ -1,4 +1,5 @@
 #' @import ggplot2
+#' @importFrom table1 label
 #' @title Generates automatic scatterplot with correlation plot
 #' @name auto_corr_cont
 #'
@@ -14,7 +15,22 @@
 #' @param theme_func Theme to display plots. Default is "theme_serene"
 #' @param lang_labs Language to display title lab. Default is Spanish.
 #'
+#' @return Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
 #'
+#' @examples
+#' data <- data.frame(group = rep(letters[1:2], 30),
+#' var1 = rnorm(30, mean = 15, sd = 5),
+#' var2 = rnorm(30, mean = 20, sd = 2),
+#' var3 = rnorm(30, mean = 10, sd = 1),
+#' var4 = rnorm(30, mean = 5, sd =2))
+#'
+#' cont_corrplot <- auto_corr_cont(data = data, referencevar = "var1", lang_labs = "EN")
+#'
+#' # Call to show all storaged plots
+#' cont_corrplot
+#'
+#' # Call to show one individual plot
+#' cont_corrplot$var2
 #'
 #' @export
 
@@ -56,9 +72,9 @@ auto_corr_cont<- function(data,
   for(variable in cont_var){
     if(variable %in% names(data)){
 
-      lab_corr_var_var<-if(!is.null(label(data[[variable]]))) label(data[[variable]]) else variable
+      lab_corr_var_var<-if(!is.null(table1::label(data[[variable]]))) table1::label(data[[variable]]) else variable
 
-      lab_corr_var_ref<-if(!is.null(label(data[[referencevar]]))) label(data[[referencevar]]) else referencevar
+      lab_corr_var_ref<-if(!is.null(table1::label(data[[referencevar]]))) table1::label(data[[referencevar]]) else referencevar
 
       p <- ggplot2::ggplot(data, ggplot2::aes(x=.data[[variable]], y=.data[[referencevar]]))
       p <- p + do.call(ggplot2::geom_point, point_args)

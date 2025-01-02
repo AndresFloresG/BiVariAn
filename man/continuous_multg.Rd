@@ -13,6 +13,17 @@ continuous_multg(data, groupvar, flextableformat = TRUE)
 
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
+\value{
+A dataframe or flextable containing pvalues for each test along with the normality and homocedasticity tests p values. An extra column will be shown indicating the recommended significant test
+}
 \description{
 Generates a HTML table of bivariate analysis for 2 groups.
+}
+\examples{
+data <- iris
+
+data$Species<-as.factor(data$Species)
+
+continuous_multg(data = data, groupvar = "Species", flextableformat = FALSE)
+
 }

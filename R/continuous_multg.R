@@ -9,11 +9,28 @@
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #'
+#' @returns A dataframe or flextable containing pvalues for each test along with the normality and homocedasticity tests p values. An extra column will be shown indicating the recommended significant test
+#'
+#' @examples
+#' data <- iris
+#'
+#' data$Species<-as.factor(data$Species)
+#'
+#' continuous_multg(data = data, groupvar = "Species", flextableformat = FALSE)
+#'
 #' @export
 
 
 continuous_multg<-function(data, groupvar, flextableformat = TRUE){
   # Convertir la variable de agrupacion en factor
+  if(!is.data.frame(data) ){
+    stop("data must be a data.frame object")
+  }
+
+  if(!(groupvar %in% names(data))){
+    stop(groupvar, " is not present in the provided dataframe")
+  }
+
   data[[groupvar]] <- as.factor(data[[groupvar]])
 
   # Verificar que la variable de agrupacion tiene al menos dos niveles

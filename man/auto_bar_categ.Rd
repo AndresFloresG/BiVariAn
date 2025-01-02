@@ -26,6 +26,26 @@ auto_bar_categ(
 
 \item{showpercent}{Logical atribute to indicate if the graph should include percentages}
 }
+\value{
+Returns a list containing all barplots as ggplot object. Can be accessed via $ operator
+}
 \description{
-Automatic generation of barplot with percentages
+Automatically generates barplot stratified by group variables with or without percentages.
+}
+\examples{
+data<-data.frame(categ = rep(letters[1:2], 10),
+var1 = rep(LETTERS[4:5], 10),
+var2 = rep(LETTERS[6:7], 10),
+var3 = rep(LETTERS[8:9], 10),
+var4 = rep(LETTERS[10:11], 10))
+data$categ <- as.factor(data$categ)
+data$var1 <- as.factor(data$var1)
+data$var2 <- as.factor(data$var2)
+data$var3 <- as.factor(data$var3)
+data$var4 <- as.factor(data$var4)
+
+barplot_list<-auto_bar_categ(data = data, groupvar = "categ", lang_labs = "EN")
+
+barplot_list$var1
+
 }

@@ -15,7 +15,8 @@ auto_dens_cont(
   lw_mean = 1,
   lw_median = 1,
   densplot_args = list(),
-  theme_func = theme_serene
+  theme_func = theme_serene,
+  lang_labs = c("EN", "SPA")
 )
 }
 \arguments{
@@ -40,12 +41,31 @@ auto_dens_cont(
 \item{densplot_args}{List of arguments to be passed to "geom_density"}
 
 \item{theme_func}{Theme to display plots. Default is "theme_serene"}
+
+\item{lang_labs}{Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"}
 }
 \value{
 Returns a list containing the generated density plots
 }
 \description{
 #' Automatically generates density plots of continuous variables from a database. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package.
+}
+\examples{
+data <- data.frame(group = rep(letters[1:2], 30),
+var1 = rnorm(30, mean = 15, sd = 5),
+var2 = rnorm(30, mean = 20, sd = 2),
+var3 = rnorm(30, mean = 10, sd = 1),
+var4 = rnorm(30, mean = 5, sd =2))
+
+data$group<-as.factor(data$group)
+
+densityplots <- auto_dens_cont(data = data)
+
+densityplots
+
+densityplots$var1
+
+
 }
 \author{
 JMCR

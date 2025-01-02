@@ -11,6 +11,14 @@ get_credentials(data = NULL, sep = ",")
 
 \item{sep}{Separator of the dataframe. Default is "," to denote a .csv file.}
 }
+\value{
+A dataframe with authorization credentials
+}
 \description{
 Get credentials for author check
+}
+\examples{
+\dontrun{
+credentials<-get_credentials(data = "googlesheets_url", sep=",")}
+
 }

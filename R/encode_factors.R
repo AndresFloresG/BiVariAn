@@ -7,11 +7,25 @@
 #' @param list_factors List of factors to be encoded
 #' @param uselist Logical operator to determine if use list of factors or not. If TRUE, list_factors argument must be provided.
 #'
+#' @returns Converts listed columns to factors.
+#'
+#' @examples
+#' df <- data.frame(has = c("Yes", "No", "Yes", "Yes", "No", "No", "Yes"),
+#' smoke = c("Yes", "No", "No", "Yes", "No", "Yes", "No"),
+#' gender = c("Male", "Female", "Male", "Female", "Female", "Male", "Male"))
+#'
+#' str(df)
+#'
+#' df <- encode_factors(df, encode = "character")
+#'
+#' str(df)
+#'
 #'
 #' @export
 #'
 encode_factors <- function(data, encode = c("character", "integer"), list_factors = NULL, uselist = FALSE) {
   # Validate that data is a data frame
+
   if (!is.data.frame(data)) {
     stop("The 'data' argument must be a data frame")
   }
@@ -19,6 +33,10 @@ encode_factors <- function(data, encode = c("character", "integer"), list_factor
   # Validate that the user provided a non-empty list if uselist is TRUE
   if (uselist && is.null(list_factors)) {
     stop("If 'uselist' is TRUE, 'list_factors' cannot be NULL")
+  }
+
+  if(is.character(uselist) | !is.logical(uselist)){
+    stop("uselist must be a logical argument")
   }
 
   if (uselist) {

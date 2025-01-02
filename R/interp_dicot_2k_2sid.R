@@ -14,9 +14,49 @@
 #' Format 2: Chi-square without statistical significance. Conditions: Minimum expected frequencies >5, p>0.05.
 #' Format 3: Fishers exact test with statistical significance. Conditions: Minimum expected frequencies <5, p<0.05. Format 4: Exact fisher's test without statistical significance. Conditions: Minimum expected frequencies <5, p>0.05.
 #'
+#' @examples
+#' df <- data.frame(
+#' has = c("Yes", "No", "Yes", "Yes", "No", "No", "Yes"),
+#' smoke = c("Yes", "No", "No", "Yes", "No", "Yes", "No"),
+#' gender = c("Male", "Female", "Male", "Female", "Female", "Male", "Male"))
+#' df$has <- as.factor(df$has)
+#' df$smoke <- as.factor(df$smoke)
+#' df$gender <- as.factor(df$gender)
+#'
+#' # Set a value as reference level
+#'
+#' df$has <- relevel(df$has, ref= "Yes")
+#' df$smoke <- relevel(df$smoke, ref= "Yes")
+#' df$gender <- relevel(df$gender, ref= "Female")
+#'
+#' interp_dicot_2k_2sid(data = df, var1 = "smoke", var2 = "gender")
+#'
+#'
+#'
 #' @export
 
 interp_dicot_2k_2sid <- function(data, var1, var2) {
+
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
+  if(!(var1 %in% names(data))){
+    stop(var1, " is not present in provided dataframe")
+  }
+
+  if(!(var2 %in% names(data))){
+    stop(var2, " is not present in provided dataframe")
+  }
+
+  if (length(levels(data[[var1]])) != 2) {
+    stop(var1, " must have exactly two levels")
+  }
+
+  if (length(levels(data[[var2]])) != 2) {
+    stop(var2, " must have exactly two levels")
+  }
+
   # Convertir las variables en factores
   data[[var1]] <- as.factor(data[[var1]])
   data[[var2]] <- as.factor(data[[var2]])

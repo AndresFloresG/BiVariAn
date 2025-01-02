@@ -1,4 +1,7 @@
 #' @import ggplot2
+#' @importFrom rlang .data
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
 #' @importFrom table1 label
 #'
 #' @name auto_bar_cont
@@ -6,13 +9,35 @@
 #' @title Automatic barplot of continous variables
 #'
 #' @description
-#' Generates bar plots of contiuous variables based on numerical variables from a data frame.
+#' Generates bar plots of contiuous variables based on numerical variables from a data frame. Internally, the function creates a tibble to summarize the data from each variable.
 #'
 #' @param data Name of the dataframe
 #' @param groupvar Grouping variable
 #' @param err_bar_show Logical indicator. Default TRUE show error bars in columns. Default is TRUE
 #' @param err_bar Statistic to be shown as error bar. Can be "sd" for standard deviation or "se" for standard error. Defauult is "se".
 #' @param lang_labs Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"
+#'
+#' @return Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+#'
+#' @examples
+#' data <- data.frame(group = rep(letters[1:2], 30),
+#' var1 = rnorm(30, mean = 15, sd = 5),
+#' var2 = rnorm(30, mean = 20, sd = 2),
+#' var3 = rnorm(30, mean = 10, sd = 1),
+#' var4 = rnorm(30, mean = 5, sd =2))
+#'
+#' data$group<-as.factor(data$group)
+#'
+#' # Create a list containing all the plots
+#' barcontplots<-auto_bar_cont(data = data, groupvar = 'group', err_bar = "se", lang_labs = 'EN')
+#'
+#' # call to show all storaged plots
+#' barcontplots
+#'
+#' # call to show one individual plots
+#' barcontplots$var1
+#'
+#' @export
 
 auto_bar_cont<-function(data,
                         groupvar,
@@ -65,14 +90,16 @@ auto_bar_cont<-function(data,
 
 
     # Resumir los datos
+    SE_value <- mean_value <- sd_value <- NULL
+
     data_summary <- data %>%
-      group_by(.data[[groupvar]]) %>%
-      summarise(
-        mean_value <- mean(.data[[var]], na.rm = TRUE),
-        sd_value <- sd(.data[[var]], na.rm = TRUE),
-        n_value <- n(),
-        SE_value <- sd(.data[[var]], na.rm = TRUE) / sqrt(n()),
-        .groups <- "drop"
+      dplyr::group_by(.data[[groupvar]]) %>%
+      dplyr::summarise(
+        mean_value = mean(.data[[var]], na.rm = TRUE),
+        sd_value = sd(.data[[var]], na.rm = TRUE),
+        n_value = n(),
+        SE_value = sd(.data[[var]], na.rm = TRUE) / sqrt(n()),
+        .groups = "drop"
       )
 
     p <- ggplot2::ggplot(data_summary, aes(x = .data[[groupvar]], y = mean_value)) +
@@ -87,14 +114,14 @@ auto_bar_cont<-function(data,
 
     if (err_bar_show && err_bar == "se") {
       p <- p +
-        ggplot2::geom_errorbar(aes(
+        ggplot2::geom_errorbar(data = data_summary, aes(
           ymin = mean_value - SE_value,
           ymax = mean_value + SE_value
         ), width = 0.2) +
         ggplot2::labs(caption = paste(caption, captionerror))
     } else if (err_bar_show && err_bar == "sd"){
       p <- p +
-        ggplot2::geom_errorbar(aes(
+        ggplot2::geom_errorbar(data = data_summary, aes(
           ymin = mean_value - sd_value,
           ymax = mean_value + sd_value
         ), width = 0.2) +

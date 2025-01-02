@@ -8,7 +8,8 @@ auto_viol_cont(
   data,
   groupvar,
   violinplot_args = list(),
-  theme_func = theme_serene
+  theme_func = theme_serene,
+  lang_labs = c("EN", "SPA")
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ auto_viol_cont(
 \item{violinplot_args}{List of arguments to be passed to "geom_violin"}
 
 \item{theme_func}{Theme to display plots. Default is "theme_serene"}
+
+\item{lang_labs}{Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA".}
 }
 \description{
 Automatically generates violinplots of continuous variables from a database and a grouping variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function it is not possible to use labels for the variables, use "auto_viol_cont_wlabels" instead.

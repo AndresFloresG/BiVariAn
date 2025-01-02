@@ -12,6 +12,9 @@
 #' @param data Data frame from which variables will be extracted.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #'
+#' @returns Flextable or dataframe with shapiro wilks results.
+#'
+#'
 #' @examples
 #' auto_shapiro_raw(iris)
 
@@ -19,6 +22,16 @@
 
 
 auto_shapiro_raw <- function(data, flextableformat= TRUE){
+
+
+  if(!is.data.frame(data)){
+    stop("Data provided must be a data.frame object")
+  }
+
+  if(!is.logical(flextableformat)){
+    stop("Argument flextableformat must be a logical operator")
+  }
+
   var_cont<-c(colnames(data %>% select_if(is.numeric)))
 
   resultados<-list()
@@ -33,7 +46,7 @@ auto_shapiro_raw <- function(data, flextableformat= TRUE){
         Normality=  paste(ifelse(shapiro_p>0.05, "Normal", "Non-normal" ))
       )
     } else {
-      cat("\nLa variable", var1, "no esta presente en la base de datos.\n")
+      cat("\nVariable", var1, "is not present in provided dataframe\n")
     }
   }
 

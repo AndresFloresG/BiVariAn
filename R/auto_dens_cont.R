@@ -1,6 +1,6 @@
 #' @import ggplot2
 #' @import ggprism
-#' @import table1
+#' @importFrom table1 label
 #' @name auto_dens_cont
 #' @author JMCR
 #' @title auto_dens_cont
@@ -18,8 +18,24 @@
 #' @param lt_median Linetype of the line indicating the median. Default is "dotdash".
 #' @param lw_mean Linewidth of the line indicating the mean. Default is 1.
 #' @param lw_median Linewidth of the line indicating the mean. Default is 1.
-#'
+#' @param lang_labs Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"
 #' @returns Returns a list containing the generated density plots
+#'
+#' @examples
+#' data <- data.frame(group = rep(letters[1:2], 30),
+#' var1 = rnorm(30, mean = 15, sd = 5),
+#' var2 = rnorm(30, mean = 20, sd = 2),
+#' var3 = rnorm(30, mean = 10, sd = 1),
+#' var4 = rnorm(30, mean = 5, sd =2))
+#'
+#' data$group<-as.factor(data$group)
+#'
+#' densityplots <- auto_dens_cont(data = data)
+#'
+#' densityplots
+#'
+#' densityplots$var1
+#'
 #'
 #' @export
 #'
@@ -34,7 +50,8 @@ auto_dens_cont <- function(data,
                            lw_mean = 1,
                            lw_median = 1,
                            densplot_args = list(),
-                           theme_func = theme_serene) {
+                           theme_func = theme_serene,
+                           lang_labs = c("EN", "SPA")) {
   # Verificar que el argumento de tema sea una funcion
   if (!is.function(theme_func)) {
     stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
@@ -46,14 +63,27 @@ auto_dens_cont <- function(data,
   # Lista para almacenar las graficas
   grafdenscon <- list()
 
+  if(any(is.null(lang_labs) | lang_labs == "SPA")){
+    titlab1 = "Gr\u00e1fica de densidades de"
+    captionmean_cap = "Linea roja: Media"
+    captionmedian_cap = "Linea azul: Mediana"
+    ylabs = "Densidad"
+  } else if (lang_labs == "EN"){
+    titlab1 = "Bar plot of"
+    captionmean_cap = "Red line: Mean"
+    captionmedian_cap = "Blue line: Median"
+    ylabs = "Density"
+  }
+
+
   # Bucle para generar las graficas
   for (contvar in contvariables) {
     if (contvar %in% names(data)) {
       # Calcular media y mediana si estan activadas
       meanlabel <- if (s_mean) mean(data[[contvar]], na.rm = TRUE) else NULL
       medianlabel <- if (s_median) median(data[[contvar]], na.rm = TRUE) else NULL
-      captionmean <- if (s_mean) "Linea roja: Media" else NULL
-      captionmedian<- if (s_median) "Linea azul: Mediana" else NULL
+      captionmean <- if (s_mean) captionmean_cap else NULL
+      captionmedian<- if (s_median) captionmedian_cap else NULL
 
       # Obtener la etiqueta de la variable o usar el nombre de la variable si no hay etiqueta
       lab_graf <- if (!is.null(label(data[[contvar]]))) label(data[[contvar]]) else contvar
@@ -81,9 +111,9 @@ auto_dens_cont <- function(data,
       # Etiquetas y personalizacion
       p <- p +
         ggplot2::labs(
-          title = paste("Distribucion de", lab_graf),
+          title = paste(titlab1, lab_graf),
           x = lab_graf,
-          y = "Densidad",
+          y = ylabs,
           caption = paste(captionmean, "\n", captionmedian)
         ) +
         theme_func() +

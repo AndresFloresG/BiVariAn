@@ -9,18 +9,24 @@ continuous_2g_2sid(data, groupvar, flextableformat = TRUE)
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}
 
-\item{groupvar}{Grouping variable. Must have exactly 2 levels.}
+\item{groupvar}{Grouping variable as character. Must have exactly 2 levels.}
 
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
+}
+\value{
+Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or T test, along with Shapiro-Wilk's p values and Levene's p value.
 }
 \description{
 Generates a HTML table of bivariate analysis for 2 groups.
 }
 \examples{
- # Not run
- # continuous_2g_2sid(dataframe, groupvar="group")
- library(riskCommunicator)
+ data <- data.frame(group = rep(letters[1:2], 30),
+ var1 = rnorm(30, mean = 15, sd = 5),
+ var2 = rnorm(30, mean = 20, sd = 2),
+ var3 = rnorm(30, mean = 10, sd = 1),
+ var4 = rnorm(30, mean = 5, sd =2))
 
- continuous_2g_2sid(cvdd, "SEX")
- continuous_2g_2sid(cvdd, "SEX", flextableformat = FALSE)
+ data$group<-as.factor(data$group)
+
+ conttable <- continuous_2g_2sid(data = data, groupvar = "group")
 }

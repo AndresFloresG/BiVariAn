@@ -22,3 +22,23 @@ Format 3: Fishers exact test with statistical significance. Conditions: Minimum 
 \description{
 It automatically writes a generic interpretation for the Chi-square test or Fisher's exact test as appropriate. In addition, it prints the contingency table for the variables included, as well as the raw statistical tests. Currently it only returns text in Spanish, more languages are planned to be added in the future.
 }
+\examples{
+df <- data.frame(
+has = c("Yes", "No", "Yes", "Yes", "No", "No", "Yes"),
+smoke = c("Yes", "No", "No", "Yes", "No", "Yes", "No"),
+gender = c("Male", "Female", "Male", "Female", "Female", "Male", "Male"))
+df$has <- as.factor(df$has)
+df$smoke <- as.factor(df$smoke)
+df$gender <- as.factor(df$gender)
+
+# Set a value as reference level
+
+df$has <- relevel(df$has, ref= "Yes")
+df$smoke <- relevel(df$smoke, ref= "Yes")
+df$gender <- relevel(df$gender, ref= "Female")
+
+interp_dicot_2k_2sid(data = df, var1 = "smoke", var2 = "gender")
+
+
+
+}

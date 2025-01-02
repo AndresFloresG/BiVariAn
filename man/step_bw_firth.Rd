@@ -11,8 +11,7 @@ step_bw_firth(
   trace = TRUE,
   steps = NULL,
   p_threshold = 0.05,
-  data = NULL,
-  ...
+  data = NULL
 )
 }
 \arguments{
@@ -22,16 +21,41 @@ step_bw_firth(
 
 \item{s_upper}{Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)}
 
-\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE}
+\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the "logistf" class are designed to print on the console when the "summary" function is used. Since this function repeatedly uses the "summary" function, some part of the process will be printed on the console even when "trace" is set to FALSE.}
 
 \item{steps}{Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.}
 
 \item{p_threshold}{Treshold of p value. Default is 0.05}
 
 \item{data}{Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.}
-
-\item{...}{Arguments passed to Anova function from the "car" package}
+}
+\value{
+An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
 }
 \description{
 Extension code to perform stepwise backward to a logistf model with categorical variables. Automatically transforms predictors of the model which are factors to dummy variables.
+}
+\examples{
+
+library(logistf)
+
+data<-mtcars
+data$am<-as.factor(data$am)
+
+regression_model<-logistf::logistf(am~mpg+cyl+disp, data=data)
+stepwise<-step_bw_firth(regression_model, trace=FALSE)
+
+final_stepwise_model<-stepwise$final_model
+
+# Show steps
+stepwise$steps
+
+summary(final_stepwise_model)
+
+
+}
+\references{
+Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
+
+Ullmann T, Heinze G, Hafermann L, Schilhart-Wallisch C, Dunkler D, et al. (2024) Evaluating variable selection methods for multivariable regression models: A simulation study protocol. PLOS ONE 19(8): e0308543
 }

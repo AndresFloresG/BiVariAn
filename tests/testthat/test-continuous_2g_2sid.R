@@ -27,7 +27,7 @@ test_that("continuous_2g_2sid funciona correctamente", {
     var2 = c(30, 35, 40, 45)
   )
 
-  expect_snapshot_warning(resultados_insufficient <- continuous_2g_2sid(data_insufficient, groupvar = "group", flextableformat = FALSE))
+  expect_snapshot(resultados_insufficient <- continuous_2g_2sid(data_insufficient, groupvar = "group", flextableformat = FALSE))
 
 
   # Verificar que el resultado contenga NA para todas las métricas
@@ -66,5 +66,5 @@ test_that("continuous_2g_2sid funciona correctamente", {
   expect_true(inherits(resultados_flextable, "flextable"))
 
   # Caso 6: Validacion de errores
-  expect_error(continuous_2g_2sid(data.frame(), groupvar = "group"), "La variable de agrupacion debe tener al menos dos niveles con observaciones.")
+  expect_error(continuous_2g_2sid(data.frame(), groupvar = "group"), "group is not in the provided dataframe")
 })

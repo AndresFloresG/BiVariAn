@@ -8,7 +8,8 @@ continuous_corr_test(
   data,
   referencevar,
   alternative = NULL,
-  flextableformat = TRUE
+  flextableformat = TRUE,
+  corr_test = c("all", "pearson", "spearman", "kendall")
 )
 }
 \arguments{
@@ -18,8 +19,38 @@ continuous_corr_test(
 
 \item{alternative}{Alternative for cor.test. Must be either "two.sided", "geater" or "less"}
 
-\item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
+\item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format. Because the function calculates different statistics for each correlation (specially in kendall correlation test), it may take some time to run. You can select individual variables using the pipe operator and the select function to run correlations only on the selected variables.}
+
+\item{corr_test}{Correlation test to be performed}
+}
+\value{
+A dataframe or flextable containing pvalues for correlation tests along with the normality and homocedasticity tests p values
 }
 \description{
 Automatic correlation analyses for continuous variables with one variable as reference.
+}
+\examples{
+# example code
+
+data <- data.frame(group = rep(letters[1:2], 15),
+var1 = rnorm(30, mean = 15, sd = 5),
+var2 = rnorm(30, mean = 20, sd = 2),
+var3 = rnorm(30, mean = 10, sd = 1),
+var4 = rnorm(30, mean = 5, sd =2))
+
+data$group<-as.factor(data$group)
+
+continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+
+\dontrun{# Example performing correlation test for only one variable
+
+continuous_corr_test(data = data \%>\% select("var1","var2"),
+ referencevar = "var1", flextableformat = FALSE)}
+
+# Example performing only pearson correlation test
+continuous_corr_test(data = data, referencevar = "var1",
+ flextableformat = FALSE, corr_test = "pearson")
+
+
+
 }

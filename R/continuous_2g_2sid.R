@@ -7,27 +7,47 @@
 #' @description
 #'   Generates a HTML table of bivariate analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.
-#' @param groupvar Grouping variable. Must have exactly 2 levels.
+#' @param groupvar Grouping variable as character. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
-#' @examples
-#'  # Not run
-#'  # continuous_2g_2sid(dataframe, groupvar="group")
-#'  library(riskCommunicator)
+#' @returns
+#' Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or T test, along with Shapiro-Wilk's p values and Levene's p value.
 #'
-#'  continuous_2g_2sid(cvdd, "SEX")
-#'  continuous_2g_2sid(cvdd, "SEX", flextableformat = FALSE)
+#'
+#' @examples
+
+#'  data <- data.frame(group = rep(letters[1:2], 30),
+#'  var1 = rnorm(30, mean = 15, sd = 5),
+#'  var2 = rnorm(30, mean = 20, sd = 2),
+#'  var3 = rnorm(30, mean = 10, sd = 1),
+#'  var4 = rnorm(30, mean = 5, sd =2))
+#'
+#'  data$group<-as.factor(data$group)
+#'
+#'  conttable <- continuous_2g_2sid(data = data, groupvar = "group")
 
 
 
 #' @export
 continuous_2g_2sid <- function(data, groupvar, flextableformat = TRUE) {
+  if(!is.data.frame(data)){
+    stop("Data must be a data.frame object")
+  }
+
+  if(is.character(flextableformat) || !is.logical(flextableformat)){
+    stop("flextableformat argument must be a logical operator")
+  }
+
+  if(!(groupvar %in% names(data))){
+    stop(groupvar, " is not in the provided dataframe")
+  }
+
   # Convertir la variable de agrupacion en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
   alternative<- c("two.sided")
 
   # Verificar que la variable de agrupacion tiene al menos dos niveles
-  if (length(levels(data[[groupvar]])) < 2) {
-    stop("La variable de agrupacion debe tener al menos dos niveles con observaciones.")
+  if (!length(levels(data[[groupvar]])) == 2) {
+    stop("Grouping variable must have exactly 2 levels")
   }
 
   # Seleccionar variables continuas del dataframe

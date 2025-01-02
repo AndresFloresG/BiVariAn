@@ -12,11 +12,36 @@
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @returns A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
+#'
+#'
+#' @examples
+#' data <- data.frame(group = rep(letters[1:2], 30),
+#'                    var1 = rnorm(30, mean = 15, sd = 5),
+#'                   var2 = rnorm(30, mean = 20, sd = 2),
+#'                   var3 = rnorm(30, mean = 10, sd = 1),
+#'                   var4 = rnorm(30, mean = 5, sd =2))
+#' data$group<-as.factor(data$group)
+#'
+#' continuous_2g_pair(data = data, groupvar = "group")
 #'
 #'
 #' @export
 
 continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
+
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
+  if(!(groupvar %in% names(data))){
+    stop(groupvar, " is not in provided dataframe")
+  }
+
+  if(is.character(flextableformat) | !is.logical(flextableformat)){
+    stop("flextableformat must be a logical operator")
+  }
+
   # Convertir la variable de agrupacion en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
 

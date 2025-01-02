@@ -14,7 +14,7 @@ interp_continuous_2g(data, groupvar, contvar)
 \item{contvar}{Continuous variable to be contrasted}
 }
 \value{
-It returns as output a generic text according to certain conditions which are as follows:
+It returns as output in console a generic text according to certain conditions which are as follows:
 Format 1: Student's t-test with statistical significance. Conditions: Normality of model residuals, homogeneity of variances, p-value of the t-test<0.05.
 Format 2: Student's t-test without statistical significance. Conditions: Normality of model residuals, homogeneity of variances, p-value>0.05.
 Format 3: Welch's t-test with statistical significance. Conditions: Normality of model residuals, no homogeneity of variances, p-value<0.05.
@@ -24,4 +24,13 @@ Format 6: Mann-Withnney U test without statistical significance. Conditions: Non
 }
 \description{
 Automatically writes a generic interpretation for the Student's t-test, Welch's t-test or Mann Whitney U-test. The wording only considers the alternative "two.sided" and the argument "paired" as "FALSE". Currently only the Spanish text is returned, more languages are planned to be added in the future.
+}
+\examples{
+data(mtcars)
+data<-mtcars
+
+data$am <- as.factor(data$am)
+interp_continuous_2g(mtcars, "am", "disp")
+
+
 }

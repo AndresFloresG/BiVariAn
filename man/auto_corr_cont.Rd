@@ -26,8 +26,27 @@ auto_corr_cont(
 
 \item{lang_labs}{Language to display title lab. Default is Spanish.}
 }
+\value{
+Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+}
 \description{
 Automatically generates correlation plots of continuous variables from a database and a reference variable. The names of the variables are set to the names defined in the database. As a result, graphs generated with the default theme "theme_serene" will be obtained. In this function, the user must define each variable label with "label" function from "table1" package
+}
+\examples{
+data <- data.frame(group = rep(letters[1:2], 30),
+var1 = rnorm(30, mean = 15, sd = 5),
+var2 = rnorm(30, mean = 20, sd = 2),
+var3 = rnorm(30, mean = 10, sd = 1),
+var4 = rnorm(30, mean = 5, sd =2))
+
+cont_corrplot <- auto_corr_cont(data = data, referencevar = "var1", lang_labs = "EN")
+
+# Call to show all storaged plots
+cont_corrplot
+
+# Call to show one individual plot
+cont_corrplot$var2
+
 }
 \author{
 JMCR

@@ -13,12 +13,25 @@ ss_multreg(df, prop, logistic = FALSE)
 
 \item{logistic}{Logical operator to indicate wether the planned regression analysis is a logistic regression or not.}
 }
+\value{
+Prints in console the sample size calculation for a regression analysis.
+}
 \description{
 Calculates the recommended sample size for a multiple regression analysis.
 }
 \examples{
 
+# Lineal multiple regression with 4 degrees of freedom
 ss_multreg(4, logistic = FALSE)
+
+# Logistic multiple regression with 4 degrees of freedom
+# and 60\% of probability of the event
+
 ss_multreg(4, prop = .6, logistic = TRUE)
 
+}
+\references{
+Peduzzi P, Concato J, Kemper E, Holford TR, Feinstein AR. A simulation study of the number of events per variable in logistic regression analysis. Journal of Clinical Epidemiology. diciembre de 1996;49(12):1373–9.
+
+Pierdant-Pérez M, Patiño-López MI, Flores-García JA, Jacques-García FA. Implementación de un curso virtual de lectura crítica en estudiantes de medicina durante la pandemia COVID-19. Inv Ed Med. el 1 de octubre de 2023;12(48):64–71.
 }
