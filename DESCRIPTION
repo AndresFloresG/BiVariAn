@@ -1,7 +1,7 @@
 Package: BiVariAn
 Type: Package
 Title: Bivariated Automatic Analysis
-Version: 0.1.0.9000
+Version: 1.0.0
 Author: Flores García José Andrés, Gordillo Moscoso Antonio Augusto, Castro Rodríguez Jhoselin Marian
 Maintainer: Flores García JA <andres.flores@uaslp.mx>
 Description: Generates a automatic output for bivariate analysis.
