@@ -35,7 +35,7 @@ Currently under development is the option to generate a generic
 interpretation of the statistical tests, temporarily available only in
 Spanish, but there are plans to include more languages.
 
-n addition to bivariate analyses, regression analyses with predictor
+In addition to bivariate analyses, regression analyses with predictor
 selection using the stepwise backward method for linear, logistic and
 Firth penalized logistic regression models can be performed in an
 automated manner.
@@ -53,6 +53,12 @@ You can install the development version of BiVariAn from
 ``` r
 # install.packages("pak")
 pak::pak("AndresFloresG/BiVariAn")
+```
+
+Or you can install the official CRAN version with:
+
+``` r
+install.packages("BiVariAn")
 ```
 
 ## Example

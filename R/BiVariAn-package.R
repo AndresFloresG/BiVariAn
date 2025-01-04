@@ -2,9 +2,12 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @import rlang
 #' @importFrom DescTools KendallTauB
 #' @importFrom DescTools SpearmanRho
 #' @importFrom fastDummies dummy_cols
+#' @importFrom glue glue
+#' @importFrom lifecycle deprecated
 #' @importFrom logistf logistf
 #' @importFrom magrittr %>%
 #' @importFrom mice mice

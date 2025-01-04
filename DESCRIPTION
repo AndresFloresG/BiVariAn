@@ -1,13 +1,26 @@
-Package: BiVariAn
 Type: Package
+Package: BiVariAn
 Title: Bivariated Automatic Analysis
 Version: 1.0.0
-Author: Flores García José Andrés, Gordillo Moscoso Antonio Augusto, Castro Rodríguez Jhoselin Marian
-Maintainer: Flores García JA <andres.flores@uaslp.mx>
-Description: Generates a automatic output for bivariate analysis.
-License: GPL-2 | GPL-3
-Encoding: UTF-8
-LazyData: true
+Date: 2025-01-01
+Authors@R: c(
+    person("José Andrés", "Flores-García", , "andres.flores@uaslp.mx", role = c("cre", "aut", "cph"),
+           comment = c(ORCID = "0000-0003-0688-3134")),
+    person("Antonio Augusto", "Gordillo-Moscoso", role = "aut",
+           comment = c(ORCID = "0000-0002-7351-4614")),
+    person("Jhoselin Marian", "Castro-Rodriguez", role = "aut",
+           comment = c(ORCID = "0009-0001-0855-4353"))
+  )
+Description: Simplify bivariate and regression analyses by automating
+    result generation, including summary tables, statistical tests, and
+    customizable graphs. It supports tests for continuous and dichotomous
+    data, as well as stepwise regression for linear, logistic, and Firth
+    penalized logistic models.  While not a substitute for tailored
+    analysis, BiVariAn accelerates workflows and is expanding features
+    like multilingual interpretations of results.
+License: GPL (>= 3)
+URL: https://github.com/AndresFloresG/BiVariAn
+BugReports: https://github.com/AndresFloresG/BiVariAn/issues
 Imports: 
     car,
     DescTools,
@@ -17,11 +30,12 @@ Imports:
     fastDummies,
     ggplot2,
     ggprism,
+    glue,
+    lifecycle,
     logistf,
     magrittr,
     mice,
     pak,
-    riskCommunicator,
     rlang,
     rrtable,
     scales,
@@ -31,9 +45,12 @@ Imports:
     tableHTML,
     tidyr,
     utils
-RoxygenNote: 7.3.2
-URL: https://github.com/AndresFloresG/BiVariAn
-BugReports: https://github.com/AndresFloresG/BiVariAn/issues
 Suggests: 
+    riskCommunicator,
+    spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

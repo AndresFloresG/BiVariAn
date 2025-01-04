@@ -8,13 +8,23 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Generates a automatic output for bivariate analysis.
+Simplify bivariate and regression analyses by automating result generation, including summary tables, statistical tests, and customizable graphs. It supports tests for continuous and dichotomous data, as well as stepwise regression for linear, logistic, and Firth penalized logistic models. While not a substitute for tailored analysis, BiVariAn accelerates workflows and is expanding features like multilingual interpretations of results.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/AndresFloresG/BiVariAn}
   \item Report bugs at \url{https://github.com/AndresFloresG/BiVariAn/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: José Andrés Flores-García \email{andres.flores@uaslp.mx} (\href{https://orcid.org/0000-0003-0688-3134}{ORCID}) [copyright holder]
+
+Authors:
+\itemize{
+  \item Antonio Augusto Gordillo-Moscoso (\href{https://orcid.org/0000-0002-7351-4614}{ORCID})
+  \item Jhoselin Marian Castro-Rodriguez (\href{https://orcid.org/0009-0001-0855-4353}{ORCID})
 }
 
 }
