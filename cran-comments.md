@@ -10,7 +10,7 @@
   them becoming unavailable.  Move as many as possible to Suggests and
   use conditionally.
   
-  This package depends directly on the imported libraries, since it automates 
-  data manipulation procedures, variable analysis and graphical representation, 
-  so the included libraries are recommended to be included in the dependencies 
-  section and not in suggest.
+  This package depends directly on the imported libraries, since it automates
+  data manipulation procedures, variable analysis and graphical
+  representation, so the included libraries are recommended to be included in
+  the dependencies section and not in suggest.

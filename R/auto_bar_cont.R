@@ -11,13 +11,19 @@
 #' @description
 #' Generates bar plots of contiuous variables based on numerical variables from a data frame. Internally, the function creates a tibble to summarize the data from each variable.
 #'
+#'
 #' @param data Name of the dataframe
 #' @param groupvar Grouping variable
 #' @param err_bar_show Logical indicator. Default TRUE show error bars in columns. Default is TRUE
 #' @param err_bar Statistic to be shown as error bar. Can be "sd" for standard deviation or "se" for standard error. Defauult is "se".
+#' @param col_args Arguments to be passed to `geom_col` inside the function. Default arguments are:
+#' * fill="grey"
+#' * color = "black"
+#' * alpha = 0.8
 #' @param lang_labs Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"
+#' @param theme_func Theme of the generated plots. Must be the name of the function without parenthesis. Use for example: `theme_minimal` instead of `theme_minimal()`
 #'
-#' @return Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+#' @return Returns a list containing barplots as ggplot2 objects. Objects can be accessed via `$` operator.
 #'
 #' @examples
 #' data <- data.frame(group = rep(letters[1:2], 30),
@@ -43,7 +49,13 @@ auto_bar_cont<-function(data,
                         groupvar,
                         err_bar_show = TRUE,
                         err_bar = c("sd", "se"),
-                        lang_labs = c("EN", "SPA")) {
+                        col_args = list(),
+                        lang_labs = c("EN", "SPA"),
+                        theme_func = theme_serene) {
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
   if (!groupvar %in% names(data)) {
     stop("The grouping variable must be a column in the data frame.")
   }
@@ -57,6 +69,13 @@ auto_bar_cont<-function(data,
     err_bar = "se"
   }else err_bar
 
+  default_col_args <- list(fill="grey", color = "black", alpha = 0.8)
+
+  if(length(col_args) == 0){
+    col_args = default_col_args
+  } else {
+    col_args = modifyList(default_col_args, col_args)
+  }
 
   if(any(is.null(lang_labs) | lang_labs == "SPA")){
       titlab1 = "Bar plot de"
@@ -64,12 +83,14 @@ auto_bar_cont<-function(data,
       caption = "Barras de error representan"
       captionerror = "error est\u00e1ndar"
       captionsdev = "desviaci\u00f3n est\u00e1ndar"
+      lab_yvar = "(Media)"
     } else if (lang_labs == "EN"){
       titlab1 = "Bar plot of"
       titlab2 = "by"
       caption = "Error bar represents"
       captionerror = "standard error"
       captionsdev = "standard deviation"
+      lab_yvar = "(Mean)"
     }
 
   lab_groupvar <- if (!is.null(table1::label(data[[groupvar]]))){
@@ -103,14 +124,14 @@ auto_bar_cont<-function(data,
       )
 
     p <- ggplot2::ggplot(data_summary, aes(x = .data[[groupvar]], y = mean_value)) +
-      ggplot2::geom_col(fill="grey", color = "black", alpha = 0.8)+
+      do.call(ggplot2::geom_col, col_args)+
       ggplot2::labs(
-        y = paste(lab_var, "(Media)"),
-        x = groupvar,
+        y = paste(lab_var, lab_yvar),
+        x = lab_groupvar,
         title = paste(titlab1, lab_var, titlab2, lab_groupvar)
       ) +
       ggplot2::scale_y_continuous(limits = c(0, data_summary$mean_value + 5))+
-      theme_serene()
+      theme_func()
 
     if (err_bar_show && err_bar == "se") {
       p <- p +

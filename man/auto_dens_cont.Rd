@@ -8,12 +8,8 @@ auto_dens_cont(
   data,
   s_mean = TRUE,
   s_median = TRUE,
-  c_mean = "red",
-  c_median = "blue",
-  lt_mean = "solid",
-  lt_median = "dotdash",
-  lw_mean = 1,
-  lw_median = 1,
+  mean_line_args = list(),
+  median_line_args = list(),
   densplot_args = list(),
   theme_func = theme_serene,
   lang_labs = c("EN", "SPA")
@@ -26,17 +22,19 @@ auto_dens_cont(
 
 \item{s_median}{Show median. Logical operator to indicate if the median should be plotted. Default is TRUE}
 
-\item{c_mean}{Color of the line indicating the mean. Default is red.}
+\item{mean_line_args}{Arguments to be passed to \code{geom_vline()} of plotted median line when \code{s_mean = TRUE}. Default arguments are:
+\itemize{
+\item color = "red"
+\item linetype="solid"
+\item linewidth = 1
+}}
 
-\item{c_median}{Color of the line indicating the median. Default is blue.}
-
-\item{lt_mean}{Linetype of the line indicating the mean. Default is "solid".}
-
-\item{lt_median}{Linetype of the line indicating the median. Default is "dotdash".}
-
-\item{lw_mean}{Linewidth of the line indicating the mean. Default is 1.}
-
-\item{lw_median}{Linewidth of the line indicating the mean. Default is 1.}
+\item{median_line_args}{Arguments to be passed to \code{geom_vline()} of plotted median line when \code{s_median = TRUE}. Default arguments are:
+\itemize{
+\item color = "blue"
+\item linetype = "dotdash"
+\item linewidth = 1
+}}
 
 \item{densplot_args}{List of arguments to be passed to "geom_density"}
 

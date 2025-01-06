@@ -30,7 +30,7 @@ step_bw_p(
 
 \item{data}{Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.}
 
-\item{...}{Arguments passed to Anova function from the "car" package}
+\item{...}{Arguments passed to \code{\link[car:Anova]{car::Anova()}} function.}
 }
 \value{
 An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator

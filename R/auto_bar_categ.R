@@ -10,8 +10,12 @@
 #'
 #' @param data Name of the dataframe
 #' @param groupvar Name of the grouping variable. Grouping variable will be used in "fill" for aesthetics argument in the creation of each ggplot object. If not provided, the function take each variable as grouping and does not display the "fill" legend.
-#' @param bar_args List of arguments to be passed to "geom_bar"
-#' @param theme_func Theme of the generated plots
+#' @param bar_args List of arguments to be passed to "geom_bar". If `NULL`, the function uses default arguments such as:
+#' * position = "dodge"
+#' * colour = "black"
+#' * linewidth = 0.9
+#' * alpha = 0.5
+#' @param theme_func Theme of the generated plots. Must be the name of the function without parenthesis. Use for example: `theme_minimal` instead of `theme_minimal()`
 #' @param lang_labs Language of displayed labels. If null, default is spanish.
 #' @param showpercent Logical atribute to indicate if the graph should include percentages
 #'
@@ -23,6 +27,7 @@
 #' var2 = rep(LETTERS[6:7], 10),
 #' var3 = rep(LETTERS[8:9], 10),
 #' var4 = rep(LETTERS[10:11], 10))
+#'
 #' data$categ <- as.factor(data$categ)
 #' data$var1 <- as.factor(data$var1)
 #' data$var2 <- as.factor(data$var2)
@@ -49,10 +54,13 @@ auto_bar_categ <- function(data,
     stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
   }
 
-  if (length(bar_args) == 0) bar_args=list(position = "dodge",
-                                   colour = "black",
-                                   linewidth = 0.9,
-                                   alpha = 0.5) else bar_args
+  if (!groupvar %in% names(data)) {
+    stop("The grouping variable must be a column in the data frame.")
+  }
+
+  if (!is.factor(data[[groupvar]]) && !is.character(data[[groupvar]])) {
+    stop("The grouping variable must be categorical.")
+  }
 
   if (any(is.null(lang_labs) | lang_labs == "SPA")){
     titlelab = "Distribuci\u00f3n de"
@@ -60,6 +68,22 @@ auto_bar_categ <- function(data,
   } else if(lang_labs == "EN"){
     titlelab = "Distribution of"
     ylabs= "Frequency"
+  }
+
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
+  bar_args_default <- list(position = "dodge",
+                           colour = "black",
+                           linewidth = 0.9,
+                           alpha = 0.5)
+
+
+  if(length(bar_args) == 0) {
+    bar_args = bar_args_default
+  } else {
+    bar_args = modifyList(bar_args_default, bar_args)
   }
 
   if(!is.null(groupvar)){

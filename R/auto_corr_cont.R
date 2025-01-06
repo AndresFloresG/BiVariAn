@@ -35,7 +35,7 @@
 #' @export
 
 auto_corr_cont<- function(data,
-                          referencevar,
+                          referencevar = NULL,
                           point_args=list(),
                           smooth_args=list(),
                           theme_func = theme_serene,
@@ -43,12 +43,36 @@ auto_corr_cont<- function(data,
 
 
   if (!is.function(theme_func)) {
-    stop("El argumento 'theme_func' debe ser una funcion de tema valida")
+    stop("Argument 'theme_func' must be a valid function")
   }
 
-  if (length(point_args) == 0) point_args=list(stat="identity") else point_args
+  if(is.null(referencevar)){
+    stop("referencevar cannot be NULL")
+  }
 
-  if (length(smooth_args) == 0) smooth_args=list(method="lm") else smooth_args
+  if(!(referencevar %in% names(data))){
+    stop("referencevar is not in database")
+  }
+
+  if (!is.numeric(data[[referencevar]])) {
+    stop("referencevar variable must be numerical.")
+  }
+
+  default_point_args <- list(stat = "identity")
+  default_smooth_args <- list(method = "lm")
+
+
+  if (length(point_args) == 0){
+    point_args = default_point_args
+  } else {
+    point_args = modifyList(default_point_args, point_args)
+  }
+
+  if (length(smooth_args) == 0){
+    smooth_args = default_smooth_args
+  } else {
+    smooth_args = modifyList(default_smooth_args, smooth_args)
+  }
 
   if (any(is.null(lang_labs) | lang_labs == "SPA" )){
     titleleg1 <- paste("Correlaci\u00f3n entre")
@@ -59,9 +83,6 @@ auto_corr_cont<- function(data,
     titleleg2 <- paste("and")
   }
 
-  if(is.null(referencevar) && !(referencevar %in% names(data))){
-    stop("Reference var is not in database")
-  }
 
 
   cont_var <- colnames(data) [sapply(data, function(x) is.numeric(x) && !identical(x, data[[referencevar]]))]

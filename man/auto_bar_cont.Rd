@@ -9,7 +9,9 @@ auto_bar_cont(
   groupvar,
   err_bar_show = TRUE,
   err_bar = c("sd", "se"),
-  lang_labs = c("EN", "SPA")
+  col_args = list(),
+  lang_labs = c("EN", "SPA"),
+  theme_func = theme_serene
 )
 }
 \arguments{
@@ -21,10 +23,19 @@ auto_bar_cont(
 
 \item{err_bar}{Statistic to be shown as error bar. Can be "sd" for standard deviation or "se" for standard error. Defauult is "se".}
 
+\item{col_args}{Arguments to be passed to \code{geom_col} inside the function. Default arguments are:
+\itemize{
+\item fill="grey"
+\item color = "black"
+\item alpha = 0.8
+}}
+
 \item{lang_labs}{Language of the resulting plots. Can be "EN" for english or "SPA" for spanish. Default is "SPA"}
+
+\item{theme_func}{Theme of the generated plots. Must be the name of the function without parenthesis. Use for example: \code{theme_minimal} instead of \code{theme_minimal()}}
 }
 \value{
-Returns a list containing barplots as ggplot2 objects. Objects can be accessed via $ operator.
+Returns a list containing barplots as ggplot2 objects. Objects can be accessed via \code{$} operator.
 }
 \description{
 Generates bar plots of contiuous variables based on numerical variables from a data frame. Internally, the function creates a tibble to summarize the data from each variable.

@@ -34,6 +34,7 @@
 #' @importFrom stats wilcox.test
 #' @importFrom stringi stri_detect_fixed
 #' @importFrom tidyr pivot_wider
+#' @importFrom utils modifyList
 #' @importFrom utils packageVersion
 #' @importFrom utils read.delim
 ## usethis namespace: end

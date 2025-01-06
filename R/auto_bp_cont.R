@@ -45,6 +45,10 @@ auto_bp_cont <- function(data,
     stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
   }
 
+  if(!is.data.frame(data)){
+    stop("data must be a data.frame object")
+  }
+
   if(any(is.null(lang_labs) | lang_labs == "SPA")){
     titlab1 = "Box plot de"
     titlab2 = "por"
@@ -53,6 +57,24 @@ auto_bp_cont <- function(data,
     titlab2 = "by"
   }
 
+  if (!groupvar %in% names(data)) {
+    stop("The grouping variable must be a column in the data frame.")
+  }
+
+  if (!is.factor(data[[groupvar]]) && !is.character(data[[groupvar]])) {
+    stop("The grouping variable must be categorical.")
+  }
+
+  default_bp_args <- list(
+    fill = "white",
+    alpha = 0
+  )
+
+  if(length(boxplot_args) == 0){
+    boxplot_args = default_bp_args
+  } else {
+    boxplot_args = modifyList(default_bp_args, boxplot_args)
+  }
 
   # Identificar variables continuas
   variables_continuas <- colnames(data %>% select_if(is.numeric))

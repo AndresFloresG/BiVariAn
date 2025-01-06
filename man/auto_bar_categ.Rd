@@ -18,9 +18,15 @@ auto_bar_categ(
 
 \item{groupvar}{Name of the grouping variable. Grouping variable will be used in "fill" for aesthetics argument in the creation of each ggplot object. If not provided, the function take each variable as grouping and does not display the "fill" legend.}
 
-\item{bar_args}{List of arguments to be passed to "geom_bar"}
+\item{bar_args}{List of arguments to be passed to "geom_bar". If \code{NULL}, the function uses default arguments such as:
+\itemize{
+\item position = "dodge"
+\item colour = "black"
+\item linewidth = 0.9
+\item alpha = 0.5
+}}
 
-\item{theme_func}{Theme of the generated plots}
+\item{theme_func}{Theme of the generated plots. Must be the name of the function without parenthesis. Use for example: \code{theme_minimal} instead of \code{theme_minimal()}}
 
 \item{lang_labs}{Language of displayed labels. If null, default is spanish.}
 
@@ -38,6 +44,7 @@ var1 = rep(LETTERS[4:5], 10),
 var2 = rep(LETTERS[6:7], 10),
 var3 = rep(LETTERS[8:9], 10),
 var4 = rep(LETTERS[10:11], 10))
+
 data$categ <- as.factor(data$categ)
 data$var1 <- as.factor(data$var1)
 data$var2 <- as.factor(data$var2)

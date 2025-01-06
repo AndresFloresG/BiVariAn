@@ -6,7 +6,7 @@
 \usage{
 auto_corr_cont(
   data,
-  referencevar,
+  referencevar = NULL,
   point_args = list(),
   smooth_args = list(),
   theme_func = theme_serene,

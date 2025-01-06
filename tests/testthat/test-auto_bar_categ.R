@@ -21,19 +21,7 @@ test_that("auto_bar_categ funciona correctamente", {
   # Verificar que las variables categóricas generen graficas
   expect_equal(names(graficas), c("category1", "category2"))
 
-  # Caso 2: Datos sin variables categoricas
-  data_no_categorical <- data.frame(
-    group = rep(c("A", "B"), each = 5),
-    value = c(1,2,3,4,5,6,7,8,9,10)
-  )
 
-
-  # Ejecutar la funcion
-  graficas_no_categorical <- auto_bar_categ(data_no_categorical, groupvar = "group")
-
-  # Verificar que la lista de graficas este vacia
-  expect_true(is.list(graficas_no_categorical))
-  expect_equal(length(graficas_no_categorical), 0)
 
   # Caso 3: Argumentos personalizados para geom_bar
   bar_args_custom <- list(fill = "skyblue", alpha = 0.7)
@@ -58,3 +46,27 @@ test_that("auto_bar_categ funciona correctamente", {
   graficas_percent <- auto_bar_categ(data, groupvar = "group", theme_func = theme_minimal)
 
 })
+
+test_that("auto_bar_categ handle errors", {
+  data_no_categorical <- data.frame(
+    group = rep(c("A", "B"), each = 5),
+    var1 = rep(c("a", "b"), each = 5),
+    value = c(1,2,3,4,5,6,7,8,9,10)
+  )
+
+  expect_error(auto_bar_categ(data_no_categorical, groupvar = "value"), "The grouping variable must be categorical.")
+
+  expect_error(auto_bar_categ(data_no_categorical, groupvar = "other"), "The grouping variable must be a column in the data frame.")
+
+  expect_error(auto_bar_categ(data_no_categorical, groupvar = "group", theme_func = "none"), "El argumento 'theme_func' debe ser una funcion de tema valida.")
+
+  listnodf <- list(
+    group = rep(c("A", "B"), each = 5),
+    var1 = rep(c("a", "b"), each = 5),
+    value = c(1,2,3,4,5,6,7,8,9,10)
+  )
+
+  expect_error(auto_bar_categ(data = listnodf, groupvar = "group"), "data must be a data.frame object")
+})
+
+

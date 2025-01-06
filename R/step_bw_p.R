@@ -10,7 +10,7 @@
 #' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
 #' @param p_threshold Treshold of p value. Default is 0.05
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
-#' @param ... Arguments passed to Anova function from the "car" package
+#' @param ... Arguments passed to [car::Anova()] function.
 #'
 #' @returns An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
 #'

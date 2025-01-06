@@ -55,10 +55,17 @@ auto_pie_categ <- function(data,
   } else stat_lab = stat_lab
 
 
-  if (length(pie_bar_args) == 0) pie_bar_args <- list(stat = "identity",
-                                                      colour = "black",
-                                                      linewidth = 0.9,
-                                                      alpha = 0.5)
+  default_pie_bar_args <- list(stat = "identity",
+                               colour = "black",
+                               linewidth = 0.9,
+                               alpha = 0.5)
+
+
+ if (length(pie_bar_args) == 0){
+   pie_bar_args = default_pie_bar_args
+ } else {
+   pie_bar_args = modifyList(default_pie_bar_args, pie_bar_args)
+ }
 
   if (any(is.null(lang_labs) | lang_labs == "SPA")) {
     titlelab <- "Distribuci\u00f3n de"
