@@ -1,8 +1,5 @@
 #' @import dplyr
 #' @importFrom rrtable df2flextable
-#'
-#' @importFrom tableHTML tableHTML
-#' @importFrom tableHTML add_theme
 #' @author JAFG
 #' @name auto_shapiro_raw
 #' @aliases auto_shapiro_raw

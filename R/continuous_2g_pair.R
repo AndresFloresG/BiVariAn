@@ -5,11 +5,12 @@
 #' @name continuous_2g_pair
 #' @aliases continuous_2g_pair
 #' @title Bivariate analysis for 2 groups for paired data
-#' @usage continuous_2g_pair(data, groupvar, flextableformat)
 #' @description
-#'   Generates a HTML table of bivariate analysis for 2 groups. (In development)
+#'   Generates a HTML table of bivariate paired analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
+#' @param ttest_args Arguments to be passed to `t.test()` function.
+#' @param wilcox_args Arguments to be passed to `wilcox.test()` function.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #' @returns A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
 #'
@@ -27,7 +28,11 @@
 #'
 #' @export
 
-continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
+continuous_2g_pair <- function(data,
+                               groupvar,
+                               ttest_args = list(),
+                               wilcox_args = list(),
+                               flextableformat = TRUE){
 
   if(!is.data.frame(data)){
     stop("data must be a data.frame object")
@@ -37,11 +42,44 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
     stop(groupvar, " is not in provided dataframe")
   }
 
-  if(is.character(flextableformat) | !is.logical(flextableformat)){
+  if(is.character(flextableformat) || !is.logical(flextableformat)){
     stop("flextableformat must be a logical operator")
   }
 
-  # Convertir la variable de agrupacion en factor
+  if("paired" %in% names(ttest_args) || "paired" %in% names(wilcox_args)){
+    warning("\nThe argument 'paired' provided will be ignored")
+  }
+
+  valid_alternative <- c("two.sided", "less", "greater")
+
+  if(all("alternative" %in% names(ttest_args))){
+    if(!all(ttest_args$alternative %in% valid_alternative)){
+      stop("Invalid alternative. Allowed alternatives are: two.sided, less, greater")
+    }
+  }
+
+  if(all("alternative" %in% names(wilcox_args))){
+    if(!all(wilcox_args$alternative %in% valid_alternative)){
+      stop("Invalid alternative. Allowed alternatives are: two.sided, less, greater")
+    }
+  }
+
+  default_pair_args <- list(paired = TRUE, conf.int = TRUE, na.action = na.pass)
+
+  if(length(ttest_args) == 0){
+    ttest_args = default_pair_args
+  } else {
+    ttest_args = modifyList(default_pair_args, ttest_args)
+  }
+
+  if(length(wilcox_args) == 0){
+    wilcox_args = default_pair_args
+  } else {
+    wilcox_args = modifyList(default_pair_args, wilcox_args)
+  }
+
+
+    # Convertir la variable de agrupacion en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
 
   # Verificar que la variable de agrupacion tiene exactamente dos niveles
@@ -63,7 +101,7 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
   }))
 
   if (has_na_discrepancy) {
-    cat("The length of one of the groups is mismatched, function will proceed with na removing.", "\nComparison columns has NAs, cannot compute t test nor mean differences\n\n")
+    warning("The length of one of the groups is mismatched, function will proceed with na removing.", "\nComparison columns has NAs, cannot compute t test nor mean differences\n\n")
 
   }
 
@@ -107,13 +145,15 @@ continuous_2g_pair <- function(data, groupvar, flextableformat = TRUE) {
       diff <- paired_data$group1 - paired_data$group2
       shapiro_res <- shapiro.test(diff)$p.value
 
-
-        t_test <- t.test(paired_data$group1, paired_data$group2, paired = TRUE)
+      bas_form <-list(paired_data$group1, paired_data$group2)
+      ttest_args <- modifyList(bas_form, ttest_args)
+      wilcox_args <- modifyList(bas_form, wilcox_args)
+      t_test <-do.call( t.test, ttest_args)
         t_p <- t_test$p.value
         diff_means <- mean(diff, na.rm = T)
         ci_lower <- t_test$conf.int[1]
         ci_upper <- t_test$conf.int[2]
-        wilcox_test <- wilcox.test(paired_data$group1, paired_data$group2, paired = TRUE)
+        wilcox_test <- do.call(wilcox.test, wilcox_args)
         wilcox_p <- wilcox_test$p.value
 
 

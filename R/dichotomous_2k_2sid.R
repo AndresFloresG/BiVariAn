@@ -1,5 +1,4 @@
 #' @import epitools
-#' @importFrom tableHTML tableHTML
 #' @importFrom rrtable df2flextable
 #' @author JAFG
 #' @title Bivariate Chi squared and Fisher Test analysis for 2 categories.
@@ -39,7 +38,9 @@
 
 #' @export
 
-dichotomous_2k_2sid <- function(data, referencevar, flextableformat = TRUE) {
+dichotomous_2k_2sid <- function(data,
+                                referencevar,
+                                flextableformat = TRUE) {
 
   if(!is.data.frame(data)){
     stop("data must be a data.frame object")

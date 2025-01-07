@@ -44,7 +44,8 @@
 #'
 #' @export
 #'
-continuous_corr_test <- function(data, referencevar,
+continuous_corr_test <- function(data,
+                                 referencevar,
                                  alternative = NULL,
                                  flextableformat = TRUE,
                                  corr_test = c("all", "pearson", "spearman", "kendall")) {
@@ -54,7 +55,25 @@ continuous_corr_test <- function(data, referencevar,
   perform_spearman <- FALSE
   perform_kendall <- FALSE
 
-  # Determinar qué análisis ejecutar según el argumento corr_test
+  if(!(is.data.frame(data))){
+    stop("data must be a data.frame object")
+  }
+
+  if(!(referencevar %in% names(data))){
+    stop("referencevar is not inprovided data.frame")
+  }
+
+  valid_tests <- c("all", "pearson", "spearman", "kendall")
+  valid_alternative <- c("two.sided", "less", "greater")
+
+  if (!all(corr_test %in% valid_tests)) {
+    stop("Invalid value in corr_test. Allowed values are: all, pearson, spearman, kendall")
+  }
+
+  if(!all(alternative %in% valid_alternative)){
+    stop("Invalid alternative. Allowed alternatives are: two.sided, less, greater")
+  }
+
   if ("all" %in% corr_test || is.null(corr_test)) {
     perform_pearson <- TRUE
     perform_spearman <- TRUE

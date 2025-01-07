@@ -21,7 +21,9 @@
 #' @export
 
 
-continuous_multg<-function(data, groupvar, flextableformat = TRUE){
+continuous_multg<-function(data,
+                           groupvar,
+                           flextableformat = TRUE){
   # Convertir la variable de agrupacion en factor
   if(!is.data.frame(data) ){
     stop("data must be a data.frame object")
@@ -29,6 +31,10 @@ continuous_multg<-function(data, groupvar, flextableformat = TRUE){
 
   if(!(groupvar %in% names(data))){
     stop(groupvar, " is not present in the provided dataframe")
+  }
+
+  if(is.character(flextableformat) || !is.logical(flextableformat)){
+    stop("flextableformat must be a logical operator")
   }
 
   data[[groupvar]] <- as.factor(data[[groupvar]])

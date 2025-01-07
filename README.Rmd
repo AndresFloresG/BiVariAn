@@ -59,15 +59,10 @@ install.packages("BiVariAn")
 
 Loading the package
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(BiVariAn)
 ```
 
-Sample useless function
-
-```{r}
-hello()
-```
 
 Render an automatic Shapiro-Wilk's table of a simple dataset
 

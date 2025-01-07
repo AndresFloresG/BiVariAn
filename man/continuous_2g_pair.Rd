@@ -4,12 +4,22 @@
 \alias{continuous_2g_pair}
 \title{Bivariate analysis for 2 groups for paired data}
 \usage{
-continuous_2g_pair(data, groupvar, flextableformat)
+continuous_2g_pair(
+  data,
+  groupvar,
+  ttest_args = list(),
+  wilcox_args = list(),
+  flextableformat = TRUE
+)
 }
 \arguments{
 \item{data}{Data frame from which variables will be extracted.}
 
 \item{groupvar}{Grouping variable. Must have exactly 2 levels.}
+
+\item{ttest_args}{Arguments to be passed to \code{t.test()} function.}
+
+\item{wilcox_args}{Arguments to be passed to \code{wilcox.test()} function.}
 
 \item{flextableformat}{Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.}
 }
@@ -17,7 +27,7 @@ continuous_2g_pair(data, groupvar, flextableformat)
 A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
 }
 \description{
-Generates a HTML table of bivariate analysis for 2 groups. (In development)
+Generates a HTML table of bivariate paired analysis for 2 groups.
 }
 \examples{
 data <- data.frame(group = rep(letters[1:2], 30),

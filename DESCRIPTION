@@ -11,6 +11,7 @@ Authors@R: c(
     person("Jhoselin Marian", "Castro-Rodriguez", role = "aut",
            comment = c(ORCID = "0009-0001-0855-4353"))
   )
+Maintainer: José Andrés Flores-García <andres.flores@uaslp.mx>
 Description: Simplify bivariate and regression analyses by automating
     result generation, including summary tables, statistical tests, and
     customizable graphs. It supports tests for continuous and dichotomous
@@ -24,7 +25,6 @@ BugReports: https://github.com/AndresFloresG/BiVariAn/issues
 Imports: 
     car,
     DescTools,
-    digest,
     dplyr,
     epitools,
     fastDummies,
@@ -34,15 +34,12 @@ Imports:
     lifecycle,
     logistf,
     magrittr,
-    mice,
     pak,
     rlang,
     rrtable,
     scales,
     stats,
-    stringi,
     table1,
-    tableHTML,
     tidyr,
     utils
 Suggests: 
