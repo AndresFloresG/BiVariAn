@@ -10,7 +10,6 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom logistf logistf
 #' @importFrom magrittr %>%
-#' @importFrom pak pak
 #' @importFrom rlang .data
 #' @importFrom scales percent
 #' @importFrom stats aov

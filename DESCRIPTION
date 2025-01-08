@@ -1,6 +1,6 @@
 Type: Package
 Package: BiVariAn
-Title: Bivariated Automatic Analysis
+Title: Bivariate Automatic Analysis
 Version: 1.0.0
 Date: 2025-01-01
 Authors@R: c(
@@ -34,7 +34,6 @@ Imports:
     lifecycle,
     logistf,
     magrittr,
-    pak,
     rlang,
     rrtable,
     scales,
