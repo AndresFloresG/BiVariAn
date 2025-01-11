@@ -4,11 +4,11 @@
 \name{BiVariAn-package}
 \alias{BiVariAn}
 \alias{BiVariAn-package}
-\title{BiVariAn: Bivariated Automatic Analysis}
+\title{BiVariAn: Bivariate Automatic Analysis}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Simplify bivariate and regression analyses by automating result generation, including summary tables, statistical tests, and customizable graphs. It supports tests for continuous and dichotomous data, as well as stepwise regression for linear, logistic, and Firth penalized logistic models. While not a substitute for tailored analysis, BiVariAn accelerates workflows and is expanding features like multilingual interpretations of results.
+Simplify bivariate and regression analyses by automating result generation, including summary tables, statistical tests, and customizable graphs. It supports tests for continuous and dichotomous data, as well as stepwise regression for linear, logistic, and Firth penalized logistic models. While not a substitute for tailored analysis, 'BiVariAn' accelerates workflows and is expanding features like multilingual interpretations of results.The methods for selecting significant statistical tests, as well as the predictor selection in prediction functions, can be referenced in the works of Marc Kery (2003, \doi{10.1890/0012-9623(2003)84[92:NORDIG]2.0.CO;2}) and Rainer Puhr (2017, \doi{10.1002/sim.7273}).
 }
 \seealso{
 Useful links:

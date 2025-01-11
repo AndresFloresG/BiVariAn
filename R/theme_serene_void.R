@@ -3,7 +3,7 @@
 #' @import dplyr
 #'
 #' @name theme_serene_void
-#' @author Serene Chessur
+#' @author Jhoselin Marian Castro-Rodriguez
 #' @title Void theme for Bivaran packages plots
 #' @aliases theme_serene_void
 #' @description
@@ -15,7 +15,17 @@
 #' @param base_rect_size base rect size
 #' @param axis_text_angle Axis text angle
 #' @param border Logical operator to indicate if the border should be printed
+#' @returns Returns a list of classes "gg" and "theme"
 #'
+#' @examples
+#' library(ggplot2)
+#'
+#' data <- mtcars
+#' p1 <- ggplot(data, aes(disp, hp))+
+#' geom_point()+
+#' geom_smooth()
+#'
+#' p1 + theme_serene_void()
 #'
 #'
 #' @export
@@ -26,7 +36,7 @@ theme_serene_void<- function(base_size = 11,
                         base_line_size = base_size / 22,
                         base_rect_size = base_size / 2,
                         axis_text_angle = 0,
-                        border = F) {
+                        border = FALSE) {
   ggprism::theme_prism(palette = "black_and_white",
                        base_size = base_size,
                        base_family = base_family,

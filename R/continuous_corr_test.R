@@ -31,10 +31,12 @@
 #'
 #' continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
 #'
-#' \dontrun{# Example performing correlation test for only one variable
-#'
+#' # Example performing correlation test for only one variable
+#'if(requireNamespace("dplyr")){
+#' library(dplyr)
 #' continuous_corr_test(data = data %>% select("var1","var2"),
-#'  referencevar = "var1", flextableformat = FALSE)}
+#'  referencevar = "var1", flextableformat = FALSE, corr_test = "pearson")
+#'}
 #'
 #' # Example performing only pearson correlation test
 #' continuous_corr_test(data = data, referencevar = "var1",
@@ -176,7 +178,7 @@ continuous_corr_test <- function(data,
         )
       })
     } else {
-      cat("\nVariable", variable, "is not present in database\n")
+      warning("\nVariable", variable, "is not present in database\n")
     }
   }
 

@@ -113,9 +113,9 @@ auto_corr_cont<- function(data,
 
     } else {
       if (lang_labs == "EN"){
-        cat("\nVariable", variable, "is not present in database \n")
+        warning("\nVariable", variable, "is not present in database \n")
       } else if(lang_labs == "SPA"){
-        cat("\nLa variable", variable, "no esta presente en la base de datos.\n")
+        warning("\nLa variable", variable, "no esta presente en la base de datos.\n")
       }
     }
   }

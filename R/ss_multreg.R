@@ -2,15 +2,15 @@
 #' @title Sample Size Calculation for multiple regression analysis
 #' @aliases ss_multreg
 #' @name ss_multreg
-#' @usage ss_multreg(df, prop, logistic = FALSE)
 #' @description
 #' Calculates the recommended sample size for a multiple regression analysis.
 #'
 #' @param df Degrees of freedom planned to be introduced
 #' @param prop Minimum prevalence of the expected event (Required if planned regression is a logistic regression)
 #' @param logistic Logical operator to indicate wether the planned regression analysis is a logistic regression or not.
+#' @param verbose Logical operator to indicate wether the results should be printed in console. Default is `TRUE`
 #'
-#' @returns Prints in console the sample size calculation for a regression analysis.
+#' @returns An object class `ss_multreg_obj` indicating the sample size calculation for a regression analysis.
 #'
 #' @references Peduzzi P, Concato J, Kemper E, Holford TR, Feinstein AR. A simulation study of the number of events per variable in logistic regression analysis. Journal of Clinical Epidemiology. diciembre de 1996;49(12):1373–9.
 #' @references Pierdant-Pérez M, Patiño-López MI, Flores-García JA, Jacques-García FA. Implementación de un curso virtual de lectura crítica en estudiantes de medicina durante la pandemia COVID-19. Inv Ed Med. el 1 de octubre de 2023;12(48):64–71.
@@ -29,7 +29,8 @@
 #'
 #' @export
 
-ss_multreg <- function(df, prop = NULL, logistic = FALSE) {
+ss_multreg <- function(df, prop = NULL, logistic = FALSE, verbose = TRUE) {
+
   # Crear una lista para almacenar las salidas de texto
   text_outp <- list(
     main = NULL,
@@ -85,13 +86,12 @@ ss_multreg <- function(df, prop = NULL, logistic = FALSE) {
   ss_multreg_obj$ss_low <- ss_low
   ss_multreg_obj$ss_high <- ss_high
 
-  # Imprimir el texto concatenado en la consola
-  cat(paste(unlist(text_outp), collapse = ""))
+  if(verbose){
+    cat(paste(unlist(text_outp), collapse = ""))
+  }
 
-  # Asignar clase personalizada al objeto
   class(ss_multreg_obj) <- "ss_multreg_obj"
 
-  # Devolver el objeto de forma invisible (no imprime en la consola al devolver)
   invisible(ss_multreg_obj)
 }
 

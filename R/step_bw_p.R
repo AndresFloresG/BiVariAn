@@ -84,6 +84,7 @@ step_bw_p <- function (reg_model,
     print(car::Anova(fit, ...))
     utils::flush.console()
   }
+
   models[[nm]] <- list(change = "Initial", formula_eval = formula(fit))
   while (steps > 0) {
     steps <- steps - 1
@@ -97,18 +98,24 @@ step_bw_p <- function (reg_model,
       max_p <- max(pvalues, na.rm = TRUE)
       term_index <- which.max(pvalues)
       term_to_remove <- attr(terms(fit), "term.labels")[term_index]
+
       if (trace) {
         cat("\n\nCandidate term to be eliminated:", term_to_remove,
             "p value =", max_p, "\n")
       }
+
       if (is.na(term_to_remove)) {
-        cat("\n\nNo terms to be removed\n\n")
+        if(trace){
+          cat("\n\nNo terms to be removed\n\n")
+        }
         break
       }
       new_terms <- setdiff(attr(terms(fit), "term.labels"),
                            term_to_remove)
       if (length(new_terms) < 1) {
-        cat("\n\nIt is not possible to eliminate more terms\n\n")
+        if(trace){
+          cat("\n\nIt is not possible to eliminate more terms\n\n")
+        }
         break
       }
       new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
@@ -124,8 +131,10 @@ step_bw_p <- function (reg_model,
       }
     }
     else {
-      text<-("\n\nAll p values are below the threshold\n\n")
-      text
+      if(trace){
+        text<-("\n\nAll p values are below the threshold\n\n")
+        text
+      }
       break
     }
   }
@@ -134,5 +143,10 @@ step_bw_p <- function (reg_model,
   steps_results <- data.frame(cbind(Step, Formula))
   reslist<-list(final_model = fit, steps = steps_results)
   class(reslist)<-"step_bw"
-  reslist
+  if(trace){
+    reslist
+  }else if(trace == FALSE){
+    invisible(reslist)
+  }
+
 }

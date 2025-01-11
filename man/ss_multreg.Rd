@@ -4,7 +4,7 @@
 \alias{ss_multreg}
 \title{Sample Size Calculation for multiple regression analysis}
 \usage{
-ss_multreg(df, prop, logistic = FALSE)
+ss_multreg(df, prop = NULL, logistic = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{df}{Degrees of freedom planned to be introduced}
@@ -12,9 +12,11 @@ ss_multreg(df, prop, logistic = FALSE)
 \item{prop}{Minimum prevalence of the expected event (Required if planned regression is a logistic regression)}
 
 \item{logistic}{Logical operator to indicate wether the planned regression analysis is a logistic regression or not.}
+
+\item{verbose}{Logical operator to indicate wether the results should be printed in console. Default is \code{TRUE}}
 }
 \value{
-Prints in console the sample size calculation for a regression analysis.
+An object class \code{ss_multreg_obj} indicating the sample size calculation for a regression analysis.
 }
 \description{
 Calculates the recommended sample size for a multiple regression analysis.

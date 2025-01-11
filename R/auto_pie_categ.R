@@ -133,9 +133,9 @@ lab_graf_group <- if (!is.null(table1::label(data[[varcat]]))) table1::label(dat
 
     } else {
       if (any(is.null(lang_labs) | lang_labs == "SPA")) {
-        cat("\nLa variable", varcat, "no est\u00e1 presente en la base de datos.\n")
+        warning("\nLa variable", varcat, "no est\u00e1 presente en la base de datos.\n")
       } else if (lang_labs == "EN") {
-        cat("\nVariable", varcat, "is not in the provided dataframe.\n")
+        warning("\nVariable", varcat, "is not in the provided dataframe.\n")
       }
     }
   }

@@ -111,7 +111,7 @@ continuous_multg<-function(data,
         )
       })
     } else {
-      cat("\nLa variable", var1, "no esta presente en la base de datos.\n")
+      warning("\nVariable", var1, " is not present in provided dataframe\n")
     }
   }
 

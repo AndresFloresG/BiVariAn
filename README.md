@@ -16,7 +16,7 @@ coverage](https://codecov.io/gh/AndresFloresG/BiVariAn/graph/badge.svg)](https:/
 
 # Overview
 
-The purpose of BiVariAn is to facilitate bivariate analysis by
+The purpose of ‘BiVariAn’ is to facilitate bivariate analysis by
 integrating functions that allow the results of such analyses to be
 represented graphically and in text.
 
@@ -29,7 +29,7 @@ Shapiro-Wilk test.
 
 It is also possible to generate graphs automatically with or without
 labels on the variables with the possibility of choosing a theme from
-the “ggplot2” package.
+the ‘ggplot2’ package.
 
 Currently under development is the option to generate a generic
 interpretation of the statistical tests, temporarily available only in

@@ -2,7 +2,7 @@ Type: Package
 Package: BiVariAn
 Title: Bivariate Automatic Analysis
 Version: 1.0.0
-Date: 2025-01-01
+Date: 2025-01-07
 Authors@R: c(
     person("José Andrés", "Flores-García", , "andres.flores@uaslp.mx", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0003-0688-3134")),
@@ -17,8 +17,12 @@ Description: Simplify bivariate and regression analyses by automating
     customizable graphs. It supports tests for continuous and dichotomous
     data, as well as stepwise regression for linear, logistic, and Firth
     penalized logistic models.  While not a substitute for tailored
-    analysis, BiVariAn accelerates workflows and is expanding features
-    like multilingual interpretations of results.
+    analysis, 'BiVariAn' accelerates workflows and is expanding features
+    like multilingual interpretations of results.The methods for selecting
+    significant statistical tests, as well as the predictor selection in
+    prediction functions, can be referenced in the works of Marc Kery
+    (2003, <doi:10.1890/0012-9623(2003)84[92:NORDIG]2.0.CO;2>) and Rainer
+    Puhr (2017, <doi:10.1002/sim.7273>).
 License: GPL (>= 3)
 URL: https://github.com/AndresFloresG/BiVariAn
 BugReports: https://github.com/AndresFloresG/BiVariAn/issues
@@ -47,9 +51,10 @@ Suggests:
     rmarkdown,
     spelling,
     testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-VignetteBuilder: knitr

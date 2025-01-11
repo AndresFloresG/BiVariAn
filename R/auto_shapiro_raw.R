@@ -43,7 +43,7 @@ auto_shapiro_raw <- function(data, flextableformat= TRUE){
         Normality=  paste(ifelse(shapiro_p>0.05, "Normal", "Non-normal" ))
       )
     } else {
-      cat("\nVariable", var1, "is not present in provided dataframe\n")
+      warning("\nVariable ", var1, " is not present in provided dataframe\n")
     }
   }
 

@@ -106,7 +106,7 @@ auto_bp_cont <- function(data,
       # Guardar la grafica en la lista
       graficascont[[var2]] <- p
     } else {
-      cat("\nLa variable", var2, "no esta presente en la base de datos.\n")
+      warning("\nLa variable", var2, "no esta presente en la base de datos.\n")
     }
   }
 

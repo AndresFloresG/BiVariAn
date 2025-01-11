@@ -28,10 +28,9 @@
 #' # Create a list containing all the plots
 #' violinplots<-auto_viol_cont(data = data, groupvar = 'group', lang_labs = 'EN')
 #'
-#' \dontrun{
-#' #' # call to show all storaged plots
+
+#' # call to show all storaged plots
 #' violinplots
-#' }
 #'
 #' # call to show one individual plots
 #' violinplots$var1
@@ -102,7 +101,7 @@ auto_viol_cont <- function(data, groupvar,
       # Guardar la grafica en la lista
       graficascont[[var2]] <- p
     } else {
-      cat("\nVariable", var2, "is not in provided dataframe\n")
+      warning("\nVariable", var2, "is not in provided dataframe\n")
     }
   }
 

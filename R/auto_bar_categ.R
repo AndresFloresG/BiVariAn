@@ -145,9 +145,9 @@ auto_bar_categ <- function(data,
       graficas[[varcat]] <- p
     } else {
       if (any(is.null(lang_labs) | lang_labs == "SPA")){
-        cat("\nLa variable", varcat, "no esta presente en la base de datos.\n")
+        warning("\nLa variable", varcat, "no esta presente en la base de datos.\n")
       } else if (lang_labs == "EN"){
-        cat("\nVariable", varcat, "is not in the provided dataframe \n")
+        warning("\nVariable", varcat, "is not in the provided dataframe \n")
       }
     }
   }

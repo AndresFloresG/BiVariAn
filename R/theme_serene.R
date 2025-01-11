@@ -3,7 +3,7 @@
 #' @import dplyr
 #'
 #' @name theme_serene
-#' @author Serene Chessur
+#' @author Jhoselin Marian Castro-Rodriguez
 #' @title Basic theme for Bivaran packages plots
 #' @aliases theme_serene
 #' @description
@@ -15,7 +15,16 @@
 #' @param base_rect_size base rect size
 #' @param axis_text_angle Axis text angle
 #' @param border Logical operator to indicate if the border should be printed
+#' @returns Returns a list of classes "gg" and "theme"
 #'
+#' @examples
+#' library(ggplot2)
+#' data <- mtcars
+#' p1 <- ggplot(data, aes(disp, hp))+
+#' geom_point()+
+#' geom_smooth()
+#'
+#' p1 + theme_serene()
 #'
 #'
 #' @export
@@ -26,7 +35,7 @@ theme_serene<- function(base_size = 14,
                       base_line_size = base_size / 14,
                       base_rect_size = base_size / 14,
                       axis_text_angle = 0,
-                      border = F) {
+                      border = FALSE) {
   ggprism::theme_prism(palette = "black_and_white",
               base_size = base_size,
               base_family = base_family,

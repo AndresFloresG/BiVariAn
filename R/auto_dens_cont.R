@@ -148,7 +148,7 @@ auto_dens_cont <- function(data,
       # Almacenar la grafica en la lista
       grafdenscon[[contvar]] <- p
     } else {
-      cat("\nLa variable", contvar, "no esta presente en la base de datos.\n")
+      warning("\nLa variable", contvar, "no esta presente en la base de datos.\n")
     }
   }
 

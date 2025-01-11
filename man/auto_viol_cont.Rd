@@ -42,10 +42,8 @@ data$group<-as.factor(data$group)
 # Create a list containing all the plots
 violinplots<-auto_viol_cont(data = data, groupvar = 'group', lang_labs = 'EN')
 
-\dontrun{
-#' # call to show all storaged plots
+# call to show all storaged plots
 violinplots
-}
 
 # call to show one individual plots
 violinplots$var1

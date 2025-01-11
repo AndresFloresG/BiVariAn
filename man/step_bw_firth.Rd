@@ -21,7 +21,7 @@ step_bw_firth(
 
 \item{s_upper}{Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)}
 
-\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the "logistf" class are designed to print on the console when the "summary" function is used. Since this function repeatedly uses the "summary" function, some part of the process will be printed on the console even when "trace" is set to FALSE.}
+\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the \code{logistf} class are designed to print on the console when the \code{summary.logistf} method from \code{logistf} package is used. Since this function repeatedly uses this function, some part of the process will be printed on the console even when "trace" is set to \code{FALSE}.}
 
 \item{steps}{Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.}
 

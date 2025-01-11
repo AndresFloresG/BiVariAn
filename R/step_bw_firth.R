@@ -10,7 +10,7 @@
 #' @param reg_model Regression model. Must be a glm or lm model
 #' @param s_lower Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)
 #' @param s_upper Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)
-#' @param trace Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the "logistf" class are designed to print on the console when the "summary" function is used. Since this function repeatedly uses the "summary" function, some part of the process will be printed on the console even when "trace" is set to FALSE.
+#' @param trace Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the `logistf` class are designed to print on the console when the `summary.logistf` method from `logistf` package is used. Since this function repeatedly uses this function, some part of the process will be printed on the console even when "trace" is set to `FALSE`.
 #' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
 #' @param p_threshold Treshold of p value. Default is 0.05
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
@@ -113,7 +113,7 @@ step_bw_firth <- function(reg_model,
   while (steps > 0) {
     steps <- steps - 1
 
-    pvalues <- summary(fit)$prob
+    pvalues <- invisible(summary(fit)$prob)
     pvalues <- pvalues[!names(pvalues) %in% "(Intercept)"]
 
     # Identificar el término con el mayor p-valor
