@@ -55,4 +55,9 @@ barplot_list<-auto_bar_categ(data = data, groupvar = "categ", lang_labs = "EN")
 
 barplot_list$var1
 
+
+# Example using `groupvar` argument as `NULL`
+auto_bar_categ(data = data)$var2
+
+
 }

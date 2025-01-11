@@ -38,7 +38,11 @@
 #'
 #' barplot_list$var1
 #'
-
+#'
+#' # Example using `groupvar` argument as `NULL`
+#' auto_bar_categ(data = data)$var2
+#'
+#'
 #' @export
 #'
 #'
@@ -54,12 +58,18 @@ auto_bar_categ <- function(data,
     stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
   }
 
-  if (!groupvar %in% names(data)) {
-    stop("The grouping variable must be a column in the data frame.")
-  }
+  if(!is.null(groupvar)){
+    if (!groupvar %in% names(data)) {
+      stop("The grouping variable must be a column in the data frame.")
+    }
+    if (!is.factor(data[[groupvar]]) && !is.character(data[[groupvar]])) {
+      stop("The grouping variable must be categorical.")
+    }
 
-  if (!is.factor(data[[groupvar]]) && !is.character(data[[groupvar]])) {
-    stop("The grouping variable must be categorical.")
+    if(is.character(showpercent) || !is.logical(showpercent)){
+      stop("showpercent must be a logical argument")
+    }
+
   }
 
   if (any(is.null(lang_labs) | lang_labs == "SPA")){
@@ -92,15 +102,10 @@ auto_bar_categ <- function(data,
     categ_var <- colnames(data)[sapply(data, function(x) is.factor(x))]
   }
 
-  # Seleccionar variables categoricas distintas de groupvar
-
-  # Crear una lista para almacenar las graficas
   graficas <- list()
 
-  # Bucle para generar y almacenar graficas
   for (varcat in categ_var) {
-    if (varcat %in% names(data)) {  # Verifica si la variable esta en la base de datos
-      # Obtener etiquetas o usar nombres de las variables
+    if (varcat %in% names(data)) {
       lab_graf_cat <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
 
       if(!is.null(groupvar)){
@@ -113,7 +118,6 @@ auto_bar_categ <- function(data,
         group_fill = varcat
       } else group_fill = groupvar
 
-      # Crear la grafica
       p <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[varcat]], fill = .data[[group_fill]])) +
         do.call(geom_bar, bar_args)
 
@@ -129,19 +133,26 @@ auto_bar_categ <- function(data,
           x = lab_graf_cat,
           y = ylabs,
           fill = lab_graf_group
-        ) +
-        ggplot2::scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
-          theme_func() +
-        theme(
-          plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
         )
+
+        if(!is.null(groupvar)){
+          p <- p + ggplot2::scale_y_continuous(limits = c(0, (max(table(data[[varcat]], data[[groupvar]])))+10))+
+            theme_func() +
+            theme(
+              plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+        } else if (is.null(groupvar)){
+          p <- p + ggplot2::scale_y_continuous(limits = c(0, max(table(data[[varcat]])) +10))+
+            theme_func() +
+            theme(
+              plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+        }
+
 
       if(is.null(groupvar)){
         p <- p + theme(legend.position = "none")
       }
 
 
-      # Guardar la grafica en la lista
       graficas[[varcat]] <- p
     } else {
       if (any(is.null(lang_labs) | lang_labs == "SPA")){
@@ -152,6 +163,5 @@ auto_bar_categ <- function(data,
     }
   }
 
-  # Retornar la lista de graficas
   return(graficas)
 }
