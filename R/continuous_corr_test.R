@@ -163,9 +163,9 @@ continuous_corr_test <- function(data,
         results[[variable]] <- list(
           Variable = variable,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
-          P_Pearson = pears_p,
-          P_Spearman = spear_p,
-          P_Kendall = kend_p,
+          P_Pearson = ifelse(pears_p > 0.001, round(pears_p, 5), "<0.001*"),
+          P_Spearman = ifelse(spear_p > 0.001, round(spear_p, 5), "<0.001*"),
+          P_Kendall = ifelse(kend_p > 0.001, round(kend_p, 5), "<0.001*"),
           r_Pearson = pears_estim,
           r_P_CI_L = pears_cilow,
           r_P_CI_H = pears_cihi,
@@ -176,6 +176,7 @@ continuous_corr_test <- function(data,
           rho_S_CI_L = spear_cilow,
           rho_S_CI_H = spear_cihi
         )
+
       })
     } else {
       warning("\nVariable", variable, "is not present in database\n")
