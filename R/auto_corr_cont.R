@@ -101,7 +101,7 @@ auto_corr_cont<- function(data,
       p <- p + do.call(ggplot2::geom_point, point_args)
       p <- p + do.call(ggplot2::geom_smooth, smooth_args)
       p <- p + ggplot2::labs(
-        title = paste(titleleg1, referencevar, titleleg2, variable),
+        title = paste(titleleg1, lab_corr_var_ref, titleleg2, lab_corr_var_var),
         x = lab_corr_var_var,
         y = lab_corr_var_ref)+
         theme_func()+
