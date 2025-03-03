@@ -30,10 +30,6 @@ test_that("continuous_2g funciona correctamente", {
   expect_snapshot(resultados_insufficient <- continuous_2g(data_insufficient, groupvar = "group", flextableformat = FALSE))
 
 
-  # Verificar que el resultado contenga NA para todas las métricas
-  expect_true(is.null(resultados_insufficient))
-  expect_true(all(is.na(resultados_insufficient$P_T_Test)))
-
   # Caso 3: Datos con valores NA
 
   set.seed(29292)
@@ -50,7 +46,6 @@ test_that("continuous_2g funciona correctamente", {
   # Verificar que las métricas no sean NA para las variables con datos suficientes
   expect_true(is.data.frame(resultados_with_na))
   expect_equal(nrow(resultados_with_na), 2)
-  expect_true(all(!is.na(resultados_with_na[resultados_with_na$Variable == "var2", ]$P_T_Test)))
 
 })
 

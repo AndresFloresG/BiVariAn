@@ -27,7 +27,7 @@ continuous_corr_test(
 A dataframe or flextable containing pvalues for correlation tests along with the normality and homocedasticity tests p values
 }
 \description{
-Automatic correlation analyses for continuous variables with one variable as reference.
+Automatic correlation analyses for continuous variables with one variable as reference. Variable names can be assigned using \code{\link[table1:label]{table1::label()}} function.
 }
 \examples{
 # example code
@@ -41,6 +41,15 @@ var4 = rnorm(30, mean = 5, sd =2))
 data$group<-as.factor(data$group)
 
 continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+
+# Set names to variables
+if(requireNamespace("table1")){
+table1::label(data$var2) <- "Variable 2"
+table1::label(data$var3) <- "Variable 3"
+table1::label(data$var4) <- "Variable 4"
+
+continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+}
 
 # Example performing correlation test for only one variable
 if(requireNamespace("dplyr")){

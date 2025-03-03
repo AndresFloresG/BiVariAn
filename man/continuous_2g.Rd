@@ -27,16 +27,23 @@ continuous_2g(
 Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or T test, along with Shapiro-Wilk's p values and Levene's p value.
 }
 \description{
-Generates a HTML table of bivariate analysis for 2 groups.
+Automatic test for continuous variables for 2 groups. Variable names can be assigned using \code{\link[table1:label]{table1::label()}} function.
 }
 \examples{
- data <- data.frame(group = rep(letters[1:2], 30),
- var1 = rnorm(30, mean = 15, sd = 5),
- var2 = rnorm(30, mean = 20, sd = 2),
- var3 = rnorm(30, mean = 10, sd = 1),
- var4 = rnorm(30, mean = 5, sd =2))
+ df <- mtcars
+ df$am <- as.factor(df$am)
+ continuous_2g(data = df,
+ groupvar = "am",
+ flextableformat = FALSE)
 
- data$group<-as.factor(data$group)
+# Set names to variables
+if(requireNamespace("table1")){
+table1::label(df$mpg) <- "Miles per gallon"
+table1::label(df$cyl) <- "Number of cylinders"
+table1::label(df$disp) <- "Displacement"
+table1::label(df$hp) <- "Gross horsepower"
+table1::label(df$drat) <- "Rear axle ratio"
 
- conttable <- continuous_2g(data = data, groupvar = "group")
+continuous_2g(data = df, groupvar = "am", flextableformat = FALSE)
+}
 }

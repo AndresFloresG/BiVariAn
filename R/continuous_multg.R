@@ -1,5 +1,6 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
+#' @importFrom table1 label
 #' @name continuous_multg
 #' @aliases continuous_multg
 #' @title Bivariate analysis for more than 2 groups
@@ -56,10 +57,12 @@ continuous_multg<-function(data,
       group_data <- valid_data[[groupvar]]
       continuous_data <- valid_data[[var1]]
 
+      variable_lab <- if(!is.null(table1::label(data[[var1]]))) table1::label(data[[var1]]) else var1
+
       # Continuar solo si hay suficientes datos para analisis
       if (length(unique(group_data)) < 2 || length(continuous_data) < 2) {
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
           P_ANOVA = NA,
@@ -92,7 +95,7 @@ continuous_multg<-function(data,
 
         # Guardar resultados
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
           P_Levene = ifelse(levene_p > 0.001, round(levene_p, 5), "<0.001*"),
           P_ANOVA = ifelse(exists("anova_p"), ifelse(anova_p > 0.001, round(anova_p, 5), "<0.001*"), NA),
@@ -102,7 +105,7 @@ continuous_multg<-function(data,
       }, error = function(e) {
         # En caso de error, asignar NA a los resultados de esta variable
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
           P_ANOVA = NA,

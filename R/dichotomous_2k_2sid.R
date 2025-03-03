@@ -1,11 +1,12 @@
 #' @import epitools
 #' @importFrom rrtable df2flextable
+#' @importFrom table1 label
 #' @author JAFG
 #' @title Bivariate Chi squared and Fisher Test analysis for 2 categories.
 #' @aliases dichotomous_2k_2sid
 #' @name dichotomous_2k_2sid
 #' @description
-#' Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
+#' Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values. Variable names can be assigned using [table1::label()] function.
 #'
 #'
 #' @param data Data frame from which variables will be extractred
@@ -35,7 +36,16 @@
 #'  # Apply function
 #' dichotomous_2k_2sid(df, referencevar="has")
 #' dichotomous_2k_2sid(df, referencevar="has", flextableformat = FALSE)
-
+#'
+#' # Set names to variables
+#' if(requireNamespace("table1")){
+#' table1::label(df$has) <- "Hypertension"
+#' table1::label(df$smoke) <- "Smoking Habits"
+#' table1::label(df$gender) <- "Gender"
+#'
+#' dichotomous_2k_2sid(df, referencevar="has", flextableformat = FALSE)
+#' }
+#'
 #' @export
 
 dichotomous_2k_2sid <- function(data,
@@ -53,6 +63,7 @@ dichotomous_2k_2sid <- function(data,
   if(any(is.character(flextableformat) | !is.logical(flextableformat))){
     stop("flextableformat must be a logical operator")
   }
+
   # Convertir la variable de referencia en factor
   data[[referencevar]] <- as.factor(data[[referencevar]])
 
@@ -61,21 +72,22 @@ dichotomous_2k_2sid <- function(data,
     stop("La variable de agrupacion debe tener al menos dos niveles con observaciones.")
   }
 
-  # Seleccionar variables dicotomicas (factores con 2 niveles) distintas de referencevar
+  # Seleccionar variables dicotómicas (factores con 2 niveles) distintas de referencevar
   variables <- colnames(data)[sapply(data, function(x) is.factor(x) && length(levels(x)) == 2 && !identical(x, data[[referencevar]]))]
 
   # Crear una lista para guardar los resultados
-
   resultados <- list()
 
-  # Bucle para analisis bivariado
+  # Bucle para análisis bivariado
   for (var in variables) {
     # Crear tabla de contingencia
     tabla <- table(data[[referencevar]], data[[var]])
 
-    # Verificar si la tabla tiene al menos dos categorias validas
+    variable_lab <- if(!is.null(table1::label(data[[var]]))) table1::label(data[[var]]) else var
+
+    # Verificar si la tabla tiene al menos dos categorías válidas
     if (all(dim(tabla) > 1)) {
-      # Prueba de Chi cuadrada
+      # Prueba de Chi cuadrado
       chi_test <- tryCatch(
         chisq.test(tabla, simulate.p.value = FALSE),
         error = function(e) NULL
@@ -100,23 +112,23 @@ dichotomous_2k_2sid <- function(data,
 
       # Guardar resultados
       resultados[[var]] <- list(
-        Variable = var,
+        Variable = variable_lab,
         Chi_Squared = if (!is.null(chi_test)) round(chi_test$statistic, 5) else NA,
         Min_Expected = if (!is.null(chi_test)) round(min(chi_test$expected), 5) else NA,
         P_Chi = if (!is.null(chi_test)) {
-          if (chi_test$p.value > 0.001) round(chi_test$p.value, 5) else "<0.001**"
+          if (is.na(chi_test$p.value)) NA else if (chi_test$p.value > 0.001) round(chi_test$p.value, 5) else "<0.001**"
         } else NA,
         P_Fisher = if (!is.null(fisher_test)) {
-          if (fisher_test$p.value > 0.001) round(fisher_test$p.value, 5) else "<0.001**"
+          if (is.na(fisher_test$p.value)) NA else if (fisher_test$p.value > 0.001) round(fisher_test$p.value, 5) else "<0.001**"
         } else NA,
         Odds_Ratio = round(odds_ratio, 5),
         CI_Lower = round(ci_lower, 5),
         CI_Upper = round(ci_upper, 5)
       )
     } else {
-      # Si la tabla no es valida, registrar NA
+      # Si la tabla no es válida, registrar NA
       resultados[[var]] <- list(
-        Variable = var,
+        Variable = variable_lab,
         Chi_Squared = NA,
         Min_Expected = NA,
         P_Chi = NA,
@@ -127,13 +139,16 @@ dichotomous_2k_2sid <- function(data,
       )
     }
   }
-resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
-if (flextableformat == TRUE){
-  return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
-} else{
-  rownames(resultados_df) <- NULL
-  return(resultados_df)
+
+  resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
+
+  if (flextableformat == TRUE){
+    return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
+  } else {
+    rownames(resultados_df) <- NULL
+    return(resultados_df)
+  }
 }
-}
+
 
 

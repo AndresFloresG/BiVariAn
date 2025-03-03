@@ -7,7 +7,7 @@ test_that("auto_corr_cont works", {
 
   expect_length(cont_plots, 10)
 
-  expect_equal(cont_plots$disp$labels$title, "Correlaci\u00f3n entre cyl con disp")
+  expect_equal(cont_plots$disp$labels$title, "Correlaci\u00f3n entre cyl \n con disp")
 })
 
 test_that("auto_corr_cont handle errors", {

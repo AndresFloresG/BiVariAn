@@ -16,13 +16,12 @@
 #' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
 #'
 #' @returns An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
-#'
+#' @references Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023. Available on: <https://CRAN.R-project.org/package=logistf>
 #' @references Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
-#'
 #' @references Ullmann T, Heinze G, Hafermann L, Schilhart-Wallisch C, Dunkler D, et al. (2024) Evaluating variable selection methods for multivariable regression models: A simulation study protocol. PLOS ONE 19(8): e0308543
 #'
 #' @examples
-#'
+#' if(requireNamespace("logistf")){
 #' library(logistf)
 #'
 #' data<-mtcars
@@ -37,6 +36,7 @@
 #' stepwise$steps
 #'
 #' summary(final_stepwise_model)
+#' }
 #'
 #'
 #' @export
@@ -113,8 +113,15 @@ step_bw_firth <- function(reg_model,
   while (steps > 0) {
     steps <- steps - 1
 
-    pvalues <- invisible(summary(fit)$prob)
-    pvalues <- pvalues[!names(pvalues) %in% "(Intercept)"]
+    if (trace) {
+      pvalues <- summary(fit)$prob
+      pvalues <- pvalues[!names(pvalues) %in% "(Intercept)"]
+    } else if (!trace) {
+      pvaluesnom <- invisible(BiVariAn::logistf_summary(fit))
+      pvaluesnom <- stats::setNames(pvaluesnom$p_value, rownames(pvaluesnom))
+      pvalues <- pvaluesnom[!names(pvaluesnom) %in% "(Intercept)"]
+    }
+
 
     # Identificar el término con el mayor p-valor
     if (any(pvalues > p_threshold, na.rm = TRUE)) {
@@ -161,7 +168,7 @@ step_bw_firth <- function(reg_model,
 
   # Tabla de resultados
   Step <- sapply(models, function(x) x$change)
-  Formula <- sapply(models, function(x) deparse(x$formula_eval))
+  Formula <- sapply(models, function(x) deparse1(x$formula_eval))
   steps_results <- data.frame(Step = Step, Formula = Formula)
 
   # Retornar modelo final y resultados

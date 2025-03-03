@@ -3,11 +3,12 @@
 #' @importFrom rrtable df2flextable
 #' @importFrom DescTools SpearmanRho
 #' @importFrom DescTools KendallTauB
+#' @importFrom table1 label
 #'
 #' @name continuous_corr_test
 #' @aliases continuous_corr_test
 #' @description
-#' Automatic correlation analyses for continuous variables with one variable as reference.
+#' Automatic correlation analyses for continuous variables with one variable as reference. Variable names can be assigned using [table1::label()] function.
 #'
 #' @title Bivariate analysis for correlation tests
 #' @param data Data frame from which variables will be extracted.
@@ -30,6 +31,15 @@
 #' data$group<-as.factor(data$group)
 #'
 #' continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+#'
+#' # Set names to variables
+#' if(requireNamespace("table1")){
+#' table1::label(data$var2) <- "Variable 2"
+#' table1::label(data$var3) <- "Variable 3"
+#' table1::label(data$var4) <- "Variable 4"
+#'
+#' continuous_corr_test(data = data, referencevar = "var1", flextableformat = FALSE)
+#' }
 #'
 #' # Example performing correlation test for only one variable
 #'if(requireNamespace("dplyr")){
@@ -103,10 +113,12 @@ continuous_corr_test <- function(data,
       ref_var_data <- data[[referencevar]]
       continuous_data <- data[[variable]]
 
+      variable_lab <- if(!is.null(table1::label(data[[variable]]))) table1::label(data[[variable]]) else variable
+
       # Verificar longitud de los datos
       if (length(ref_var_data) < 2 || length(continuous_data) < 2) {
         results[[variable]] <- list(
-          Variable = variable,
+          Variable = variable_lab,
           P_Shapiro_Resid = NA,
           P_Pearson = if (perform_pearson) NA else NULL,
           P_Spearman = if (perform_spearman) NA else NULL,
@@ -161,7 +173,7 @@ continuous_corr_test <- function(data,
 
         # Guardar resultados
         results[[variable]] <- list(
-          Variable = variable,
+          Variable = variable_lab,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
           P_Pearson = ifelse(pears_p > 0.001, round(pears_p, 5), "<0.001*"),
           P_Spearman = ifelse(spear_p > 0.001, round(spear_p, 5), "<0.001*"),

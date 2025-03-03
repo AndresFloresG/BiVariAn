@@ -27,17 +27,26 @@ continuous_2g_pair(
 A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
 }
 \description{
-Generates a HTML table of bivariate paired analysis for 2 groups.
+Automatic paired test for continuous variables for 2 groups. Variable names can be assigned using \code{\link[table1:label]{table1::label()}} function.
 }
 \examples{
 data <- data.frame(group = rep(letters[1:2], 30),
-                   var1 = rnorm(30, mean = 15, sd = 5),
-                  var2 = rnorm(30, mean = 20, sd = 2),
-                  var3 = rnorm(30, mean = 10, sd = 1),
-                  var4 = rnorm(30, mean = 5, sd =2))
+                   var1 = rnorm(60, mean = 15, sd = 5),
+                  var2 = rnorm(60, mean = 20, sd = 2),
+                  var3 = rnorm(60, mean = 10, sd = 1),
+                  var4 = rnorm(60, mean = 5, sd =2))
 data$group<-as.factor(data$group)
 
 continuous_2g_pair(data = data, groupvar = "group")
 
+# Set names to variables
+if(requireNamespace("table1")){
+table1::label(data$var1) <- "Variable 1"
+table1::label(data$var2) <- "Variable 2"
+table1::label(data$var3) <- "Variable 3"
+table1::label(data$var4) <- "Variable 4"
+
+continuous_2g_pair(data = data, groupvar = "group", flextableformat = FALSE)
+}
 
 }

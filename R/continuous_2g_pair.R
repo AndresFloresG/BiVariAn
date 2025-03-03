@@ -2,11 +2,12 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyr drop_na
 #' @importFrom rrtable df2flextable
+#' @importFrom table1 label
 #' @name continuous_2g_pair
 #' @aliases continuous_2g_pair
 #' @title Bivariate analysis for 2 groups for paired data
 #' @description
-#'   Generates a HTML table of bivariate paired analysis for 2 groups.
+#' Automatic paired test for continuous variables for 2 groups. Variable names can be assigned using [table1::label()] function.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param ttest_args Arguments to be passed to `t.test()` function.
@@ -17,14 +18,23 @@
 #'
 #' @examples
 #' data <- data.frame(group = rep(letters[1:2], 30),
-#'                    var1 = rnorm(30, mean = 15, sd = 5),
-#'                   var2 = rnorm(30, mean = 20, sd = 2),
-#'                   var3 = rnorm(30, mean = 10, sd = 1),
-#'                   var4 = rnorm(30, mean = 5, sd =2))
+#'                    var1 = rnorm(60, mean = 15, sd = 5),
+#'                   var2 = rnorm(60, mean = 20, sd = 2),
+#'                   var3 = rnorm(60, mean = 10, sd = 1),
+#'                   var4 = rnorm(60, mean = 5, sd =2))
 #' data$group<-as.factor(data$group)
 #'
 #' continuous_2g_pair(data = data, groupvar = "group")
 #'
+#' # Set names to variables
+#' if(requireNamespace("table1")){
+#' table1::label(data$var1) <- "Variable 1"
+#' table1::label(data$var2) <- "Variable 2"
+#' table1::label(data$var3) <- "Variable 3"
+#' table1::label(data$var4) <- "Variable 4"
+#'
+#' continuous_2g_pair(data = data, groupvar = "group", flextableformat = FALSE)
+#' }
 #'
 #' @export
 
@@ -101,7 +111,7 @@ continuous_2g_pair <- function(data,
   }))
 
   if (has_na_discrepancy) {
-    warning("The length of one of the groups is mismatched, function will proceed with na removing.", "\nComparison columns has NAs, cannot compute t test nor mean differences\n\n")
+    warning("The length of one of the groups is mismatched, function will proceed with na pass")
 
   }
 
@@ -121,7 +131,13 @@ continuous_2g_pair <- function(data,
     group1 <- na.omit(group1)
     group2 <- na.omit(group2)
 
-    length(group1) = length(group2)
+    if(length(group1) > length(group2)){
+      length(group2) = length(group1)
+    } else if (length(group2) > length(group1)){
+      length(group1) = length(group2)
+    }
+
+    variable_lab <- if(!is.null(table1::label(data[[var]]))) table1::label(data[[var]]) else var
 
 
     # Emparejar los grupos
@@ -129,7 +145,7 @@ continuous_2g_pair <- function(data,
 
     if (nrow(paired_data) < 2) {
       resultados[[var]] <- list(
-        Variable = var,
+        Variable = variable_lab,
         P_Shapiro_Resid = NA,
         P_T_Paired = NA,
         P_Wilcoxon = NA,
@@ -158,7 +174,7 @@ continuous_2g_pair <- function(data,
 
 
       resultados[[var]] <- list(
-        Variable = var,
+        Variable = variable_lab,
         P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
         P_T_Paired = if (!is.na(t_p)) ifelse(t_p > 0.001, round(t_p, 5), "<0.001*") else NA,
         P_Wilcoxon = if (!is.na(wilcox_p)) ifelse(wilcox_p > 0.001, round(wilcox_p, 5), "<0.001*") else NA,
@@ -168,7 +184,7 @@ continuous_2g_pair <- function(data,
       )
     }, error = function(e) {
       resultados[[var]] <- list(
-        Variable = var,
+        Variable = variable_lab,
         P_Shapiro_Resid = NA,
         P_T_Paired = NA,
         P_Wilcoxon = NA,

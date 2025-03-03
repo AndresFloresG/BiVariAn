@@ -36,7 +36,7 @@ An oject class step_bw containing the final model an each step performed in back
 Extension code to perform stepwise backward to a logistf model with categorical variables. Automatically transforms predictors of the model which are factors to dummy variables.
 }
 \examples{
-
+if(requireNamespace("logistf")){
 library(logistf)
 
 data<-mtcars
@@ -51,10 +51,13 @@ final_stepwise_model<-stepwise$final_model
 stepwise$steps
 
 summary(final_stepwise_model)
+}
 
 
 }
 \references{
+Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023. Available on: \url{https://CRAN.R-project.org/package=logistf}
+
 Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
 
 Ullmann T, Heinze G, Hafermann L, Schilhart-Wallisch C, Dunkler D, et al. (2024) Evaluating variable selection methods for multivariable regression models: A simulation study protocol. PLOS ONE 19(8): e0308543

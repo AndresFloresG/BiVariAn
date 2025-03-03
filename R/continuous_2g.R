@@ -1,10 +1,11 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
+#' @importFrom table1 label
 #' @name continuous_2g
 #' @aliases continuous_2g
 #' @title Bivariate analysis for 2 groups
 #' @description
-#'   Generates a HTML table of bivariate analysis for 2 groups.
+#' Automatic test for continuous variables for 2 groups. Variable names can be assigned using [table1::label()] function.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable as character. Must have exactly 2 levels.
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
@@ -15,17 +16,22 @@
 #'
 #'
 #' @examples
-
-#'  data <- data.frame(group = rep(letters[1:2], 30),
-#'  var1 = rnorm(30, mean = 15, sd = 5),
-#'  var2 = rnorm(30, mean = 20, sd = 2),
-#'  var3 = rnorm(30, mean = 10, sd = 1),
-#'  var4 = rnorm(30, mean = 5, sd =2))
+#'  df <- mtcars
+#'  df$am <- as.factor(df$am)
+#'  continuous_2g(data = df,
+#'  groupvar = "am",
+#'  flextableformat = FALSE)
 #'
-#'  data$group<-as.factor(data$group)
+#' # Set names to variables
+#' if(requireNamespace("table1")){
+#' table1::label(df$mpg) <- "Miles per gallon"
+#' table1::label(df$cyl) <- "Number of cylinders"
+#' table1::label(df$disp) <- "Displacement"
+#' table1::label(df$hp) <- "Gross horsepower"
+#' table1::label(df$drat) <- "Rear axle ratio"
 #'
-#'  conttable <- continuous_2g(data = data, groupvar = "group")
-
+#' continuous_2g(data = df, groupvar = "am", flextableformat = FALSE)
+#' }
 
 
 #' @export
@@ -34,6 +40,7 @@ continuous_2g <- function(data,
                           ttest_args = list(),
                           wilcox_args = list(),
                           flextableformat = TRUE) {
+
   if (!is.data.frame(data)) {
     stop("Data must be a data.frame object")
   }
@@ -63,19 +70,6 @@ continuous_2g <- function(data,
     }
   }
 
-  # Configurar argumentos por defecto
-  na.action <- NULL
-  default_ttestargs <- list(formula = continuous_data ~ group_data,
-                            alternative = "two.sided",
-                            na.action = na.pass)
-  default_wilcoxargs <- list(formula = continuous_data ~ group_data,
-                             alternative = "two.sided",
-                             na.action = na.pass)
-
-  # Combinar argumentos del usuario con los predeterminados
-  ttest_args <- modifyList(default_ttestargs, ttest_args)
-  wilcox_args <- modifyList(default_wilcoxargs, wilcox_args)
-
   # Convertir la variable de agrupación en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
 
@@ -92,13 +86,15 @@ continuous_2g <- function(data,
   for (var1 in variables_continuas) {
     if (var1 %in% names(data)) {
       valid_data <- data[!is.na(data[[groupvar]]) & !is.na(data[[var1]]), ]
-      group_data <- valid_data[[groupvar]]
+      groupingdata <- valid_data[[groupvar]]
       continuous_data <- valid_data[[var1]]
 
+      variable_lab <- if(!is.null(table1::label(data[[var1]]))) table1::label(data[[var1]]) else var1
+
       # Continuar solo si hay suficientes datos para análisis
-      if (length(unique(group_data)) < 2 || length(continuous_data) < 2) {
+      if (length(unique(groupingdata)) < 2 || length(continuous_data) < 2) {
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
           P_T_Test = NA,
@@ -114,43 +110,50 @@ continuous_2g <- function(data,
 
       tryCatch({
         # Prueba de normalidad en los residuos
-        lm_model <- lm(continuous_data ~ group_data)
+        lm_model <- lm(continuous_data ~ groupingdata)
         shapiro_res <- stats::shapiro.test(residuals(lm_model))$p.value
 
         # Prueba de homogeneidad de varianzas (Levene)
-        levene_p <- car::leveneTest(continuous_data ~ group_data)$"Pr(>F)"[1]
+        levene_p <- car::leveneTest(continuous_data ~ groupingdata)$"Pr(>F)"[1]
 
         # Configurar var.equal según la prueba de Levene
         var_equal <- levene_p > 0.05
 
+        # Extraer grupos
+        group_levels <- levels(groupingdata)
+        group1 <- continuous_data[groupingdata == group_levels[1]]
+        group2 <- continuous_data[groupingdata == group_levels[2]]
+
         # Ejecutar t-test
-        ttest_args <- modifyList(ttest_args, list(var.equal = var_equal))
+        ttest_args <- modifyList(ttest_args, list(x = group1, y = group2, var.equal = var_equal))
         t_test <- do.call(t.test, ttest_args)
         t_p <- t_test$p.value
-        diff_means <- t_test$estimate[1] - t_test$estimate[2]
+        diff_means <- mean(group1, na.rm = TRUE) - mean(group2, na.rm = TRUE)
         ci_lower <- t_test$conf.int[1]
         ci_upper <- t_test$conf.int[2]
 
         # Ejecutar prueba de Mann-Whitney
+        wilcox_args <- modifyList(wilcox_args, list(x = group1, y = group2))
         mann_whitney <- do.call(wilcox.test, wilcox_args)
         mann_u_p <- mann_whitney$p.value
 
+        # Inicializar `signiftest` para evitar que quede NULL
+        signiftest <- "None"
+
         # Determinar la prueba significativa
-
-        if(shapiro_res > 0.05){
-          if(levene_p > 0.05 && t_p < 0.05){
-            signiftest <- paste("Student T test")
-          } else if (levene_p < 0.05 && t_p < 0.05){
-            signiftest <- paste("Welch T test")
+        if (!is.na(shapiro_res) && shapiro_res > 0.05) {
+          if (!is.na(levene_p) && levene_p > 0.05 && !is.na(t_p) && t_p < 0.05) {
+            signiftest <- "Student T test"
+          } else if (!is.na(levene_p) && levene_p < 0.05 && !is.na(t_p) && t_p < 0.05) {
+            signiftest <- "Welch T test"
           }
-        } else if (shapiro_res < 0.05 && mann_u_p <0.05){
-          signiftest <- paste("Mann-W-U test")
-        } else signiftest <- paste("None")
-
+        } else if (!is.na(shapiro_res) && shapiro_res <= 0.05 && !is.na(mann_u_p) && mann_u_p < 0.05) {
+          signiftest <- "Mann-W-U test"
+        }
 
         # Guardar resultados
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = ifelse(shapiro_res > 0.001, round(shapiro_res, 5), "<0.001*"),
           P_Levene = ifelse(levene_p > 0.001, round(levene_p, 5), "<0.001*"),
           P_T_Test = ifelse(t_p > 0.001, round(t_p, 5), "<0.001*"),
@@ -164,7 +167,7 @@ continuous_2g <- function(data,
       }, error = function(e) {
         # En caso de error, asignar NA a los resultados de esta variable
         resultados[[var1]] <- list(
-          Variable = var1,
+          Variable = variable_lab,
           P_Shapiro_Resid = NA,
           P_Levene = NA,
           P_T_Test = NA,
@@ -188,4 +191,5 @@ continuous_2g <- function(data,
     return(resultados_df)
   }
 }
+
 

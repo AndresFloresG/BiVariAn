@@ -17,7 +17,7 @@ dichotomous_2k_2sid(data, referencevar, flextableformat = TRUE)
 Returns a dataframe or flextable containing statistical values for Chi squared tests or Fisher's test.
 }
 \description{
-Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values.
+Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 categories. Display a table arranged dataframe with Chi squared statistic, minimum expected frecuencies, Chi squared p value, Fisher Test p value, and Odds ratio with 95 confidence levels. Note that you must recode factors and level the database factors in order to compute exact p values. Variable names can be assigned using \code{\link[table1:label]{table1::label()}} function.
 }
 \examples{
   # Not run
@@ -40,6 +40,16 @@ Generates a HTML table of bivariate Chi squared and Fisher Test analysis for 2 c
  # Apply function
 dichotomous_2k_2sid(df, referencevar="has")
 dichotomous_2k_2sid(df, referencevar="has", flextableformat = FALSE)
+
+# Set names to variables
+if(requireNamespace("table1")){
+table1::label(df$has) <- "Hypertension"
+table1::label(df$smoke) <- "Smoking Habits"
+table1::label(df$gender) <- "Gender"
+
+dichotomous_2k_2sid(df, referencevar="has", flextableformat = FALSE)
+}
+
 }
 \author{
 JAFG
