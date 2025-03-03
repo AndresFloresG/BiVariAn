@@ -15,7 +15,7 @@ logistf_summary(object, verbose = FALSE, ...)
 \item{...}{Additional arguments}
 }
 \value{
-An object class 'data.frane' showing coefficients and p_values.
+An object class 'data.frame' showing coefficients and p_values.
 }
 \description{
 Summary method for logistf models, currently this method is only used in \link{step_bw_firth} function.

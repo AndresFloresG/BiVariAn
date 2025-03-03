@@ -5,7 +5,7 @@
 #' @param object logistf class object
 #' @param verbose logical. If TRUE, the output will be printed
 #' @param ... Additional arguments
-#' @returns An object class 'data.frane' showing coefficients and p_values.
+#' @returns An object class 'data.frame' showing coefficients and p_values.
 #' @references Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023. available on: <https://CRAN.R-project.org/package=logistf>
 #'
 #' @examples
