@@ -1,7 +1,7 @@
 Type: Package
 Package: BiVariAn
 Title: Bivariate Automatic Analysis
-Version: 1.0.1
+Version: 1.0.1.9000
 Date: 2025-03-03
 Authors@R: c(
     person("José Andrés", "Flores-García", , "andres.flores@uaslp.mx", role = c("cre", "aut", "cph"),
