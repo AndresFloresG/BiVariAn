@@ -10,6 +10,7 @@
 coverage](https://codecov.io/gh/AndresFloresG/BiVariAn/graph/badge.svg)](https://app.codecov.io/gh/AndresFloresG/BiVariAn)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/BiVariAn)](https://CRAN.R-project.org/package=BiVariAn)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/BiVariAn)]
 <!-- badges: end -->
 
 <br/>
