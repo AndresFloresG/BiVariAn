@@ -2,7 +2,7 @@
 % Please edit documentation in R/step_bw_p.R
 \name{step_bw_p}
 \alias{step_bw_p}
-\title{Automatized stepwise backward for regression models}
+\title{Automatized stepwise backward for regression models (with forced terms)}
 \usage{
 step_bw_p(
   reg_model,
@@ -12,41 +12,48 @@ step_bw_p(
   steps = NULL,
   p_threshold = 0.05,
   data = NULL,
+  forced = NULL,
   ...
 )
 }
 \arguments{
-\item{reg_model}{Regression model. Must be a glm or lm model}
+\item{reg_model}{Regression model. Must be a glm or lm object}
 
-\item{s_lower}{Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)}
+\item{s_lower}{Lower step. Names of the variables to be included at the lower step. Default is "~1" (intercept only)}
 
-\item{s_upper}{Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)}
+\item{s_upper}{Upper step. Names of the variables to be included at the upper step. Default is "all" (all predictors)}
 
-\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE}
+\item{trace}{Logical. Whether to print each step to the console. Default is TRUE.}
 
-\item{steps}{Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.}
+\item{steps}{Maximum number of elimination steps. If NULL, set to number of predictors.}
 
-\item{p_threshold}{Treshold of p value. Default is 0.05}
+\item{p_threshold}{P-value threshold for elimination. Default is 0.05.}
 
-\item{data}{Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.}
+\item{data}{Data frame for stepwise. If NULL, extracted from reg_model.}
 
-\item{...}{Arguments passed to \code{\link[car:Anova]{car::Anova()}} function.}
+\item{forced}{Character vector of predictor names to always keep. Default NULL.}
+
+\item{...}{Additional arguments passed to car::Anova().}
 }
 \value{
-An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
+An object of class "step_bw" containing the final model and a data.frame of steps.
 }
 \description{
-Automatized stepwise backward for regression models
+Automatized stepwise backward for regression models (with forced terms)
 }
 \examples{
 data(mtcars)
-regression_model<-lm(cyl~., data=mtcars)
-stepwise<-step_bw_p(regression_model, trace=FALSE)
-
-final_stepwise_model<-stepwise$final_model
-
-summary(final_stepwise_model)
-
+# Fit a linear model
+regression_model <- lm(cyl ~ ., data = mtcars)
+# Perform backward stepwise, forcing "wt" and "hp" to remain
+stepwise <- step_bw_p(
+  regression_model,
+  forced = c("wt", "hp"),
+  trace = FALSE
+)
+# Extract final model and view summary
+final_model <- stepwise$final_model
+summary(final_model)
 
 }
 \references{

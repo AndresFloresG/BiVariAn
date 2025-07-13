@@ -2,7 +2,7 @@
 % Please edit documentation in R/step_bw_firth.R
 \name{step_bw_firth}
 \alias{step_bw_firth}
-\title{Stepwise backward for logistic Firth regression with automated dummy variables conversion}
+\title{Stepwise backward for logistic Firth regression with automated dummy variables conversion (with forced terms)}
 \usage{
 step_bw_firth(
   reg_model,
@@ -11,52 +11,60 @@ step_bw_firth(
   trace = TRUE,
   steps = NULL,
   p_threshold = 0.05,
-  data = NULL
+  data = NULL,
+  forced = NULL
 )
 }
 \arguments{
-\item{reg_model}{Regression model. Must be a glm or lm model}
+\item{reg_model}{A logistf model object.}
 
-\item{s_lower}{Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)}
+\item{s_lower}{Lower step. Not used; included for compatibility. Default = "~1".}
 
-\item{s_upper}{Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)}
+\item{s_upper}{Upper step. Not used; included for compatibility. Default = "all".}
 
-\item{trace}{Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the \code{logistf} class are designed to print on the console when the \code{summary.logistf} method from \code{logistf} package is used. Since this function repeatedly uses this function, some part of the process will be printed on the console even when "trace" is set to \code{FALSE}.}
+\item{trace}{Logical. Print each step. Default TRUE.}
 
-\item{steps}{Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.}
+\item{steps}{Maximum number of elimination steps. If NULL, set to number of predictors.}
 
-\item{p_threshold}{Treshold of p value. Default is 0.05}
+\item{p_threshold}{P-value threshold for elimination. Default = 0.05.}
 
-\item{data}{Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.}
+\item{data}{Data frame. If NULL, extracted from reg_model.}
+
+\item{forced}{Character vector of term names to always keep. Default NULL.}
 }
 \value{
-An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
+An object of class "step_bw" with components:
+\itemize{
+\item final_model: the fitted logistf model
+\item steps: a data.frame of each elimination step
+}
 }
 \description{
-Extension code to perform stepwise backward to a logistf model with categorical variables. Automatically transforms predictors of the model which are factors to dummy variables.
+Extension code to perform stepwise backward on a logistf model with categorical variables.
+Automatically transforms predictors that are factors into dummy variables.
 }
 \examples{
-if(requireNamespace("logistf")){
-library(logistf)
-
-data<-mtcars
-data$am<-as.factor(data$am)
-
-regression_model<-logistf::logistf(am~mpg+cyl+disp, data=data)
-stepwise<-step_bw_firth(regression_model, trace=FALSE)
-
-final_stepwise_model<-stepwise$final_model
-
-# Show steps
-stepwise$steps
-
-summary(final_stepwise_model)
+if (requireNamespace("logistf", quietly = TRUE)) {
+  library(logistf)
+  data <- mtcars
+  data$am <- as.factor(data$am)
+  regression_model <- logistf(am ~ mpg + cyl + disp, data = data)
+  # Perform backward stepwise, forcing 'cyl' to remain
+  stepwise <- step_bw_firth(
+    regression_model,
+    forced = c("cyl"),
+    p_threshold = 0.05,
+    trace = FALSE
+  )
+  final_model <- stepwise$final_model
+  # Show steps and summary
+  stepwise$steps
+  summary(final_model)
 }
-
 
 }
 \references{
-Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023. Available on: \url{https://CRAN.R-project.org/package=logistf}
+Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023.
 
 Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
 

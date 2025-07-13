@@ -22,14 +22,13 @@ Summary method for logistf models, currently this method is only used in \link{s
 }
 \examples{
 # Only use if you want a non-printable version of 'summary' for a logistfnp object.
-if(requireNamespace("logistf")){
-library(logistf)
-data <- mtcars
-data$am <- as.factor(data$am)
+if (requireNamespace("logistf")) {
+  library(logistf)
+  data <- mtcars
+  data$am <- as.factor(data$am)
 
-regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
-class(regression_model) <- c("logistfnp")
-summary(regression_model)
+  regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
+  logistf_summary(regression_model)
 }
 
 }

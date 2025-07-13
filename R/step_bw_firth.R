@@ -31,7 +31,7 @@
 #'   library(logistf)
 #'   data <- mtcars
 #'   data$am <- as.factor(data$am)
-#'   regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
+#'   regression_model <- logistf(am ~ mpg + cyl + disp, data = data)
 #'   # Perform backward stepwise, forcing 'cyl' to remain
 #'   stepwise <- step_bw_firth(
 #'     regression_model,

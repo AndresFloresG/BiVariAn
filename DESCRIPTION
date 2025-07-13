@@ -42,6 +42,7 @@ Imports:
     rrtable,
     scales,
     stats,
+    systemfonts,
     table1,
     tidyr,
     utils

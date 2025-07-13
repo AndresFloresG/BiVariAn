@@ -10,19 +10,17 @@
 #'
 #' @examples
 #' # Only use if you want a non-printable version of 'summary' for a logistfnp object.
-#' if(requireNamespace("logistf")){
-#' library(logistf)
-#' data <- mtcars
-#' data$am <- as.factor(data$am)
+#' if (requireNamespace("logistf")) {
+#'   library(logistf)
+#'   data <- mtcars
+#'   data$am <- as.factor(data$am)
 #'
-#' regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
-#' class(regression_model) <- c("logistfnp")
-#' logistf_summary(regression_model)
+#'   regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
+#'   logistf_summary(regression_model)
 #' }
 #'
 #' @export
 logistf_summary <- function(object, verbose = FALSE, ...) {
-
   # Verificar que el objeto es de la clase correcta
   if (!inherits(object, "logistf")) {
     stop("Object is not a 'logistf' class")
@@ -78,39 +76,40 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
   )
 
   # Prueba de Wald
-  wald_stat <- tryCatch({
-    t(coefs) %*% solve(var_red) %*% coefs
-  }, error = function(e) {
-    message("\n La matriz de varianza-covarianza es singular. No se puede calcular la prueba de Wald. \n")
-    return(NA)
-  })
+  wald_stat <- tryCatch(
+    {
+      t(coefs) %*% solve(var_red) %*% coefs
+    },
+    error = function(e) {
+      message("\n La matriz de varianza-covarianza es singular. No se puede calcular la prueba de Wald. \n")
+      return(NA)
+    }
+  )
   wald_test <- list(
     Wald_stat = wald_stat,
     df = df,
     p_value = 1 - stats::pchisq(wald_stat, df)
   )
-if(verbose){
-  # Imprimir resultados en formato legible
-  cat("\nCall:\n")
-  print(call)
+  if (verbose) {
+    # Imprimir resultados en formato legible
+    cat("\nCall:\n")
+    print(call)
 
-  cat("\nTabla de coeficientes:\n")
-  print(round(summary_table, 8))
+    cat("\nTabla de coeficientes:\n")
+    print(round(summary_table, 8))
 
-  cat("\nLikelihood Ratio Test:\n")
-  cat("  LR =", round(lr_test$LR_stat, 8), "on", df, "df, p =", round(lr_test$p_value, 8), "\n")
+    cat("\nLikelihood Ratio Test:\n")
+    cat("  LR =", round(lr_test$LR_stat, 8), "on", df, "df, p =", round(lr_test$p_value, 8), "\n")
 
-  cat("\nWald Test:\n")
-  if (!is.na(wald_test$Wald_stat)) {
-    cat("  Wald =", round(wald_test$Wald_stat, 8), "on", df, "df, p =", round(wald_test$p_value, 8), "\n")
+    cat("\nWald Test:\n")
+    if (!is.na(wald_test$Wald_stat)) {
+      cat("  Wald =", round(wald_test$Wald_stat, 8), "on", df, "df, p =", round(wald_test$p_value, 8), "\n")
+    } else {
+      cat("  Wald Test no se pudo calcular debido a singularidad en la matriz de varianza.\n")
+    }
   } else {
-    cat("  Wald Test no se pudo calcular debido a singularidad en la matriz de varianza.\n")
+    summary_table
   }
-} else {
-  summary_table
-}
   # Retornar invisiblemente la tabla de coeficientes
   return(invisible(as.data.frame(summary_table)))
 }
-
-
