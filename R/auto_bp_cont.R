@@ -1,5 +1,6 @@
 #' @import ggplot2
 #' @import ggprism
+#' @importFrom systemfonts require_font
 #' @name auto_bp_cont
 #' @author JMCR
 #' @title auto_bp_cont
@@ -65,6 +66,8 @@ auto_bp_cont <- function(data,
     stop("The grouping variable must be categorical.")
   }
 
+  systemfonts::require_font("sans")
+
   default_bp_args <- list(
     fill = "white",
     alpha = 0
@@ -113,5 +116,3 @@ auto_bp_cont <- function(data,
   # Retornar la lista de graficas
   return(graficascont)
 }
-
-

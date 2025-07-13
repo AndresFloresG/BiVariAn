@@ -17,7 +17,7 @@
 #'
 #' regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
 #' class(regression_model) <- c("logistfnp")
-#' summary(regression_model)
+#' logistf_summary(regression_model)
 #' }
 #'
 #' @export

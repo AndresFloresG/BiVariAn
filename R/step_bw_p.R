@@ -1,152 +1,163 @@
 #' @importFrom car Anova
-#' @title Automatized stepwise backward for regression models
+#' @title Automatized stepwise backward for regression models (with forced terms)
 #' @name step_bw_p
 #' @aliases step_bw_p
 #'
-#' @param reg_model Regression model. Must be a glm or lm model
-#' @param s_lower Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)
-#' @param s_upper Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)
-#' @param trace Trace the steps in R console. Display the output of each iteration. Default is TRUE
-#' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
-#' @param p_threshold Treshold of p value. Default is 0.05
-#' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
-#' @param ... Arguments passed to [car::Anova()] function.
+#' @param reg_model Regression model. Must be a glm or lm object
+#' @param s_lower Lower step. Names of the variables to be included at the lower step. Default is "~1" (intercept only)
+#' @param s_upper Upper step. Names of the variables to be included at the upper step. Default is "all" (all predictors)
+#' @param trace Logical. Whether to print each step to the console. Default is TRUE.
+#' @param steps Maximum number of elimination steps. If NULL, set to number of predictors.
+#' @param p_threshold P-value threshold for elimination. Default is 0.05.
+#' @param data Data frame for stepwise. If NULL, extracted from reg_model.
+#' @param forced Character vector of predictor names to always keep. Default NULL.
+#' @param ... Additional arguments passed to car::Anova().
 #'
-#' @returns An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
+#' @returns An object of class "step_bw" containing the final model and a data.frame of steps.
 #'
 #' @references Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
 #'
-#'
 #' @examples
 #' data(mtcars)
-#' regression_model<-lm(cyl~., data=mtcars)
-#' stepwise<-step_bw_p(regression_model, trace=FALSE)
+#' # Fit a linear model
+#' regression_model <- lm(cyl ~ ., data = mtcars)
+#' # Perform backward stepwise, forcing "wt" and "hp" to remain
+#' stepwise <- step_bw_p(
+#'   regression_model,
+#'   forced = c("wt", "hp"),
+#'   trace = FALSE
+#' )
+#' # Extract final model and view summary
+#' final_model <- stepwise$final_model
+#' summary(final_model)
 #'
-#' final_stepwise_model<-stepwise$final_model
-#'
-#' summary(final_stepwise_model)
-#'
-#'
-
 #' @export
-
-
-step_bw_p <- function (reg_model,
-                       s_lower = "~1",
-                       s_upper = "all",
-                       trace = TRUE,
-                       steps = NULL,
-                       p_threshold = 0.05,
-                       data = NULL,
-                       ...)
-{
+step_bw_p <- function(reg_model,
+                      s_lower = "~1",
+                      s_upper = "all",
+                      trace = TRUE,
+                      steps = NULL,
+                      p_threshold = 0.05,
+                      data = NULL,
+                      forced = NULL,
+                      ...) {
+  # --- Validate inputs ---
   if (!inherits(reg_model, c("lm", "glm"))) {
-    stop("\n\nThe model must be a 'lm' or 'glm' object")
+    stop("'reg_model' must be of class 'lm' or 'glm'")
+  }
+  if (!is.null(p_threshold) && (p_threshold < 0 || p_threshold > 1)) {
+    stop("'p_threshold' must be between 0 and 1")
+  }
+  # Extract data and predictors
+  if (is.null(data)) data <- eval(reg_model$call$data)
+
+  # Process s_lower
+  if (is.character(s_lower)) {
+    s_lower <- terms(as.formula(s_lower), data = data)
+  } else {
+    stop("'s_lower' must be a character string of a formula")
+  }
+  # Process s_upper
+  if (identical(s_upper, "all")) {
+    response <- all.vars(formula(reg_model))[1]
+    preds <- setdiff(names(data), response)
+    s_upper <- terms(as.formula(paste(response, "~", paste(preds, collapse = "+"))),
+      data = data
+    )
+  } else if (is.character(s_upper)) {
+    s_upper <- terms(as.formula(s_upper), data = data)
+  } else {
+    stop("'s_upper' must be 'all' or a character string of a formula")
   }
 
-  if(p_threshold < 0 || p_threshold > 1){
-    stop("p_threshold must be a number between 0 and 1")
-  }
-
+  # Initialize steps count
   if (is.null(steps)) {
     steps <- length(attr(terms(reg_model), "term.labels"))
   }
-  if (is.null(data)) {
-    data <- eval(reg_model$call$data)
-  }
-  if (is.character(s_lower)) {
-    s_lower <- terms(as.formula(s_lower), data = data)
-  }
-  else {
-    stop("\n\ns_lower must be a string with a valid formula")
-  }
-  if (s_upper == "all") {
-    response_var <- all.vars(formula(reg_model))[1]
-    all_vars <- setdiff(names(data), response_var)
-    s_upper <- as.formula(paste(response_var, "~", paste(all_vars,
-                                                         collapse = "+")))
-  }
-  else if (is.character(s_upper)) {
-    s_upper <- terms(as.formula(s_upper), data = data)
-  }
-  else {
-    stop("\n\ns_upper must be a string with a valid formula.")
+
+  # Validate 'forced' argument
+  forced_terms <- character(0)
+  if (!is.null(forced)) {
+    if (!is.character(forced)) stop("'forced' must be a character vector of term names")
+    all_terms <- attr(terms(reg_model), "term.labels")
+    missing <- setdiff(forced, all_terms)
+    if (length(missing) > 0) {
+      stop("The following 'forced' terms are not in the model: ", paste(missing, collapse = ", "))
+    }
+    forced_terms <- forced
   }
 
-
-
+  # Begin stepwise
   models <- list()
   fit <- reg_model
-  nm <- 1
+  step_idx <- 1L
   if (trace) {
-    cat("\n\nBeggining of the model:\n", deparse(formula(fit)),
-        "\n\n")
+    cat("\nInitial model:", deparse(formula(fit)), "\n")
     print(car::Anova(fit, ...))
     utils::flush.console()
   }
+  models[[step_idx]] <- list(
+    change = "Initial",
+    formula = formula(fit)
+  )
 
-  models[[nm]] <- list(change = "Initial", formula_eval = formula(fit))
+  # Backward elimination loop
   while (steps > 0) {
     steps <- steps - 1
-    coef_summary <- car::Anova(fit, ...)
-    pvalues <- coef_summary[, ifelse(inherits(reg_model,
-                                              "glm"), "Pr(>Chisq)", "Pr(>F)"), drop = TRUE]
-    pvalues <- pvalues[!rownames(coef_summary) %in% c("Residuals",
-                                                      "(Intercept)")]
-    if (length(pvalues) > 0 && any(pvalues > p_threshold,
-                                   na.rm = TRUE)) {
-      max_p <- max(pvalues, na.rm = TRUE)
-      term_index <- which.max(pvalues)
-      term_to_remove <- attr(terms(fit), "term.labels")[term_index]
+    # Compute p-values for terms
+    aov_tab <- car::Anova(fit, ...)
+    pcol <- if (inherits(fit, "glm")) "Pr(>Chisq)" else "Pr(>F)"
+    pvals <- aov_tab[, pcol, drop = TRUE]
+    names(pvals) <- rownames(aov_tab)
+    # Exclude intercept and residuals
+    pvals <- pvals[!names(pvals) %in% c("(Intercept)", "Residuals")]
 
-      if (trace) {
-        cat("\n\nCandidate term to be eliminated:", term_to_remove,
-            "p value =", max_p, "\n")
-      }
-
-      if (is.na(term_to_remove)) {
-        if(trace){
-          cat("\n\nNo terms to be removed\n\n")
-        }
-        break
-      }
-      new_terms <- setdiff(attr(terms(fit), "term.labels"),
-                           term_to_remove)
-      if (length(new_terms) < 1) {
-        if(trace){
-          cat("\n\nIt is not possible to eliminate more terms\n\n")
-        }
-        break
-      }
-      new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
-      fit <- update(fit, new_formula)
-      models[[nm + 1]] <- list(change = paste("-", term_to_remove),
-                               formula_eval = formula(fit))
-      nm <- nm + 1
-      if (trace) {
-        cat("\n\nStep: Eliminated", term_to_remove, "\n",
-            deparse(formula(fit)), "\n\n")
-        print(car::Anova(fit, ...))
-        utils::flush.console()
-      }
-    }
-    else {
-      if(trace){
-        text<-("\n\nAll p values are below the threshold\n\n")
-        text
-      }
+    # Identify candidates not in 'forced'
+    candidates <- pvals[!names(pvals) %in% forced_terms]
+    # Stop if none above threshold
+    if (!(any(candidates > p_threshold, na.rm = TRUE))) {
+      if (trace) cat("\nNo eliminable terms above p_threshold. Stopping.\n")
       break
     }
-  }
-  Step <- sapply(models, function(x) x$change)
-  Formula <- sapply(models, function(x) deparse(x$formula_eval))
-  steps_results <- data.frame(cbind(Step, Formula))
-  reslist<-list(final_model = fit, steps = steps_results)
-  class(reslist)<-"step_bw"
-  if(trace){
-    reslist
-  }else if(trace == FALSE){
-    invisible(reslist)
+    # Select term with largest p-value
+    term_to_remove <- names(candidates)[which.max(candidates)]
+    maxp <- max(candidates, na.rm = TRUE)
+    if (trace) cat(sprintf("\nRemoving %s (p = %.4f)\n", term_to_remove, maxp))
+
+    # Update model
+    current_terms <- attr(terms(fit), "term.labels")
+    new_terms <- setdiff(current_terms, term_to_remove)
+    if (length(new_terms) == 0) {
+      if (trace) cat("\nNo more terms to remove.\n")
+      break
+    }
+    new_formula <- reformulate(new_terms, response = all.vars(formula(fit))[1])
+    fit <- update(fit, new_formula)
+
+    # Record step
+    step_idx <- step_idx + 1L
+    models[[step_idx]] <- list(
+      change = paste("-", term_to_remove),
+      formula = formula(fit)
+    )
+    if (trace) {
+      print(car::Anova(fit, ...))
+      utils::flush.console()
+    }
   }
 
+  # Prepare output
+  steps_df <- data.frame(
+    Step = sapply(models, `[[`, "change"),
+    Formula = sapply(models, function(x) deparse(x$formula)),
+    stringsAsFactors = FALSE
+  )
+  result <- list(final_model = fit, steps = steps_df)
+  class(result) <- "step_bw"
+
+  if (trace) {
+    return(result)
+  } else {
+    invisible(result)
+  }
 }

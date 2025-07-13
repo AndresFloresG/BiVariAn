@@ -1,183 +1,158 @@
 #' @importFrom logistf logistf
 #' @importFrom fastDummies dummy_cols
 #' @importFrom dplyr setdiff
-#' @title Stepwise backward for logistic Firth regression with automated dummy variables conversion
+#' @importFrom BiVariAn logistf_summary
+#' @title Stepwise backward for logistic Firth regression with automated dummy variables conversion (with forced terms)
 #' @name step_bw_firth
 #' @aliases step_bw_firth
 #' @description
-#' Extension code to perform stepwise backward to a logistf model with categorical variables. Automatically transforms predictors of the model which are factors to dummy variables.
+#' Extension code to perform stepwise backward on a logistf model with categorical variables.
+#' Automatically transforms predictors that are factors into dummy variables.
 #'
-#' @param reg_model Regression model. Must be a glm or lm model
-#' @param s_lower Lower step. Names of the variables to be included at the lower step. Default is "~1" (Intercept)
-#' @param s_upper Upper step. Names of the variables to be included at the upper step. Default is "all" (Includes all variables in a dataframe)
-#' @param trace Trace the steps in R console. Display the output of each iteration. Default is TRUE. Regression models of the `logistf` class are designed to print on the console when the `summary.logistf` method from `logistf` package is used. Since this function repeatedly uses this function, some part of the process will be printed on the console even when "trace" is set to `FALSE`.
-#' @param steps Maximum number of steps in the process. If NULL, steps will be the length of the regression model introduced.
-#' @param p_threshold Treshold of p value. Default is 0.05
-#' @param data Dataframe to execute the stepwise process. If NULL, data will be assigned from the regression model data.
+#' @param reg_model A logistf model object.
+#' @param s_lower Lower step. Not used; included for compatibility. Default = "~1".
+#' @param s_upper Upper step. Not used; included for compatibility. Default = "all".
+#' @param trace Logical. Print each step. Default TRUE.
+#' @param steps Maximum number of elimination steps. If NULL, set to number of predictors.
+#' @param p_threshold P-value threshold for elimination. Default = 0.05.
+#' @param data Data frame. If NULL, extracted from reg_model.
+#' @param forced Character vector of term names to always keep. Default NULL.
 #'
-#' @returns An oject class step_bw containing the final model an each step performed in backward regression. The final model can be accessed using $ operator
-#' @references Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023. Available on: <https://CRAN.R-project.org/package=logistf>
+#' @returns An object of class "step_bw" with components:
+#'  - final_model: the fitted logistf model
+#'  - steps: a data.frame of each elimination step
+#'
+#' @references Heinze G, Ploner M, Jiricka L, Steiner G. logistf: Firth’s Bias-Reduced Logistic Regression. 2023.
 #' @references Efroymson MA. Multiple regression analysis. In: Ralston A, Wilf HS, editors. Mathematical methods for digital computers. New York: Wiley; 1960.
 #' @references Ullmann T, Heinze G, Hafermann L, Schilhart-Wallisch C, Dunkler D, et al. (2024) Evaluating variable selection methods for multivariable regression models: A simulation study protocol. PLOS ONE 19(8): e0308543
 #'
 #' @examples
-#' if(requireNamespace("logistf")){
-#' library(logistf)
-#'
-#' data<-mtcars
-#' data$am<-as.factor(data$am)
-#'
-#' regression_model<-logistf::logistf(am~mpg+cyl+disp, data=data)
-#' stepwise<-step_bw_firth(regression_model, trace=FALSE)
-#'
-#' final_stepwise_model<-stepwise$final_model
-#'
-#' # Show steps
-#' stepwise$steps
-#'
-#' summary(final_stepwise_model)
+#' if (requireNamespace("logistf", quietly = TRUE)) {
+#'   library(logistf)
+#'   data <- mtcars
+#'   data$am <- as.factor(data$am)
+#'   regression_model <- logistf::logistf(am ~ mpg + cyl + disp, data = data)
+#'   # Perform backward stepwise, forcing 'cyl' to remain
+#'   stepwise <- step_bw_firth(
+#'     regression_model,
+#'     forced = c("cyl"),
+#'     p_threshold = 0.05,
+#'     trace = FALSE
+#'   )
+#'   final_model <- stepwise$final_model
+#'   # Show steps and summary
+#'   stepwise$steps
+#'   summary(final_model)
 #' }
 #'
-#'
 #' @export
-
 step_bw_firth <- function(reg_model,
                           s_lower = "~1",
                           s_upper = "all",
                           trace = TRUE,
                           steps = NULL,
                           p_threshold = 0.05,
-                          data = NULL) {
-  # Validar que el modelo sea de tipo logistf
+                          data = NULL,
+                          forced = NULL) {
+  # Validate model
   if (!inherits(reg_model, "logistf")) {
-    stop("\n\nThe model must be a 'logistf' object.")
+    stop("The model must be a 'logistf' object.")
   }
-
-  # Obtener los datos si no se proporcionan
+  # Retrieve data
   if (is.null(data)) {
     data <- tryCatch(eval(reg_model$model), error = function(e) NULL)
   }
-
-  if (is.null(data) || !is.data.frame(data)) {
-    stop("Could not retrieve a valid data frame. Please provide a valid 'data' argument.")
+  if (!is.data.frame(data)) {
+    stop("Could not retrieve a valid data frame. Please provide 'data'.")
   }
-
+  # Validate p_threshold
   if (p_threshold < 0 || p_threshold > 1) {
     stop("p_threshold must be a number between 0 and 1")
   }
-
-  # Extraer términos del modelo
-  formula_terms <- as.character(names(attr(terms(reg_model), "dataClasses")))
-  yvar <- formula_terms[1]
-  predictors <- dplyr::setdiff(formula_terms, yvar)
-
-  # Identificar variables categóricas en la base de datos original
-  columnvals <- predictors[sapply(predictors, function(term) is.factor(data[[term]]))]
-
-  if (!(rlang::is_empty(columnvals))) {
+  # Extract terms
+  data_classes <- attr(terms(reg_model), "dataClasses")
+  vars <- names(data_classes)
+  yvar <- vars[1]
+  preds <- dplyr::setdiff(vars, yvar)
+  # Dummy-code factor predictors
+  factors <- preds[sapply(preds, function(v) is.factor(data[[v]]))]
+  if (length(factors) > 0) {
     dataprov <- fastDummies::dummy_cols(
-      data %>% dplyr::select(all_of(formula_terms)),
-      select_columns = columnvals,
+      data[, vars, drop = FALSE],
+      select_columns = factors,
       remove_first_dummy = TRUE,
       remove_selected_columns = TRUE
     )
   } else {
-    dataprov <- data %>% dplyr::select(all_of(formula_terms))
+    dataprov <- data[, vars, drop = FALSE]
   }
-
-  # Ajustar el nuevo modelo inicial usando la base de datos dummy
-  new_preds <- dplyr::setdiff(names(dataprov), yvar)
-
-  formula_initial <- reformulate(new_preds, response = yvar)
-  fit <- logistf::logistf(formula_initial, data = dataprov)
-
-  if (is.null(steps)) {
-    steps <- length(attr(terms(fit), "term.labels"))
-  }
-
-  # Inicializar modelos y resultados
-  models <- list()
-  nm <- 1
+  # Fit initial model
+  new_preds <- setdiff(names(dataprov), yvar)
+  formula_init <- reformulate(new_preds, response = yvar)
+  fit <- logistf::logistf(formula_init, data = dataprov)
+  # Initialize steps count
+  if (is.null(steps)) steps <- length(attr(terms(fit), "term.labels"))
+  # Validate 'forced'
   terms_current <- attr(terms(fit), "term.labels")
-
-  # Trazar el inicio
+  forced_terms <- character(0)
+  if (!is.null(forced)) {
+    if (!is.character(forced)) stop("'forced' must be a character vector of term names")
+    missing <- setdiff(forced, terms_current)
+    if (length(missing) > 0) {
+      stop("The following 'forced' terms are not in the model: ", paste(missing, collapse = ", "))
+    }
+    forced_terms <- forced
+  }
+  models <- list()
+  step_idx <- 1L
+  # Initial output
   if (trace) {
-    cat("\n\nBeginning of the model:\n", deparse(formula(fit)), "\n\n")
+    cat("\nInitial model:", deparse(formula(fit)), "\n\n")
     print(summary(fit))
   }
-
-  # Guardar el modelo inicial
-  models[[nm]] <- list(change = "Initial", formula_eval = formula(fit))
-
-  # Selección backward
+  models[[step_idx]] <- list(change = "Initial", formula = formula(fit))
+  # Backward elimination
   while (steps > 0) {
     steps <- steps - 1
-
+    # Extract p-values based on trace flag
     if (trace) {
-      pvalues <- summary(fit)$prob
-      pvalues <- pvalues[!names(pvalues) %in% "(Intercept)"]
-    } else if (!trace) {
-      pvaluesnom <- invisible(BiVariAn::logistf_summary(fit))
-      pvaluesnom <- stats::setNames(pvaluesnom$p_value, rownames(pvaluesnom))
-      pvalues <- pvaluesnom[!names(pvaluesnom) %in% "(Intercept)"]
-    }
-
-
-    # Identificar el término con el mayor p-valor
-    if (any(pvalues > p_threshold, na.rm = TRUE)) {
-      max_p <- max(pvalues, na.rm = TRUE)
-      term_index <- which.max(pvalues)
-      term_to_remove <- attr(terms(fit), "term.labels")[term_index]
-
-      if (trace) {
-        cat("\n\nCandidate term to remove:", term_to_remove, "with p =", max_p, "\n\n")
-      }
-
-      if (length(term_to_remove) == 0) {
-        if (trace) cat("\n\nNo terms to be removed\n\n")
-        break
-      }
-
-      # Eliminar el término y actualizar la fórmula
-      terms_current <- setdiff(terms_current, term_to_remove)
-
-      if (length(terms_current) < 1) {
-        if (trace) cat("\n\nIt is not possible to eliminate more terms\n\n")
-        break
-      }
-
-      new_formula <- reformulate(terms_current, response = all.vars(formula(fit))[1])
-
-      # Ajustar nuevo modelo
-      fit <- logistf::logistf(new_formula, data = dataprov)
-
-      # Guardar el cambio
-      models[[nm + 1]] <- list(change = paste("-", term_to_remove), formula_eval = formula(fit))
-      nm <- nm + 1
-
-      # Mostrar el paso
-      if (trace) {
-        cat("\nStep:", paste("-", term_to_remove), "\n", deparse(formula(fit)), "\n\n")
-        print(summary(fit))
-      }
+      pv <- summary(fit)$prob
+      pv <- pv[!names(pv) %in% "(Intercept)"]
     } else {
-      if (trace) cat("\n\nAll p values are below the threshold\n\n")
+      p_tab <- invisible(BiVariAn::logistf_summary(fit))
+      pv <- stats::setNames(p_tab$p_value, rownames(p_tab))
+      pv <- pv[!names(pv) %in% "(Intercept)"]
+    }
+    # Exclude forced terms
+    candidates <- pv[!names(pv) %in% forced_terms]
+    if (!any(candidates > p_threshold, na.rm = TRUE)) {
+      if (trace) cat("\nNo eliminable terms above p_threshold. Stopping.\n")
       break
     }
+    term_remove <- names(candidates)[which.max(candidates)]
+    maxp <- max(candidates, na.rm = TRUE)
+    if (trace) cat(sprintf("\nRemoving %s (p = %.4f)\n", term_remove, maxp))
+    # Update terms
+    terms_current <- setdiff(terms_current, term_remove)
+    if (length(terms_current) == 0) {
+      if (trace) cat("\nNo more terms to remove.\n")
+      break
+    }
+    new_formula <- reformulate(terms_current, response = yvar)
+    fit <- logistf::logistf(new_formula, data = dataprov)
+    step_idx <- step_idx + 1L
+    models[[step_idx]] <- list(change = paste("-", term_remove), formula = formula(fit))
+    if (trace) {
+      print(summary(fit))
+    }
   }
-
-  # Tabla de resultados
-  Step <- sapply(models, function(x) x$change)
-  Formula <- sapply(models, function(x) deparse1(x$formula_eval))
-  steps_results <- data.frame(Step = Step, Formula = Formula)
-
-  # Retornar modelo final y resultados
-  reslist <- list(final_model = fit, steps = steps_results)
-  class(reslist) <- "step_bw"
-
-  if (trace) {
-    return(reslist)
-  } else {
-    invisible(reslist)
-  }
+  # Prepare output
+  steps_df <- data.frame(
+    Step = sapply(models, `[[`, "change"),
+    Formula = sapply(models, function(x) deparse1(x$formula)),
+    stringsAsFactors = FALSE
+  )
+  res <- list(final_model = fit, steps = steps_df)
+  class(res) <- "step_bw"
+  if (trace) res else invisible(res)
 }

@@ -72,7 +72,7 @@ auto_dens_cont <- function(data,
     captionmedian_cap = "Linea azul: Mediana"
     ylabs = "Densidad"
   } else if (lang_labs == "EN"){
-    titlab1 = "Bar plot of"
+    titlab1 = "Densityplot of"
     captionmean_cap = "Red line: Mean"
     captionmedian_cap = "Blue line: Median"
     ylabs = "Density"

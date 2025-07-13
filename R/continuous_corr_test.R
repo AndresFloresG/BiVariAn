@@ -61,6 +61,7 @@ continuous_corr_test <- function(data,
                                  alternative = NULL,
                                  flextableformat = TRUE,
                                  corr_test = c("all", "pearson", "spearman", "kendall")) {
+  # Agregar argumento sobre el supuesto de normalidad (Analizarlo por residuos o por datos en crudo)
 
   # Configuración inicial de los análisis a realizar
   perform_pearson <- FALSE
