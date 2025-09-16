@@ -14,7 +14,7 @@ test_that("auto_bar_cont works", {
 
   expect_true(is.list(graficas))
   expect_equal(graficas$var1$labels$x, "group")
-  expect_equal(class(graficas$var1), c("gg", "ggplot"))
+  expect_equal(class(graficas$var1), c("ggplot2::ggplot", "ggplot", "ggplot2::gg", "S7_object", "gg"))
 
   expect_equal(graficas$var1$labels$title, "Bar plot de var1 por group")
 })

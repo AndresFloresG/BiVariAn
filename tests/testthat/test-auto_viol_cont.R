@@ -10,8 +10,7 @@ test_that("auto_violin_cont works", {
 
   expect_true(is.list(violinplotlist))
 
-  expect_equal(capture.output(violinplotlist$var1$layers[[1]])[1],"geom_violin: draw_quantiles = NULL, na.rm = FALSE, orientation = NA")
-
+  expect_equal(capture.output(violinplotlist$var1$layers[[1]])[1], "geom_violin: na.rm = FALSE, orientation = NA, quantile_gp = list(colour = NULL, linetype = 0, linewidth = NULL)")
   expect_length(violinplotlist, 4)
 
   expect_error(auto_viol_cont(data = data, groupvar = "group", theme_func = data), "Argument 'theme_func' must be a valid function")

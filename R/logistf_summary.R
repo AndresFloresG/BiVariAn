@@ -21,14 +21,12 @@
 #'
 #' @export
 logistf_summary <- function(object, verbose = FALSE, ...) {
-  # Verificar que el objeto es de la clase correcta
   if (!inherits(object, "logistf")) {
     stop("Object is not a 'logistf' class")
   }
 
 
 
-  # Extraer información clave
   call <- object$call
   coefficients <- object$coefficients
   var_matrix <- object$var
@@ -41,7 +39,6 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
   df <- object$df
   n <- object$n
 
-  # Cálculo del estadístico Chi-cuadrado
   if (!is.null(object$modcontrol$terms.fit)) {
     var_red <- var_matrix[object$modcontrol$terms.fit, object$modcontrol$terms.fit]
     coefs <- coefficients[object$modcontrol$terms.fit]
@@ -53,7 +50,6 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
     chi2 <- stats::qchisq(1 - prob, 1)
   }
 
-  # Construcción de la tabla de salida
   summary_table <- cbind(
     coef = coefficients,
     se_coef = sqrt(diag(var_matrix)),
@@ -67,7 +63,6 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
   rownames(summary_table) <- names(coefficients)
   colnames(summary_table) <- c("Coef", "SE(Coeff)", paste0("Lower ", 1 - alpha), paste0("Upper ", 1 - alpha), "Chisq", "p_value", "Method")
 
-  # Prueba de razón de verosimilitud
   likelihood_ratio <- -2 * (loglik["null"] - loglik["full"])
   lr_test <- list(
     LR_stat = likelihood_ratio,
@@ -75,13 +70,12 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
     p_value = 1 - stats::pchisq(likelihood_ratio, df)
   )
 
-  # Prueba de Wald
   wald_stat <- tryCatch(
     {
       t(coefs) %*% solve(var_red) %*% coefs
     },
     error = function(e) {
-      message("\n La matriz de varianza-covarianza es singular. No se puede calcular la prueba de Wald. \n")
+      message("\n The variance-covariance matrix is singular. The Wald test cannot be calculated. \n")
       return(NA)
     }
   )
@@ -91,11 +85,10 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
     p_value = 1 - stats::pchisq(wald_stat, df)
   )
   if (verbose) {
-    # Imprimir resultados en formato legible
     cat("\nCall:\n")
     print(call)
 
-    cat("\nTabla de coeficientes:\n")
+    cat("\nCoefficient table:\n")
     print(round(summary_table, 8))
 
     cat("\nLikelihood Ratio Test:\n")
@@ -105,11 +98,10 @@ logistf_summary <- function(object, verbose = FALSE, ...) {
     if (!is.na(wald_test$Wald_stat)) {
       cat("  Wald =", round(wald_test$Wald_stat, 8), "on", df, "df, p =", round(wald_test$p_value, 8), "\n")
     } else {
-      cat("  Wald Test no se pudo calcular debido a singularidad en la matriz de varianza.\n")
+      cat("  The Wald Test could not be calculated due to singularity in the variance matrix.\n")
     }
   } else {
     summary_table
   }
-  # Retornar invisiblemente la tabla de coeficientes
   return(invisible(as.data.frame(summary_table)))
 }

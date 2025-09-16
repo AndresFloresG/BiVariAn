@@ -105,6 +105,7 @@ auto_bar_cont<-function(data,
 
   for (var in continuous_vars) {
 
+
     lab_var <- if (!is.null(table1::label(data[[var]]))){
       table1::label(data[[var]])
     } else var
@@ -130,7 +131,7 @@ auto_bar_cont<-function(data,
         x = lab_groupvar,
         title = paste(titlab1, lab_var, titlab2, lab_groupvar)
       ) +
-      ggplot2::scale_y_continuous(limits = c(0, data_summary$mean_value + 5))+
+      ggplot2::ylim(0, (max(data_summary$mean_value) + 5))+
       theme_func()
 
     if (err_bar_show && err_bar == "se") {

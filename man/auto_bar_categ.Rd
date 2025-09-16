@@ -7,9 +7,9 @@
 auto_bar_categ(
   data,
   groupvar = NULL,
-  bar_args = list(),
+  bar_args = NULL,
   theme_func = theme_serene,
-  lang_labs = c("EN", "SPA"),
+  lang_labs = NULL,
   showpercent = TRUE
 )
 }

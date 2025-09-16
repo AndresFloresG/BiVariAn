@@ -37,7 +37,7 @@ test_that("logistf_summary verbose output contains all sections", {
 
   out <- capture.output(BiVariAn::logistf_summary(mod, verbose = TRUE))
   expect_true(any(grepl("^Call:", out)))
-  expect_true(any(grepl("Tabla de coeficientes", out)))
+  expect_true(any(grepl("Coefficient table", out)))
   expect_true(any(grepl("Likelihood Ratio Test", out)))
   expect_true(any(grepl("Wald", out)))
 })
@@ -56,7 +56,7 @@ test_that("logistf_summary handles singular variance-covariance matrix", {
   # Expect message about singularity and still return a data.frame
   expect_message(
     res <- BiVariAn::logistf_summary(obj, verbose = FALSE),
-    "matriz de varianza-covarianza es singular"
+    "The variance-covariance matrix is singular"
   )
   expect_s3_class(res, "data.frame")
   expect_true(all(c("Coef", "Chisq", "p_value") %in% names(res)))
