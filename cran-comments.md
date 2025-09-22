@@ -1,20 +1,16 @@
 ## Resubmission
-This is a resubmission. In this version I have:
+This is a forward. 
+Due to the request received by email informing us of changes made to the ggplot2 
+package, corrections were made to the code for the graph automation functions, 
+as well as to the tests for these functions.
+The code for the functions was corrected:
 
-* Modified software names in DESCRIPTION file to be in single quotes.
+* auto_bar_cont()
+* auto_bar_categ()
+* auto_viol_cont()
 
-* Added a reference to the software in the DESCRIPTION file.
-
-* Modified 'T' and 'F' to 'TRUE' and 'FALSE' in the code.
-
-* Added \value to the documentation of the functions.
-
-* \dontrun{} section in the examples of the functions was modified.
-
-* Information messages to the console were removed.
+As well as the code for the “test_that” tests for these functions. 
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
