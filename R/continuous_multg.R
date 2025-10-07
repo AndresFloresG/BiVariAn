@@ -38,7 +38,9 @@ continuous_multg<-function(data,
     stop("flextableformat must be a logical operator")
   }
 
-  data[[groupvar]] <- as.factor(data[[groupvar]])
+  if(!is.factor(data[[groupvar]])){
+    data[[groupvar]] <- as.factor(data[[groupvar]])
+  }
 
   # Verificar que la variable de agrupacion tiene al menos dos niveles
   if (length(levels(data[[groupvar]])) < 2) {

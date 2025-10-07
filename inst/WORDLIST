@@ -8,11 +8,13 @@ CMD
 COVID
 Codecov
 Concato
+DV
 Defauult
 Dunkler
 Efroymson
 Feinstein
 Flextable
+GG
 García
 Gordillo
 Hafermann
@@ -30,6 +32,7 @@ Kemper
 Kery
 Levene's
 López
+Mauchly's
 Moscoso
 NORDIG
 ORCID
@@ -43,6 +46,7 @@ Pérez
 Rainer
 Ralston
 Schilhart
+Sphericity
 Ullmann
 Wallisch
 Welch's
@@ -70,6 +74,7 @@ english
 estudiantes
 et
 extractred
+ezANOVA
 flextable
 frecuencies
 geater
@@ -83,6 +88,7 @@ lectura
 linetype
 linewidth
 lm
+lme
 logistf
 medicina
 multivariable
@@ -96,6 +102,7 @@ sd
 se
 shapiro
 spanish
+sphericity
 tibble
 un
 violinplots

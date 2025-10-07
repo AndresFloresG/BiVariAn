@@ -5,13 +5,16 @@
 #' @import rlang
 #' @importFrom DescTools KendallTauB
 #' @importFrom DescTools SpearmanRho
+#' @importFrom ez ezANOVA
 #' @importFrom fastDummies dummy_cols
 #' @importFrom glue glue
 #' @importFrom lifecycle deprecated
 #' @importFrom logistf logistf
 #' @importFrom magrittr %>%
+#' @importFrom nlme lme
 #' @importFrom rlang .data
 #' @importFrom scales percent
+#' @importFrom stats anova
 #' @importFrom stats aov
 #' @importFrom stats as.formula
 #' @importFrom stats chisq.test
