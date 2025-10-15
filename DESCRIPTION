@@ -40,6 +40,8 @@ Imports:
     logistf,
     magrittr,
     nlme,
+    purrr,
+    readr,
     rlang,
     rrtable,
     scales,
