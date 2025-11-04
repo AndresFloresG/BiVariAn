@@ -18,6 +18,7 @@
 #' @param theme_func Theme of the generated plots. Must be the name of the function without parenthesis. Use for example: `theme_minimal` instead of `theme_minimal()`
 #' @param lang_labs Language of displayed labels. If null, default is spanish.
 #' @param showpercent Logical atribute to indicate if the graph should include percentages
+#' @param drop_na Remove NAs from provided dataframe
 #'
 #' @return Returns a list containing all barplots as ggplot object. Can be accessed via $ operator
 #'
@@ -44,16 +45,15 @@
 #'
 #'
 #' @export
-auto_bar_categ <- function(data,
-                           groupvar = NULL,
-                           bar_args = NULL,
-                           theme_func = theme_serene,
-                           lang_labs = NULL,
-                           showpercent = TRUE) {
-
-  # Validaciones basicas
+auto_bar_categ <- function (data,
+                            groupvar = NULL,
+                            bar_args = NULL,
+                            theme_func = theme_serene,
+                            lang_labs = NULL,
+                            showpercent = TRUE,
+                            drop_na = TRUE) {
   if (!is.function(theme_func)) {
-    stop("El argumento 'theme_func' debe ser una funcion de tema valida.")
+    stop("Argument 'theme_func' must be a valid theme function.")
   }
   if (!is.data.frame(data)) {
     stop("data must be a data.frame object")
@@ -61,24 +61,24 @@ auto_bar_categ <- function(data,
   if (!is.logical(showpercent) || length(showpercent) != 1L || is.na(showpercent)) {
     stop("showpercent must be a logical argument")
   }
+  if (!is.logical(drop_na) || length(drop_na) != 1L || is.na(drop_na)) {
+    stop("drop_na must be TRUE/FALSE")
+  }
 
-  # Normalizar idioma a escalar: "SPA" o "EN"
   if (is.null(lang_labs)) {
     lang_labs <- "SPA"
   } else {
-    lang_labs <- match.arg(lang_labs, c("SPA","EN"))
+    lang_labs <- match.arg(lang_labs, c("SPA", "EN"))
   }
 
-  # Etiquetas por idioma
   if (lang_labs == "SPA") {
     titlelab <- "Distribuci\u00f3n de"
     ylabs    <- "Frecuencia"
-  } else { # EN
+  } else {
     titlelab <- "Distribution of"
     ylabs    <- "Frequency"
   }
 
-  # Validar/normalizar groupvar
   if (!is.null(groupvar)) {
     if (!groupvar %in% names(data)) {
       stop("The grouping variable must be a column in the data frame.")
@@ -88,18 +88,15 @@ auto_bar_categ <- function(data,
     }
   }
 
-  # Defaults de geom_bar y fusion con bar_args
-  bar_args_default <- list(position = "dodge",
-                           colour   = "black",
-                           linewidth= 0.9,
-                           alpha    = 0.5)
+  bar_args_default <- list(position = "dodge", colour = "black",
+                           linewidth = 0.9, alpha = 0.5)
   if (is.null(bar_args) || length(bar_args) == 0L) {
     bar_args <- bar_args_default
   } else {
     bar_args <- utils::modifyList(bar_args_default, bar_args)
   }
+  if (isTRUE(drop_na) && is.null(bar_args$na.rm)) bar_args$na.rm <- TRUE
 
-  # Variables categoricas a graficar
   if (!is.null(groupvar)) {
     categ_var <- colnames(data)[sapply(data, function(x) is.factor(x) && !identical(x, data[[groupvar]]))]
   } else {
@@ -118,23 +115,43 @@ auto_bar_categ <- function(data,
       next
     }
 
-    lab_graf_cat <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
+    df <- data
+    if (isTRUE(drop_na)) {
+      if (!is.null(groupvar)) {
+        df <- df[!is.na(df[[varcat]]) & !is.na(df[[groupvar]]), , drop = FALSE]
+      } else {
+        df <- df[!is.na(df[[varcat]]), , drop = FALSE]
+      }
+      if (is.factor(df[[varcat]]))  df[[varcat]]  <- droplevels(df[[varcat]])
+      if (!is.null(groupvar) && is.factor(df[[groupvar]])) df[[groupvar]] <- droplevels(df[[groupvar]])
+    }
+
+    if (nrow(df) == 0L) {
+      if (lang_labs == "SPA") {
+        warning("La variable ", varcat, " contiene solo NA; se omite.")
+      } else {
+        warning("Variable ", varcat, " has only NA; skipping.")
+      }
+      next
+    }
+
+    lab_graf_cat <- if (!is.null(table1::label(df[[varcat]]))) table1::label(df[[varcat]]) else varcat
 
     if (!is.null(groupvar)) {
-      lab_graf_group <- if (!is.null(table1::label(data[[groupvar]]))) table1::label(data[[groupvar]]) else groupvar
+      lab_graf_group <- if (!is.null(table1::label(df[[groupvar]]))) table1::label(df[[groupvar]]) else groupvar
       group_fill <- groupvar
     } else {
       lab_graf_group <- lab_graf_cat
       group_fill <- varcat
     }
 
-    p <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[varcat]], fill = .data[[group_fill]])) +
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[varcat]], fill = .data[[group_fill]])) +
       do.call(ggplot2::geom_bar, bar_args)
 
     if (isTRUE(showpercent)) {
       p <- p + ggplot2::geom_text(
         stat = "count",
-        ggplot2::aes(label = scales::percent(after_stat(count / sum(count)))),
+        ggplot2::aes(label = scales::percent(after_stat(count/sum(count)))),
         position = ggplot2::position_dodge(width = 0.9),
         vjust = -0.5
       )
@@ -142,19 +159,20 @@ auto_bar_categ <- function(data,
 
     p <- p + ggplot2::labs(
       title = paste(titlelab, lab_graf_cat),
-      x     = lab_graf_cat,
-      y     = ylabs,
-      fill  = lab_graf_group
+      x = lab_graf_cat, y = ylabs, fill = lab_graf_group
     )
 
     if (!is.null(groupvar)) {
-      ymax <- max(table(data[[varcat]], data[[groupvar]])) + 10
+      tab <- table(df[[varcat]], df[[groupvar]])
     } else {
-      ymax <- max(table(data[[varcat]])) + 10
+      tab <- table(df[[varcat]])
     }
+    ymax <- if (length(tab)) max(tab, na.rm = TRUE) + 10 else 10
 
     p <- p +
       ggplot2::scale_y_continuous(limits = c(0, ymax)) +
+      ggplot2::scale_x_discrete(drop = TRUE, na.translate = FALSE) +
+      ggplot2::scale_fill_discrete(na.translate = FALSE) +
       theme_func() +
       ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, size = 14, face = "bold"))
 

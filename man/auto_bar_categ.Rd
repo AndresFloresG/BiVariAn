@@ -10,7 +10,8 @@ auto_bar_categ(
   bar_args = NULL,
   theme_func = theme_serene,
   lang_labs = NULL,
-  showpercent = TRUE
+  showpercent = TRUE,
+  drop_na = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ auto_bar_categ(
 \item{lang_labs}{Language of displayed labels. If null, default is spanish.}
 
 \item{showpercent}{Logical atribute to indicate if the graph should include percentages}
+
+\item{drop_na}{Remove NAs from provided dataframe}
 }
 \value{
 Returns a list containing all barplots as ggplot object. Can be accessed via $ operator
