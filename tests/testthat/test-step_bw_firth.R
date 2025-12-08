@@ -11,7 +11,7 @@ test_that("step_bw_firth works", {
   list_steps <- stepwise$steps
   expect_s3_class(list_steps, "data.frame")
   expect_length(list_steps, 2)
-  expect_equal(list_steps$Formula[3], "am ~ mpg")
+  expect_equal(list_steps$Formula[3], "\"am ~ mpg\"")
 
   expect_equal(rownames(list_steps), c("1", "2", "3"))
 

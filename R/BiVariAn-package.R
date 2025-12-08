@@ -7,6 +7,7 @@
 #' @importFrom DescTools SpearmanRho
 #' @importFrom ez ezANOVA
 #' @importFrom fastDummies dummy_cols
+#' @importFrom flextable add_header_lines
 #' @importFrom glue glue
 #' @importFrom lifecycle deprecated
 #' @importFrom logistf logistf

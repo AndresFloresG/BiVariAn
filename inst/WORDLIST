@@ -2,7 +2,6 @@ Andrés
 Anova
 Augusto
 BiVariAn’
-BiVarian
 Bivaran
 CMD
 COVID
@@ -59,6 +58,7 @@ al
 atribute
 bp
 bw
+callout
 colour
 continous
 contiuous
@@ -76,12 +76,14 @@ et
 extractred
 ezANOVA
 flextable
+flextableformat
 frecuencies
 geater
 gg
 ggplot
 glm
 grey
+groupvar
 homocedasticity
 kendall
 lectura
@@ -93,6 +95,7 @@ logistf
 medicina
 multivariable
 octubre
+palmerpenguins
 pandemia
 pieplots
 pts

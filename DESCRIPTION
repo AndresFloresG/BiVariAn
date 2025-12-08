@@ -33,6 +33,7 @@ Imports:
     epitools,
     ez,
     fastDummies,
+    flextable,
     ggplot2,
     ggprism,
     glue,

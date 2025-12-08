@@ -14,6 +14,7 @@ Simplify bivariate and regression analyses by automating result generation, incl
 Useful links:
 \itemize{
   \item \url{https://github.com/AndresFloresG/BiVariAn}
+  \item \url{https://andresfloresg.github.io/BiVariAn/}
   \item Report bugs at \url{https://github.com/AndresFloresG/BiVariAn/issues}
 }
 

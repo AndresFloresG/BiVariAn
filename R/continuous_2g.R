@@ -1,6 +1,7 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom rrtable df2flextable
 #' @importFrom table1 label
+#' @importFrom flextable add_header_lines
 #' @name continuous_2g
 #' @aliases continuous_2g
 #' @title Bivariate analysis for 2 groups
