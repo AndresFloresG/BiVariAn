@@ -1,0 +1,202 @@
+# BiVariAn
+
+  
+
+  
+
+# Overview
+
+The purpose of ‘BiVariAn’ is to facilitate bivariate analysis by
+integrating functions that allow the results of such analyses to be
+represented graphically and in text.
+
+Currently the package can generate summary tables of analysis data for:
+Analysis of continuous variables across two groups using Student’s
+t-tests (OR Welch’s t-tests according to homogeneity of variances),
+Mann-Whitney U; analysis of dichotomous variables using Chi-square and
+Fisher’s exact test; analysis of normality of raw data using the
+Shapiro-Wilk test.
+
+It is also possible to generate graphs automatically with or without
+labels on the variables with the possibility of choosing a theme from
+the ‘ggplot2’ package.
+
+Currently under development is the option to generate a generic
+interpretation of the statistical tests, temporarily available only in
+Spanish, but there are plans to include more languages.
+
+In addition to bivariate analyses, regression analyses with predictor
+selection using the stepwise backward method for linear, logistic and
+Firth penalized logistic regression models can be performed in an
+automated manner.
+
+Note: The use of the package does not replace individual customized
+analysis, but rather streamlines the process of producing the results.
+We encourage users to perform statistical analyses based on the
+recommendations for each type of study.
+
+## Installation
+
+You can install the development version of BiVariAn from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("AndresFloresG/BiVariAn")
+```
+
+Or you can install the official CRAN version with:
+
+``` r
+install.packages("BiVariAn")
+```
+
+## Example
+
+Loading the package
+
+``` r
+library(BiVariAn)
+```
+
+Render an automatic Shapiro-Wilk’s table of a simple dataset
+
+``` r
+auto_shapiro_raw(cars)
+```
+
+![](reference/figures/README-unnamed-chunk-3-1.png)
+
+``` r
+
+shapiro.test(cars$speed)
+#> 
+#>  Shapiro-Wilk normality test
+#> 
+#> data:  cars$speed
+#> W = 0.97765, p-value = 0.4576
+```
+
+Return Shapiro-Wilk’s results as a dataframe
+
+``` r
+auto_shapiro_raw(cars, flextableformat = FALSE)
+#>       Variable p_shapiro  Normality
+#> speed    speed   0.45763     Normal
+#> dist      dist    0.0391 Non-normal
+```
+
+Render an automatic Shapiro-Wilk’s table of a more complex dataset
+
+``` r
+# Load riskCommunicator to access Framingham dataset
+library(riskCommunicator)
+```
+
+``` r
+# Load dplyr to select specific columns
+library(dplyr)
+data(cvdd)
+```
+
+For shapiro.test, sample size must be between 3 and 5000
+
+Let’s select only 300 observations (arbitrary)
+
+``` r
+set.seed(081224)
+ex_sample<-slice_sample(cvdd, n=300)
+```
+
+Now, let’s select specific columns from the database
+
+``` r
+
+auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
+```
+
+![](reference/figures/README-unnamed-chunk-8-1.png)
+
+Common use of shapiro.test
+
+``` r
+shapiro.test(ex_sample$TOTCHOL)
+#> 
+#>  Shapiro-Wilk normality test
+#> 
+#> data:  ex_sample$TOTCHOL
+#> W = 0.98654, p-value = 0.007891
+```
+
+Return the same Shapiro-Wilk’s results as a dataframe
+
+``` r
+auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE), flextableformat = FALSE)
+#>          Variable p_shapiro  Normality
+#> TOTCHOL   TOTCHOL   0.00789 Non-normal
+#> SYSBP       SYSBP   <0.001* Non-normal
+#> DIABP       DIABP   <0.001* Non-normal
+#> BMI           BMI   <0.001* Non-normal
+#> HEARTRTE HEARTRTE   <0.001* Non-normal
+```
+
+# Package index
+
+## BiVariAn
+
+- [`auto_bar_categ()`](https://andresfloresg.github.io/BiVariAn/reference/auto_bar_categ.md)
+  : Automatic generation of barplot with percentages
+- [`auto_bar_cont()`](https://andresfloresg.github.io/BiVariAn/reference/auto_bar_cont.md)
+  : Automatic barplot of continous variables
+- [`auto_bp_cont()`](https://andresfloresg.github.io/BiVariAn/reference/auto_bp_cont.md)
+  : auto_bp_cont
+- [`auto_corr_cont()`](https://andresfloresg.github.io/BiVariAn/reference/auto_corr_cont.md)
+  : Generates automatic scatterplot with correlation plot
+- [`auto_dens_cont()`](https://andresfloresg.github.io/BiVariAn/reference/auto_dens_cont.md)
+  : auto_dens_cont
+- [`auto_pie_categ()`](https://andresfloresg.github.io/BiVariAn/reference/auto_pie_categ.md)
+  : Automatic generation of pieplots
+- [`auto_shapiro_raw()`](https://andresfloresg.github.io/BiVariAn/reference/auto_shapiro_raw.md)
+  : Automatic Shapiro-Wilk test table
+- [`auto_viol_cont()`](https://andresfloresg.github.io/BiVariAn/reference/auto_viol_cont.md)
+  : auto_viol_cont
+- [`BiVariAn`](https://andresfloresg.github.io/BiVariAn/reference/BiVariAn-package.md)
+  [`BiVariAn-package`](https://andresfloresg.github.io/BiVariAn/reference/BiVariAn-package.md)
+  : BiVariAn: Bivariate Automatic Analysis
+- [`continuous_2g()`](https://andresfloresg.github.io/BiVariAn/reference/continuous_2g.md)
+  : Bivariate analysis for 2 groups
+- [`continuous_2g_pair()`](https://andresfloresg.github.io/BiVariAn/reference/continuous_2g_pair.md)
+  : Bivariate analysis for 2 groups for paired data
+- [`continuous_corr_test()`](https://andresfloresg.github.io/BiVariAn/reference/continuous_corr_test.md)
+  : Bivariate analysis for correlation tests
+- [`continuous_multg()`](https://andresfloresg.github.io/BiVariAn/reference/continuous_multg.md)
+  : Bivariate analysis for more than 2 groups
+- [`continuous_multg_rm()`](https://andresfloresg.github.io/BiVariAn/reference/continuous_multg_rm.md)
+  : Repeated-measures ANOVA (ezANOVA and/or lme)
+- [`dichotomous_2k_2sid()`](https://andresfloresg.github.io/BiVariAn/reference/dichotomous_2k_2sid.md)
+  : Bivariate Chi squared and Fisher Test analysis for 2 categories.
+- [`encode_factors()`](https://andresfloresg.github.io/BiVariAn/reference/encode_factors.md)
+  : Encode character variables as factor automatically
+- [`fix_mixed_cols()`](https://andresfloresg.github.io/BiVariAn/reference/fix_mixed_cols.md)
+  : Fix mixed cols in dataframes
+- [`logistf_summary()`](https://andresfloresg.github.io/BiVariAn/reference/logistf_summary.md)
+  : Summary method for logistf with no printable output
+- [`ss_multreg()`](https://andresfloresg.github.io/BiVariAn/reference/ss_multreg.md)
+  : Sample Size Calculation for multiple regression analysis
+- [`step_bw_firth()`](https://andresfloresg.github.io/BiVariAn/reference/step_bw_firth.md)
+  : Stepwise backward for logistic Firth regression with automated dummy
+  variables conversion (with forced terms)
+- [`step_bw_p()`](https://andresfloresg.github.io/BiVariAn/reference/step_bw_p.md)
+  : Automatized stepwise backward for regression models (with forced
+  terms)
+- [`theme_serene()`](https://andresfloresg.github.io/BiVariAn/reference/theme_serene.md)
+  : Basic theme for Bivaran packages plots
+- [`theme_serene_void()`](https://andresfloresg.github.io/BiVariAn/reference/theme_serene_void.md)
+  : Void theme for Bivaran packages plots
+
+# Articles
+
+### All vignettes
+
+- [Using
+  BiVariAn](https://andresfloresg.github.io/BiVariAn/articles/Using-BiVariAn.md):
