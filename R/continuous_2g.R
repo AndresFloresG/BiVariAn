@@ -11,9 +11,11 @@
 #' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
 #' @param ttest_args Arguments to be passed to `t.test()` function.
 #' @param wilcox_args Arguments to be passed to `wilcox.test()` function.
+#' @param caption TRUE/FALSE or character. If FALSE, no caption will be displayed. If TRUE, caption will be the same as groupvar or groupvar label. If character, character will be displayed as caption. For display options, flextableformat option must be TRUE.
 #' @returns
 #' Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or T test, along with Shapiro-Wilk's p values and Levene's p value.
-#'
+#' @seealso \code{vignette("continuous_2g", package="BiVariAn")}
+#' @concept Function
 #'
 #' @examples
 #'  df <- mtcars
@@ -39,7 +41,8 @@ continuous_2g <- function(data,
                           groupvar,
                           ttest_args = list(),
                           wilcox_args = list(),
-                          flextableformat = TRUE) {
+                          flextableformat = TRUE,
+                          caption = FALSE) {
 
   if (!is.data.frame(data)) {
     stop("Data must be a data.frame object")
@@ -49,7 +52,8 @@ continuous_2g <- function(data,
     stop("flextableformat argument must be a logical operator")
   }
 
-  if (!(groupvar %in% names(data))) {
+
+  if(!(groupvar %in% names(data))) {
     stop(groupvar, " is not in the provided dataframe")
   }
 
@@ -69,6 +73,17 @@ continuous_2g <- function(data,
       stop("Invalid alternative. Allowed alternatives are: two.sided, less, greater")
     }
   }
+
+  if((caption == TRUE | is.character(caption)) & flextableformat == FALSE){
+    stop("For caption, flextableformat must be TRUE")
+  }else if(caption == TRUE){
+    captionlabel <- if(!is.null(table1::label(data[[groupvar]]))) table1::label(data[[groupvar]]) else groupvar
+  }else if(is.character(caption)){
+    captionlabel <- caption
+  }else if(is.null(caption) | caption == FALSE){
+    captionlabel <- NULL
+  }
+
 
   # Convertir la variable de agrupación en factor
   data[[groupvar]] <- as.factor(data[[groupvar]])
@@ -185,7 +200,12 @@ continuous_2g <- function(data,
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat) {
-    return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
+    if(!is.null(captionlabel)){
+      return(rrtable::df2flextable(resultados_df, vanilla = TRUE) %>%
+      flextable::add_header_lines(values = captionlabel))
+    }else{
+      return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
+    }
   } else {
     rownames(resultados_df) <- NULL
     return(resultados_df)

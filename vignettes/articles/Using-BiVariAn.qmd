@@ -1,0 +1,290 @@
+---
+title: "Using BiVariAn"
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+grid: 
+  content-mode: auto
+  margin-width: "100px"
+  gutter-width: "0.5rem"
+---
+
+```{r, warning=FALSE, message=FALSE}
+#| label: setup
+library(BiVariAn)
+```
+
+
+Using BiVariAn solves several different problems, each one described in its corresponding function.
+
+## Functions 
+
+There are currently several groups of functions available:
+
+**Database oriented**
+
+-   `encode_factors`
+
+-   `fix_mixed_cols`
+
+**Plotting oriented**
+
+-   `theme_serene`
+
+-   `theme_serene_void`
+
+-   `auto_bar_categ`
+
+-   `auto_bar_cont`
+
+-   `auto_viol_cont`
+
+-   `auto_bp_cont`
+
+-   `auto_corr_cont`
+
+-   `auto_dens_cont`
+
+-   `auto_pie_categ`
+
+**Univariate and bivariate analyses**
+
+-   `auto_shapiro_raw`
+
+-   `dichotomous_2k_2sid`
+
+-   `continuous_2g`
+
+-   `continuous_2g_pair`
+
+-   `continuous_corr_test`
+
+-   `continuous_multg`
+
+-   `continuous_multg_rm`   
+
+**Regression analyses**
+
+-   `step_bw_p`
+
+-   `step_bw_firth`
+
+-   `logistf_summary`
+
+-   `ss_multreg`
+
+## Usage examples
+
+Suppose we want to start an analysis of a dataset with a large number of variables. Typically, we would have to run normality tests, which would mean writing one line of code for every variable. As an example, we will use the `penguins` dataset available in the palmerpenguins package.
+
+```{r}
+data(penguins)
+
+dat <- penguins
+```
+
+### Normality
+
+If we inspect the dataset we have 8 variables with 344 observations. Among these variables there are 5 numeric variables (one of them representing years), which would mean writing normality test code for each of them. 
+
+```{r}
+shapiro.test(dat$bill_len)
+```
+
+More advanced users might consider writing a loop or using helper functions such as `lapply` to evaluate all variables through a list (or similar approaches).
+
+```{r}
+cont_var <- c("bill_len", "bill_dep", "flipper_len", "body_mass")
+
+lapply(dat[cont_var], function(x) shapiro.test(x))
+```
+
+With BiVariAn we can solve this problem (and improve the display of the results) by using the `auto_shapiro_raw` function.
+
+```{r}
+auto_shapiro_raw(data = dat)
+```
+
+Do we want a data frame instead of a flextable? We can do that with the `flextableformat` argument (which is used in most functions).
+
+```{r}
+shapirores <- auto_shapiro_raw(
+  data = dat, 
+  flextableformat = FALSE
+)
+
+shapirores
+```
+
+### Bivariate analyses
+
+After checking normality, the next natural step is to apply bivariate tests, but again we would have to write separate code for each test. For example, if we wanted to compare variables across sexes, we would write something like this for every variable.
+
+::: {.callout-note}
+The normality analysis showed a non normal distribution, so ideally at this stage we would not apply parametric tests. For now, we will continue as if we needed to perform a t test, only to illustrate the workflow.
+:::
+
+```{r}
+# First we would evaluate homoscedasticity
+car::leveneTest(
+  dat$bill_len, 
+  group = dat$sex,
+  center = "median"
+)
+
+# Then we apply the t test
+t.test(dat$bill_len)
+```
+
+Doing this for every variable quickly becomes an iterative and repetitive process, and in addition we would need to write separate code to report mean differences with their corresponding tests.
+
+With BiVariAn we can avoid this by using the `continuous_2g` function.
+
+```{r}
+#| column: screen-inset-right
+continuous_2g(
+  data = dat,
+  groupvar = "sex"
+)
+```
+
+#### Customizing the output
+
+Similarly, we can use the `flextableformat` argument to obtain a data frame. 
+
+```{r}
+continuous_2g(
+  data = dat,
+  groupvar = "sex",
+  flextableformat = FALSE
+)
+```
+
+However, we can also add labels to the variables using the `table1::label()` function from the `table1` package.
+
+```{r}
+library(table1)
+
+table1::label(dat$sex)        <- "Sex"
+table1::label(dat$bill_len)   <- "Bill length"
+table1::label(dat$bill_dep)   <- "Bill depth"
+```
+
+And we obtain a nicely labeled table.
+
+```{r}
+#| column: screen-inset-right
+continuous_2g(
+  data = dat,
+  groupvar = "sex"
+)
+```
+
+Do we want a title row that indicates the grouping variable? We can add it with the `caption` argument.
+
+```{r}
+#| column: screen-inset-right
+continuous_2g(
+  data = dat,
+  groupvar = "sex",
+  caption = TRUE
+)
+```
+
+:::{.callout-important}
+To use the `caption` argument it is mandatory that `flextableformat` is TRUE; otherwise an error will be raised.
+:::
+
+### Graphical representation
+
+The next step would be to create graphical representations. Again, if we want to use `ggplot2` we would write separate code for every plot (which implies multiple lines of code that can become tedious if we want extensive customization).
+
+Let us create a boxplot to represent the comparison of `flipper_len` across the `sex` variable.
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+dat_comp <- dat %>% 
+  drop_na(sex) # We remove the NAs from the sex variable
+
+ggplot(
+  data = dat_comp,
+  mapping = aes(
+    x = sex,
+    y = flipper_len
+  )
+) + 
+  geom_boxplot() + 
+  labs(
+    x = "Sex",
+    y = "Flipper length"
+  ) + 
+  theme_classic()
+```
+
+Repeating this for every variable implies multiple lines of code. For this reason, the `auto_bp_cont` function can help streamline the workflow. 
+
+We simply call the function and store its output in an object. This object is a list, so we can select the specific plot we want to display or include in our report. 
+
+```{r}
+graphs <- auto_bp_cont(
+  data = dat_comp, 
+  groupvar = "sex"
+)
+
+graphs$flipper_len
+```
+
+If you remember, we previously assigned labels using `table1::label()`. The good news is that these labels can also be used for the plots. 
+
+```{r}
+table1::label(dat_comp$sex)         <- "Sex"
+table1::label(dat_comp$flipper_len) <- "Flipper length"
+
+graphs <- auto_bp_cont(
+  data = dat_comp, 
+  groupvar = "sex"
+)
+
+graphs$flipper_len
+```
+
+At this point we have everything we need to build our report.
+
+
+### Special mentions 
+
+As a special mention, there are some useful helper functions for regression analysis. For example, the `step_bw_p` function helps with the tedious iterative process of simplifying regression models by stepwise backward selection based on a p value threshold, and the `step_bw_firth` function performs the same process for models fitted with `logistf::logistf()`. 
+
+If we fit a model with our dataset, we obtain something like this:
+
+```{r}
+model_reg <- glm(
+  sex ~ species + island + bill_len + bill_dep + flipper_len + body_mass, 
+  data = dat, 
+  family = binomial()
+)
+
+step_bw_p(model_reg)
+```
+
+In practice, this removes the need to manually perform three backward selection steps (which would otherwise require typing the full model each time or using helpers such as `reformulate`). 
+
+We can also store the output in an object:
+
+```{r}
+step_res <- step_bw_p(
+  model_reg, 
+  trace = FALSE # To avoid printing the process in the console
+)
+
+step_res$steps       # Data frame of the steps involved
+step_res$final_model # Final model after all iterations
+```
+
+

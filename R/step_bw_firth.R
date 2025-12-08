@@ -107,10 +107,13 @@ step_bw_firth <- function(reg_model,
   step_idx <- 1L
   # Initial output
   if (trace) {
-    cat("\nInitial model:", deparse(formula(fit)), "\n\n")
+    cat("\nInitial model:", gsub("\\s+", " ", paste(deparse(formula(fit)), collapse = "")), "\n\n")
     print(summary(fit))
   }
-  models[[step_idx]] <- list(change = "Initial", formula = formula(fit))
+  models[[step_idx]] <- list(
+    change = "Initial",
+    formula = gsub("\\s+", " ", paste(deparse(formula(fit)), collapse = ""))
+  )
   # Backward elimination
   while (steps > 0) {
     steps <- steps - 1
@@ -141,16 +144,22 @@ step_bw_firth <- function(reg_model,
     new_formula <- reformulate(terms_current, response = yvar)
     fit <- logistf::logistf(new_formula, data = dataprov)
     step_idx <- step_idx + 1L
-    models[[step_idx]] <- list(change = paste("-", term_remove), formula = formula(fit))
+    models[[step_idx]] <- list(change = paste("-", term_remove),
+                               formula = gsub("\\s+", " ", paste(deparse(formula(fit)), collapse = "")))
     if (trace) {
       print(summary(fit))
     }
   }
   # Prepare output
+
+  Step <- sapply(models, function(x) x$change)
+  Formula <- sapply(models, function(x) deparse1(x$formula))
+
   steps_df <- data.frame(
-    Step = sapply(models, `[[`, "change"),
-    Formula = sapply(models, function(x) deparse1(x$formula)),
-    stringsAsFactors = FALSE
+    cbind(
+      Step,
+      Formula
+    )
   )
   res <- list(final_model = fit, steps = steps_df)
   class(res) <- "step_bw"

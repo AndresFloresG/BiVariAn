@@ -1,0 +1,52 @@
+url: "https://github.com/AndresFloresG/BiVariAn"
+BugReports: "https://github.com/AndresFloresG/BiVariAn/issues"
+template:
+  bootstrap: 5
+
+reference:
+  - title: "BiVariAn"
+    contents:
+      - auto_bar_categ
+      - auto_bar_cont
+      - auto_bp_cont
+      - auto_corr_cont
+      - auto_dens_cont
+      - auto_pie_categ
+      - auto_shapiro_raw
+      - auto_viol_cont
+      - BiVariAn-package
+      - continuous_2g
+      - continuous_2g_pair
+      - continuous_corr_test
+      - continuous_multg
+      - continuous_multg_rm
+      - dichotomous_2k_2sid
+      - encode_factors
+      - fix_mixed_cols
+      - logistf_summary
+      - ss_multreg
+      - step_bw_firth
+      - step_bw_p
+      - theme_serene
+      - theme_serene_void
+
+#articles:
+ # - title: "Vignettes"
+  #  contents:
+   #   - articles/Using-BiVariAn
+
+navbar:
+  structure:
+    left:
+      - reference
+      #- articles
+      - usage
+      - news
+  components:
+    articles:
+      text: "Vignettes"
+      href: articles/index.html
+    usage:
+      text: "Usage"
+      href: articles/Using-BiVariAn.html
+

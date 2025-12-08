@@ -62,7 +62,7 @@ step_bw_p <- function(reg_model,
     response <- all.vars(formula(reg_model))[1]
     preds <- setdiff(names(data), response)
     s_upper <- terms(as.formula(paste(response, "~", paste(preds, collapse = "+"))),
-      data = data
+                     data = data
     )
   } else if (is.character(s_upper)) {
     s_upper <- terms(as.formula(s_upper), data = data)
@@ -92,13 +92,15 @@ step_bw_p <- function(reg_model,
   fit <- reg_model
   step_idx <- 1L
   if (trace) {
-    cat("\nInitial model:", deparse(formula(fit)), "\n")
+    cat("\nInitial model:",
+        gsub("\\s+", " ", paste(deparse(formula(fit)), collapse = "")),
+        "\n")
     print(car::Anova(fit, ...))
     utils::flush.console()
   }
   models[[step_idx]] <- list(
     change = "Initial",
-    formula = formula(fit)
+    formula = gsub("\\s+", " ", paste(deparse(formula(fit)), collapse =""))
   )
 
   # Backward elimination loop
@@ -138,7 +140,7 @@ step_bw_p <- function(reg_model,
     step_idx <- step_idx + 1L
     models[[step_idx]] <- list(
       change = paste("-", term_to_remove),
-      formula = formula(fit)
+      formula = gsub("\\s+", " ", paste(deparse(formula(fit)), collapse =""))
     )
     if (trace) {
       print(car::Anova(fit, ...))
@@ -147,12 +149,19 @@ step_bw_p <- function(reg_model,
   }
 
   # Prepare output
+
+  Step <- sapply(models, function(x) x$change)
+  Formula <- sapply(models, function(x) deparse(x$formula))
+
   steps_df <- data.frame(
-    Step = sapply(models, `[[`, "change"),
-    Formula = sapply(models, function(x) deparse(x$formula)),
-    stringsAsFactors = FALSE
+    cbind(
+      Step,
+      Formula
+    )
+
   )
-  result <- list(final_model = fit, steps = steps_df)
+  result <- list(final_model = fit,
+                 steps = steps_df)
   class(result) <- "step_bw"
 
   if (trace) {

@@ -7,3 +7,11 @@
 ^CRAN-SUBMISSION$
 ^doc$
 ^Meta$
+^vignettes/\.quarto$
+^vignettes/*_files$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles/\.quarto$
+^vignettes/articles/*_files$
+^vignettes/articles$
