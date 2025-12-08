@@ -1,7 +1,7 @@
 Type: Package
 Package: BiVariAn
 Title: Bivariate Automatic Analysis
-Version: 1.0.2.9000
+Version: 1.0.2.9001
 Date: 2025-09-16
 Authors@R: c(
     person("José Andrés", "Flores-García", , "andres.flores@uaslp.mx", role = c("cre", "aut", "cph"),
@@ -24,7 +24,7 @@ Description: Simplify bivariate and regression analyses by automating
     (2003) <doi:10.1890/0012-9623(2003)84[92:NORDIG]2.0.CO;2> and Rainer
     Puhr (2017) <doi:10.1002/sim.7273>.
 License: GPL (>= 3)
-URL: https://github.com/AndresFloresG/BiVariAn
+URL: https://github.com/AndresFloresG/BiVariAn, https://andresfloresg.github.io/BiVariAn/
 BugReports: https://github.com/AndresFloresG/BiVariAn/issues
 Imports: 
     car,
