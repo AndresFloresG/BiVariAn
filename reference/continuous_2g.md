@@ -12,7 +12,8 @@ continuous_2g(
   groupvar,
   ttest_args = list(),
   wilcox_args = list(),
-  flextableformat = TRUE
+  flextableformat = TRUE,
+  caption = FALSE
 )
 ```
 
@@ -41,10 +42,21 @@ continuous_2g(
   Logical operator to indicate the output desired. Default is TRUE. When
   FALSE, function will return a dataframe format.
 
+- caption:
+
+  TRUE/FALSE or character. If FALSE, no caption will be displayed. If
+  TRUE, caption will be the same as groupvar or groupvar label. If
+  character, character will be displayed as caption. For display
+  options, flextableformat option must be TRUE.
+
 ## Value
 
 Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or
 T test, along with Shapiro-Wilk's p values and Levene's p value.
+
+## See also
+
+`vignette("continuous_2g", package="BiVariAn")`
 
 ## Examples
 

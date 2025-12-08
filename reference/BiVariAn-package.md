@@ -19,6 +19,8 @@ Useful links:
 
 - <https://github.com/AndresFloresG/BiVariAn>
 
+- <https://andresfloresg.github.io/BiVariAn/>
+
 - Report bugs at <https://github.com/AndresFloresG/BiVariAn/issues>
 
 ## Author

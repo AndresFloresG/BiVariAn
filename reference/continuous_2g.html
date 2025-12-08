@@ -44,7 +44,8 @@
 <span>  <span class="va">groupvar</span>,</span>
 <span>  ttest_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  wilcox_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  flextableformat <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  flextableformat <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  caption <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,10 +72,18 @@
 <dt id="arg-flextableformat">flextableformat<a class="anchor" aria-label="anchor" href="#arg-flextableformat"></a></dt>
 <dd><p>Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.</p></dd>
 
+
+<dt id="arg-caption">caption<a class="anchor" aria-label="anchor" href="#arg-caption"></a></dt>
+<dd><p>TRUE/FALSE or character. If FALSE, no caption will be displayed. If TRUE, caption will be the same as groupvar or groupvar label. If character, character will be displayed as caption. For display options, flextableformat option must be TRUE.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a dataframe or flextable of 2 groups 2 sided Mann Whitney's U or T test, along with Shapiro-Wilk's p values and Levene's p value.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code>vignette("continuous_2g", package="BiVariAn")</code></p></div>
     </div>
 
     <div class="section level2">
