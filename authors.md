@@ -16,14 +16,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/AndresFloresG/BiVariAn/blob/master/DESCRIPTION)
 
-Flores-García J, Gordillo-Moscoso A, Castro-Rodriguez J (2025).
+Flores-García J, Gordillo-Moscoso A, Castro-Rodriguez J (2026).
 *BiVariAn: Bivariate Automatic Analysis*. R package version 1.0.2.9001,
 <https://github.com/AndresFloresG/BiVariAn>.
 
     @Manual{,
       title = {BiVariAn: Bivariate Automatic Analysis},
       author = {José Andrés Flores-García and Antonio Augusto Gordillo-Moscoso and Jhoselin Marian Castro-Rodriguez},
-      year = {2025},
+      year = {2026},
       note = {R package version 1.0.2.9001},
       url = {https://github.com/AndresFloresG/BiVariAn},
     }
