@@ -85,13 +85,15 @@ auto_pie_categ <- function(data,
     if (varcat %in% names(data)) {
 
         freq <- table(data[[varcat]])
+        names <- names(freq)
+        dim(freq) <- NULL
         prop <- freq / nrow(data)
         csum <- rev(cumsum(rev(freq)))
         pos <-  freq/2 + lead(csum, 1)
         pos <- if_else(is.na(pos), freq/2, pos)
         namescol <- NULL
 
-        datastats <- data.frame(namescol = names(freq), freq = as.vector(freq), prop = as.vector(prop), csum = as.vector(csum), pos = as.vector(pos))
+        datastats <- data.frame(namescol = names, freq = as.vector(freq), prop = as.vector(prop), csum = as.vector(csum), pos = as.vector(pos))
 
 
       lab_graf_cat <- if (!is.null(table1::label(data[[varcat]]))) table1::label(data[[varcat]]) else varcat
