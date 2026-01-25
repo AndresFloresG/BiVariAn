@@ -9,7 +9,7 @@
 #' Automatic test for continuous variables for 2 groups. Variable names can be assigned using [table1::label()] function.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable as character. Must have exactly 2 levels.
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format.
 #' @param ttest_args Arguments to be passed to `t.test()` function.
 #' @param wilcox_args Arguments to be passed to `wilcox.test()` function.
 #' @param caption TRUE/FALSE or character. If FALSE, no caption will be displayed. If TRUE, caption will be the same as groupvar or groupvar label. If character, character will be displayed as caption. For display options, flextableformat option must be TRUE.
@@ -42,7 +42,7 @@ continuous_2g <- function(data,
                           groupvar,
                           ttest_args = list(),
                           wilcox_args = list(),
-                          flextableformat = TRUE,
+                          flextableformat = FALSE,
                           caption = FALSE) {
 
   if (!is.data.frame(data)) {
@@ -201,6 +201,11 @@ continuous_2g <- function(data,
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat) {
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      rownames(resultados_df) <- NULL
+      return(resultados_df)
+    }
     if(!is.null(captionlabel)){
       return(rrtable::df2flextable(resultados_df, vanilla = TRUE) %>%
       flextable::add_header_lines(values = captionlabel))

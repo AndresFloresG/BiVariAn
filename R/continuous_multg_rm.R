@@ -18,8 +18,8 @@
 #' @param method One of \code{"both"} (default), \code{"ez"}, or \code{"lme"}.
 #' @param correction Sphericity correction for \code{ezANOVA}:
 #'   \code{"GG"} (default), \code{"HF"}, or \code{"none"}.
-#' @param flextableformat Logical; \code{TRUE} (default) returns a \code{flextable};
-#'   \code{FALSE} returns a \code{data.frame}.
+#' @param flextableformat Logical; \code{FALSE} (default) returns a \code{data.frame};
+#'   \code{TRUE} returns a \code{flextable} if rrtable package is installed.
 #'
 #' @return A \code{flextable} or \code{data.frame} with, per outcome (DV):
 #'   \code{n_subjects}, \code{within_levels}, (\code{between_levels} if applicable),
@@ -48,7 +48,7 @@ continuous_multg_rm <- function(data,
                                 betweenvar = NULL,
                                 method = c("both","ez","lme"),
                                 correction = c("GG","HF","none"),
-                                flextableformat = TRUE){
+                                flextableformat = FALSE){
 
   method <- match.arg(method)
   correction <- match.arg(correction)
@@ -262,6 +262,10 @@ continuous_multg_rm <- function(data,
   rownames(res_df) <- NULL
 
   if (isTRUE(flextableformat)) {
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      return(res_df)
+    }
     rrtable::df2flextable(res_df, vanilla = TRUE)
   } else {
     res_df

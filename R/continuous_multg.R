@@ -8,7 +8,7 @@
 #'   Generates a HTML table of bivariate analysis for 2 groups.
 #' @param data Data frame from which variables will be extracted.
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format.
 #'
 #' @returns A dataframe or flextable containing pvalues for each test along with the normality and homocedasticity tests p values. An extra column will be shown indicating the recommended significant test
 #'
@@ -24,7 +24,7 @@
 
 continuous_multg<-function(data,
                            groupvar,
-                           flextableformat = TRUE){
+                           flextableformat = FALSE){
   # Convertir la variable de agrupacion en factor
   if(!is.data.frame(data) ){
     stop("data must be a data.frame object")
@@ -124,6 +124,11 @@ continuous_multg<-function(data,
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat == TRUE) {
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      rownames(resultados_df) <- NULL
+      return(resultados_df)
+    }
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
     rownames(resultados_df) <- NULL

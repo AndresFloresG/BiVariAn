@@ -11,7 +11,7 @@
 #'
 #' @param data Data frame from which variables will be extractred
 #' @param referencevar Reference variable. Must have exactly 2 levels
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format.
 #'
 #' @return Returns a dataframe or flextable containing statistical values for Chi squared tests or Fisher's test.
 #'
@@ -50,7 +50,7 @@
 
 dichotomous_2k_2sid <- function(data,
                                 referencevar,
-                                flextableformat = TRUE) {
+                                flextableformat = FALSE) {
 
   if(!is.data.frame(data)){
     stop("data must be a data.frame object")
@@ -143,6 +143,11 @@ dichotomous_2k_2sid <- function(data,
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat == TRUE){
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      rownames(resultados_df) <- NULL
+      return(resultados_df)
+    }
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
     rownames(resultados_df) <- NULL

@@ -7,7 +7,7 @@
 #' @description
 #' Generates a HTML table of raw data from a numerical variables of a dataframe.
 #' @param data Data frame from which variables will be extracted.
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format.
 #'
 #' @returns Flextable or dataframe with shapiro wilks results.
 #'
@@ -18,7 +18,7 @@
 #' @export
 
 
-auto_shapiro_raw <- function(data, flextableformat= TRUE){
+auto_shapiro_raw <- function(data, flextableformat= FALSE){
 
 
   if(!is.data.frame(data)){
@@ -50,6 +50,10 @@ auto_shapiro_raw <- function(data, flextableformat= TRUE){
   resultadosdf <-do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat == TRUE){
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      return(resultadosdf)
+    }
     return(rrtable::df2flextable(resultadosdf, vanilla = TRUE))
   }
   else {

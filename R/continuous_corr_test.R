@@ -14,7 +14,7 @@
 #' @param data Data frame from which variables will be extracted.
 #' @param referencevar Reference variable. Must be a continuous variable.
 #' @param alternative Alternative for cor.test. Must be either "two.sided", "geater" or "less"
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format. Because the function calculates different statistics for each correlation (specially in kendall correlation test), it may take some time to run. You can select individual variables using the pipe operator and the select function to run correlations only on the selected variables.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format. Because the function calculates different statistics for each correlation (specially in kendall correlation test), it may take some time to run. You can select individual variables using the pipe operator and the select function to run correlations only on the selected variables.
 #' @param corr_test Correlation test to be performed
 #'
 #' @returns A dataframe or flextable containing pvalues for correlation tests along with the normality and homocedasticity tests p values
@@ -59,7 +59,7 @@
 continuous_corr_test <- function(data,
                                  referencevar,
                                  alternative = NULL,
-                                 flextableformat = TRUE,
+                                 flextableformat = FALSE,
                                  corr_test = c("all", "pearson", "spearman", "kendall")) {
   # Agregar argumento sobre el supuesto de normalidad (Analizarlo por residuos o por datos en crudo)
 
@@ -221,6 +221,11 @@ continuous_corr_test <- function(data,
   }
 
   if (flextableformat == TRUE) {
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      rownames(resultados_df) <- NULL
+      return(resultados_df)
+    }
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
     rownames(resultados_df) <- NULL

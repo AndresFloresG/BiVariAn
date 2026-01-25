@@ -12,7 +12,7 @@
 #' @param groupvar Grouping variable. Must have exactly 2 levels.
 #' @param ttest_args Arguments to be passed to `t.test()` function.
 #' @param wilcox_args Arguments to be passed to `wilcox.test()` function.
-#' @param flextableformat Logical operator to indicate the output desired. Default is TRUE. When FALSE, function will return a dataframe format.
+#' @param flextableformat Logical operator to indicate the output desired. Default is FALSE. When TRUE and rrtable package is installed, function will return a flextable format.
 #' @returns A dataframe or flextable with containing p values for paired tests along with statistics for normality and homocedasticity.
 #'
 #'
@@ -42,7 +42,7 @@ continuous_2g_pair <- function(data,
                                groupvar,
                                ttest_args = list(),
                                wilcox_args = list(),
-                               flextableformat = TRUE){
+                               flextableformat = FALSE){
 
   if(!is.data.frame(data)){
     stop("data must be a data.frame object")
@@ -198,6 +198,11 @@ continuous_2g_pair <- function(data,
   resultados_df <- do.call(rbind, lapply(resultados, as.data.frame))
 
   if (flextableformat) {
+    if (!requireNamespace("rrtable", quietly = TRUE)) {
+      warning("Package 'rrtable' is required for flextable output. Returning dataframe instead. Install it with: install.packages('rrtable')")
+      rownames(resultados_df) <- NULL
+      return(resultados_df)
+    }
     return(rrtable::df2flextable(resultados_df, vanilla = TRUE))
   } else {
     rownames(resultados_df) <- NULL
