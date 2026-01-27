@@ -79,7 +79,7 @@ Render an automatic Shapiro-Wilk’s table of a simple dataset
 auto_shapiro_raw(cars)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
 
 ``` r
 
@@ -129,7 +129,7 @@ Now, let’s select specific columns from the database
 auto_shapiro_raw(ex_sample %>% select(TOTCHOL, SYSBP, DIABP, BMI, HEARTRTE))
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" alt="" width="100%" />
 
 Common use of shapiro.test
 
